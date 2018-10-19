@@ -1,0 +1,42 @@
+<p *ngIf="alertTenHours" class="center"><strong>Noch {{outTillTenHours}} bis zur 10-Stunden-Grenze!</strong><p>
+
+<div class="progress-wrapper">
+  <div class="current" style="">
+    <table mat-table>
+      <tr>
+        <td>Beginn:</td>
+        <td class="right">{{myStartTime | date:'HH:mm'}} Uhr</td>
+      </tr>
+      <tr>
+        <td>Ende:</td>
+        <td class="right">­{{myFinishTime | date:'HH:mm'}} Uhr </td>
+      </tr>
+    </table>
+    <table mat-table>
+      <tr>
+        <td>bisher:</td>
+        <td class="right">{{outWorkTime}}</td>
+      </tr>
+      <tr [ngClass]="balanceNegative?'negative':''">
+        <td>Saldo:</td>
+        <td class="right">{{outBalance}}</td>
+      </tr>
+    </table>
+
+    <button mat-stroked-button type="submit" (click)="reset()">Zurücksetzen</button>
+  </div>
+
+  <round-progress
+    [current]="progressCurrent"
+    [max]="progressMax"
+    [color]="'#ff0000'"
+    [background]="'#fff'"
+    [radius]="125"
+    [stroke]="30"
+    [rounded]="false"
+    [clockwise]="false"
+    [responsive]="true"
+    [duration]="800"
+    [animation]="'easeInOutQuart'"></round-progress>
+
+</div>

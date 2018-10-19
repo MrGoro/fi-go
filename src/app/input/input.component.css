@@ -1,0 +1,12 @@
+.center {
+  text-align: center;
+}
+
+h3 {
+  margin-bottom: 40px;
+}
+
+button.mat-stroked-button {
+  margin-top: 20px;
+  width: 100px;
+}
