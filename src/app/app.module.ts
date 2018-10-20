@@ -17,6 +17,9 @@ import {InputComponent} from './input/input.component';
 import {TimerComponent} from './timer/timer.component';
 import {InfoDialog} from './shared/info-dialog';
 
+import { AngularFireModule } from '@angular/fire';
+import { environment } from '../environments/environment';
+
 import * as moment from 'moment';
 
 @NgModule({
@@ -25,7 +28,8 @@ import * as moment from 'moment';
     MatButtonModule, MatInputModule, MatToolbarModule, MatIconModule,
     MatDialogModule,
     RoundProgressModule,
-    MomentModule
+    MomentModule,
+    AngularFireModule.initializeApp(environment.firebase)
   ],
   declarations: [
     AppComponent, InputComponent, TimerComponent, InfoDialog
