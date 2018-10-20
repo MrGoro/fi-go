@@ -3,11 +3,15 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { InputComponent } from './input/input.component';
 import { TimerComponent } from './timer/timer.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './shared/auth.guard';
 
 const appRoutes: Routes = [
-  { path: 'input', component: InputComponent },
-  { path: 'timer', component: TimerComponent },
-  { path: '', redirectTo: '/input', pathMatch: 'full' }
+  { path: 'login', component: LoginComponent },
+  { path: 'input', component: InputComponent, canActivate: [AuthGuard] },
+  { path: 'timer', component: TimerComponent, canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/input', pathMatch: 'full' },
+  { path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 
 @NgModule({

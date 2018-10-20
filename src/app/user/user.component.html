@@ -1,0 +1,8 @@
+<div *ngIf="(user | async)">
+  <img mat-button height="50px" [src]="(user | async)?.image" alt="Profilbild" [matMenuTriggerFor]="menu">
+  <mat-menu #menu="matMenu">
+    <div mat-menu-item>{{ (user | async)?.name }}</div>
+    <button mat-menu-item (click)="info()">Über fi go!</button>
+    <button mat-menu-item (click)="logout()">Logout</button>
+  </mat-menu>
+</div>
