@@ -3,7 +3,7 @@ import 'rxjs/add/operator/toPromise';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
-import { FirebaseUserModel } from './firebaseuser.model';
+import { FirebaseUserModel, User } from './firebaseuser.model';
 
 @Injectable()
 export class UserService {
@@ -38,12 +38,13 @@ export class UserService {
 
   map(user: firebase.User): FirebaseUserModel {
     if (user) {
-      return {
-        name: user.displayName,
-        email: user.email,
-        image: user.photoURL,
-        provider: user.providerId
-      };
+      return new User(
+        user.displayName,
+        user.email,
+        user.phoneNumber,
+        user.photoURL,
+        user.providerId
+      );
     } else {
       return null;
     }

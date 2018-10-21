@@ -32,6 +32,8 @@ import { AuthService } from './shared/auth.service';
 import { UserService } from './shared/user.service';
 import { AuthGuard } from './shared/auth.guard';
 import { UserComponent } from './user/user.component';
+import { WindowService } from './shared/window.service';
+import { PhoneLoginComponent } from './login/phone-login.component';
 
 @NgModule({
   imports: [
@@ -46,9 +48,11 @@ import { UserComponent } from './user/user.component';
     AngularFireAuthModule
   ],
   declarations: [
-    AppComponent, LoginComponent, InputComponent, TimerComponent, InfoDialog, UserComponent
+    AppComponent, LoginComponent, PhoneLoginComponent,
+    InputComponent, TimerComponent,
+    InfoDialog, UserComponent
   ],
-  providers: [AuthService, UserService, AuthGuard],
+  providers: [AuthService, UserService, AuthGuard, WindowService],
   entryComponents: [
     InfoDialog
   ],

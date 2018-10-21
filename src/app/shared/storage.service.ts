@@ -1,34 +1,42 @@
 import { Injectable } from '@angular/core';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
-  constructor() { }
+  constructor(
+    private db: AngularFirestore,
+    private afAuth: AngularFireAuth) { }
 
-  set(key: string, data: any): void {
-    try {
-      localStorage.setItem(key, JSON.stringify(data));
-    } catch (e) {
-      console.error('Error saving to localStorage', e);
-    }
+  set(key: string, value: any): Promise<void> {
+    const data = {};
+    data[key] = value;
+    return this.getRef().set(data, {merge: true});
   }
 
-  get(key: string) {
-    try {
-      return JSON.parse(localStorage.getItem(key));
-    } catch (e) {
-      console.error('Error getting data from localStorage', e);
-      return null;
-    }
+  get(key: string): Observable<any> {
+    return this.getRef().valueChanges().pipe(
+      map(x => x[key])
+    );
   }
 
-  setDate(key: string, date: Date): void {
-    this.set(key, date.getTime());
+  setDate(key: string, date: Date): Promise<void> {
+    return this.set(key, date.getTime());
   }
 
-  getDate(key: string): Date {
-    let time: number = this.get(key);
-    return new Date(time);
+  getDate(key: string): Observable<Date> {
+    return this.get(key).pipe(
+      map(time => new Date(time))
+    );
+  }
+
+  getRef(): AngularFirestoreDocument {
+    const uid: string = this.afAuth.auth.currentUser.uid;
+    const ref: AngularFirestoreDocument<any> = this.db.doc<any>('data/' + uid);
+    return ref;
   }
 }

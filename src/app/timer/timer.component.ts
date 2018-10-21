@@ -1,15 +1,15 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 
-import { Subscription } from "rxjs";
-import { TimerObservable } from "rxjs/observable/TimerObservable";
+import { Subscription } from 'rxjs';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
 import * as moment from 'moment';
 import 'moment/locale/de';
 
 import { StorageService } from '../shared/storage.service';
 
 @Component({
-  selector: 'figo-timer',
+  selector: 'app-timer',
   templateUrl: './timer.component.html',
   styleUrls: ['./timer.component.css']
 })
@@ -30,7 +30,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   public balanceNegative: boolean;
   public alertTenHours: boolean;
 
-  public progressCurrent: number = 0;
+  public progressCurrent = 0;
   public progressMax: number = this.timeToWork.asMilliseconds();
 
   constructor(
@@ -41,22 +41,24 @@ export class TimerComponent implements OnInit, OnDestroy {
   public ngOnInit(): void {
     moment.locale('de');
 
-    let startTime: Date = this.storageService.getDate('startTime');
-    this.myStartTime = moment(startTime);
+    this.storageService.getDate('startTime').subscribe(startTime => {
 
-    this.myFinishTime = this.myStartTime.clone().add({
-      minutes: 30, 
-      milliseconds: this.timeToWork.asMilliseconds() 
-    });
+      this.myStartTime = moment(startTime);
 
-    // If no time saved => redirect to beginning
-    if (!(startTime instanceof Date) || startTime.toDateString() != new Date().toDateString()) {
-      this.reset();
-    }
+      this.myFinishTime = this.myStartTime.clone().add({
+        minutes: 30,
+        milliseconds: this.timeToWork.asMilliseconds()
+      });
 
-    let timer = TimerObservable.create(0, 1000);
-    this.subscription = timer.subscribe(t => {
-      this.refresh();
+      // If no time saved => redirect to beginning
+      if (!(startTime instanceof Date) || startTime.toDateString() !== new Date().toDateString()) {
+        this.reset();
+      }
+
+      const timer = TimerObservable.create(0, 1000);
+      this.subscription = timer.subscribe(t => {
+        this.refresh();
+      });
     });
   }
 
@@ -65,14 +67,14 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public refresh(): void {
-    let now: Date = new Date();
+    const now: Date = new Date();
 
-    let startOfDay: Date = new Date();
+    const startOfDay: Date = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
     // Bisherige Arbeitszeit
     this.workTime = moment.duration(moment().diff(this.myStartTime));
-    if (this.workTime.hours() == 6 && this.workTime.minutes() < 30) {
+    if (this.workTime.hours() === 6 && this.workTime.minutes() < 30) {
       this.workTime = this.sixHours;
     } else if (this.workTime.hours() >= 6) {
       this.workTime = this.workTime.subtract(30, 'minutes');
@@ -80,7 +82,7 @@ export class TimerComponent implements OnInit, OnDestroy {
     this.outWorkTime = moment.utc(this.workTime.asMilliseconds()).format('HH:mm:ss');
 
     // Saldo
-    let myBalance: moment.Duration = this.workTime.clone().subtract(this.timeToWork.clone());
+    const myBalance: moment.Duration = this.workTime.clone().subtract(this.timeToWork.clone());
     if (myBalance.asMilliseconds() < 0) {
       this.outBalance = '-' + moment.utc(myBalance.asMilliseconds() * -1).format('HH:mm:ss');
       this.balanceNegative = true;
@@ -100,9 +102,9 @@ export class TimerComponent implements OnInit, OnDestroy {
     // Progress
     this.progressCurrent = this.workTime.asMilliseconds();
     // Neuen Kreis bis 10 Stunden zeigen, wenn Arbeitszeit erfüllt
-    if(this.timeToWork.asMilliseconds() < this.progressCurrent) {
+    if (this.timeToWork.asMilliseconds() < this.progressCurrent) {
       this.progressCurrent = myBalance.asMilliseconds();
-      this.progressMax = moment.duration("2:12").asMilliseconds();
+      this.progressMax = moment.duration('2:12').asMilliseconds();
     }
   }
 

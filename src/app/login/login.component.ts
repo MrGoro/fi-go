@@ -12,7 +12,7 @@ import { AuthService } from '../shared/auth.service';
 })
 export class LoginComponent implements OnInit {
 
-  public loginForm: FormGroup;
+  public phoneLogin = false;
   errorMessage = '';
 
   constructor(private _iconRegistry: MatIconRegistry,
@@ -27,18 +27,9 @@ export class LoginComponent implements OnInit {
       .addSvgIcon('twitter', _sanitizer.bypassSecurityTrustResourceUrl('/assets/providers/twitter.svg'))
       .addSvgIcon('github', _sanitizer.bypassSecurityTrustResourceUrl('/assets/providers/github-circle.svg'))
       .addSvgIcon('phone', _sanitizer.bypassSecurityTrustResourceUrl('/assets/providers/phone.svg'));
-
-    this.createForm();
   }
 
   ngOnInit() {
-  }
-
-  createForm() {
-    this.loginForm = this.fb.group({
-      email: ['', Validators.required ],
-      password: ['', Validators.required]
-    });
   }
 
   tryGoogleLogin() {

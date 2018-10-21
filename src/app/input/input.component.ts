@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from "@angular/router";
+import { Router } from '@angular/router';
 
 import { StorageService } from '../shared/storage.service';
 
@@ -7,7 +7,7 @@ import * as moment from 'moment';
 import 'moment/locale/de';
 
 @Component({
-  selector: 'figo-input',
+  selector: 'app-input',
   templateUrl: './input.component.html',
   styleUrls: ['./input.component.css']
 })
@@ -21,10 +21,11 @@ export class InputComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    let startTime: Date = this.storageService.getDate('startTime');
-    if(startTime.toDateString() == new Date().toDateString()) {
-      this.analyseDate(startTime);
-    }
+    this.storageService.getDate('startTime').subscribe(startTime => {
+      if (startTime.toDateString() === new Date().toDateString()) {
+        this.analyseDate(startTime);
+      }
+    });
   }
 
   public now(): void {
@@ -32,7 +33,7 @@ export class InputComponent implements OnInit {
   }
 
   public analyse(): void {
-    let startTime: Date = this.getTime();
+    const startTime: Date = this.getTime();
     this.analyseDate(startTime);
   }
 
@@ -47,10 +48,11 @@ export class InputComponent implements OnInit {
   }
 
   private getTime(): Date {
-    let hour: string = this.time.substring(0, 2);
-    let minute: string = this.time.substring(3, 5);
+    const hour: string = this.time.substring(0, 2);
+    const minute: string = this.time.substring(3, 5);
 
-    let time: Date = new Date();
+    const time: Date = new Date();
+    // tslint:disable-next-line:radix
     time.setHours(parseInt(hour), parseInt(minute), 0, 0);
 
     return time;
