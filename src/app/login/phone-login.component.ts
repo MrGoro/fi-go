@@ -5,6 +5,8 @@ import * as firebase from 'firebase/app';
 import {UserService} from '../shared/user.service';
 import {Router} from '@angular/router';
 
+declare var grecaptcha: any;
+
 @Component({
   selector: 'app-phone-login',
   templateUrl: './phone-login.component.html',
