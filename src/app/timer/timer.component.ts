@@ -56,7 +56,7 @@ export class TimerComponent implements OnInit, OnDestroy {
       }
 
       const timer = TimerObservable.create(0, 1000);
-      this.subscription = timer.subscribe(t => {
+      this.subscription = timer.subscribe(() => {
         this.refresh();
       });
     });

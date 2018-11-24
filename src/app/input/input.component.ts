@@ -22,7 +22,7 @@ export class InputComponent implements OnInit {
 
   public ngOnInit(): void {
     this.storageService.getDate('startTime').subscribe(startTime => {
-      if (startTime.toDateString() === new Date().toDateString()) {
+      if (startTime && startTime.toDateString() === new Date().toDateString()) {
         this.analyseDate(startTime);
       }
     });

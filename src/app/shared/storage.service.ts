@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { AngularFireAuth } from '@angular/fire/auth';
-import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import {Injectable} from '@angular/core';
+import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
+import {AngularFireAuth} from '@angular/fire/auth';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,12 @@ export class StorageService {
 
   get(key: string): Observable<any> {
     return this.getRef().valueChanges().pipe(
-      map(x => x[key])
+      map(x => {
+        if(x) {
+          return x[key]
+        }
+        return null;
+      })
     );
   }
 
@@ -36,7 +41,6 @@ export class StorageService {
 
   getRef(): AngularFirestoreDocument {
     const uid: string = this.afAuth.auth.currentUser.uid;
-    const ref: AngularFirestoreDocument<any> = this.db.doc<any>('data/' + uid);
-    return ref;
+    return this.db.doc<any>('data/' + uid);
   }
 }
