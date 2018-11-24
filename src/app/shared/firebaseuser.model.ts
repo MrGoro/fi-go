@@ -1,17 +1,17 @@
 export interface FirebaseUserModel {
-    image: string;
-    name: string;
-    email: string;
-    phone: string;
+    image?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
     provider: string;
 }
 
 export class User implements FirebaseUserModel {
 
-    image: string;
-    name: string;
-    email: string;
-    phone: string;
+    image?: string;
+    name?: string;
+    email?: string;
+    phone?: string;
     provider: string;
 
     constructor(name: string, email: string, phone: string, image: string, provider: string) {

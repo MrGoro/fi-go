@@ -1,36 +1,35 @@
-<mat-card [hidden]="windowRef.confirmationResult" class="login-card">
+<mat-card class="login-card">
   <mat-card-header>
     <mat-card-title>Login mit Telefonnummer</mat-card-title>
   </mat-card-header>
-  <mat-card-content>
-    <mat-form-field>
+
+  <form [hidden]="codeSent" #phoneNumberForm="ngForm">
+    <mat-card-content>
+      <p [hidden]="!error">{{ error }}</p>
+      <mat-form-field>
         <span matPrefix>+49 &nbsp;</span>
-        <input [(ngModel)]="phoneNumber" type="tel" matInput placeholder="Telefonnummer">
+        <input [(ngModel)]="phoneNumber" name="phoneNumber" type="tel" matInput placeholder="Telefonnummer" min="8" required>
         <mat-icon matSuffix>mode_edit</mat-icon>
-    </mat-form-field>
+      </mat-form-field>
+    <mat-card-actions>
 
-    <div class="center">
-      <div id="recaptcha-container" class="recaptcha"></div>
-    </div>
-  </mat-card-content>
+    </mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" id="get-login-code-button" [disabled]="!phoneNumberForm.form.valid">
+        Login-Code per SMS anfordern
+      </button>
+    </mat-card-content>
+  </form>
 
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="sendLoginCode()">Login-Code per SMS anfordern</button>
-  </mat-card-actions>
-</mat-card>
-
-<mat-card *ngIf="windowRef.confirmationResult" class="login-card">
-  <mat-card-header>
-    <mat-card-title>Login mit Telefonnummer</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <mat-form-field>
-      <input type="text" name="code" [(ngModel)]="verificationCode" matInput placeholder="Login-Code">
-    </mat-form-field>
-  </mat-card-content>
-
-  <mat-card-actions>
-    <button mat-raised-button color="primary" (click)="verifyLoginCode()">Überprüfen</button>
-    <button mat-raised-button color="warn" (click)="reset()">Abbrechen</button>
-  </mat-card-actions>
+  <form [hidden]="!codeSent" #loginCodeForm="ngForm">
+    <mat-card-content>
+      <p [hidden]="!error">{{ error }}</p>
+      <mat-form-field>
+        <input [(ngModel)]="verificationCode" name="code" type="number" matInput placeholder="Login-Code" min="6" max="6" required>
+      </mat-form-field>
+      <mat-card-actions>
+        <button mat-raised-button color="warn" (click)="reset('')">Abbrechen</button>
+        <button mat-raised-button color="primary" type="submit" (click)="verifyLoginCode()" [disabled]="!loginCodeForm.form.valid">Überprüfen</button>
+      </mat-card-actions>
+    </mat-card-content>
+  </form>
 </mat-card >

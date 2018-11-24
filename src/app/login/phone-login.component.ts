@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ApplicationRef, Component, OnInit} from '@angular/core';
 import {WindowService} from '../shared/window.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
@@ -12,23 +12,33 @@ import {Router} from '@angular/router';
 })
 export class PhoneLoginComponent implements OnInit {
 
-  public recaptchaOk = false;
+  public error: string;
   public codeSent = false;
+  public phoneNumber: string;
+  public verificationCode: number;
 
-  windowRef: any;
-  phoneNumber: string;
-  verificationCode: string;
+  private windowRef: any;
+  private recaptchaWidgetId: number;
 
   constructor(private win: WindowService,
               private userService: UserService,
               private afAuth: AngularFireAuth,
-              private router: Router) {
+              private router: Router,
+              private appRef: ApplicationRef) {
   }
 
   ngOnInit() {
     this.windowRef = this.win.windowRef;
-    this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
-    this.windowRef.recaptchaVerifier.render();
+    this.afAuth.auth.useDeviceLanguage();
+    this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('get-login-code-button', {
+      'size': 'invisible',
+      'callback': (response) => {
+        this.sendLoginCode();
+      }
+    });
+    this.windowRef.recaptchaVerifier.render().then(widgetId => {
+      this.recaptchaWidgetId = widgetId;
+    });
   }
 
   sendLoginCode() {
@@ -39,25 +49,43 @@ export class PhoneLoginComponent implements OnInit {
       .then(result => {
         this.windowRef.confirmationResult = result;
         this.codeSent = true;
-      })
-      .catch(error => console.log(error));
-  }
-
-  verifyLoginCode() {
-    this.windowRef.confirmationResult
-      .confirm(this.verificationCode)
-      .then(res => {
-        console.log('Logged in with Phone');
-        this.userService.updateUser(res.user);
-        this.router.navigate(['/']);
+        this.appRef.tick();
       })
       .catch(error => {
-        console.log(error, 'Incorrect code entered?');
+        console.log(JSON.stringify(error));
+        if(error.code === 'auth/invalid-phone-number') {
+          this.reset('Die eingegebene Telefonnummer ist ungültig!')
+        } else {
+          this.reset('Es ist ein Fehler aufgetreten!');
+        }
+        this.appRef.tick();
       });
   }
 
-  reset(): void {
+  verifyLoginCode() {
+    let code: string = this.verificationCode.toString();
+    this.windowRef.confirmationResult
+      .confirm(code)
+      .then(res => {
+        console.log('Logged in with Phone');
+        this.userService.updateUser(res.user);
+        console.log('Redirect to /');
+        this.router.navigate(['/']);
+      })
+      .catch(error => {
+        if(error.code === 'auth/invalid-verification-code') {
+          this.error = 'Der eingegebene Login-Code war leider falsch!'
+        } else {
+          this.error = 'Es ist ein Fehler aufgetreten! Code: ' + error.code;
+        }
+      });
+  }
+
+  reset(error: string): void {
+    this.error = error;
     this.codeSent = false;
     this.windowRef.confirmationResult = null;
+    // Reset Recaptcha to allow user to solve it again
+    grecaptcha.reset(this.recaptchaWidgetId);
   }
 }

@@ -17,7 +17,7 @@ export class UserService {
     return new Promise<any>((resolve, reject) => {
       this.afAuth.auth.onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
-          const user: FirebaseUserModel = this.map(firebaseUser);
+          const user: FirebaseUserModel = UserService.map(firebaseUser);
           console.log('Current User: ' + JSON.stringify(user));
           resolve(user);
         } else {
@@ -29,14 +29,15 @@ export class UserService {
 
   updateUser(firebaseuser: firebase.User): void {
     const uid: string = firebaseuser.uid;
-    const user: FirebaseUserModel = this.map(firebaseuser);
-
+    const user: FirebaseUserModel = UserService.map(firebaseuser);
+    console.log('Updating User: ' + JSON.stringify(user) + ' / UID: ' + uid);
     const userRef: AngularFirestoreDocument<FirebaseUserModel> = this.db.doc<FirebaseUserModel>('users/' + uid);
-    userRef.set(user);
-    console.log('Updating User:' + JSON.stringify(user));
+    userRef.set(Object.assign({}, user)).then(() =>
+      console.log('Update Successful.')
+    );
   }
 
-  map(user: firebase.User): FirebaseUserModel {
+  static map(user: firebase.User): FirebaseUserModel {
     if (user) {
       return new User(
         user.displayName,
