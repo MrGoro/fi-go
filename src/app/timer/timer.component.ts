@@ -67,8 +67,6 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public refresh(): void {
-    const now: Date = new Date();
-
     const startOfDay: Date = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -109,8 +107,8 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   public reset(): void {
-    this.storageService.set('startTime', null);
-
-    this.router.navigate(['/']);
+    this.storageService.set('startTime', null).subscribe(() =>
+      this.router.navigate(['/'])
+    );
   }
 }
