@@ -42,7 +42,7 @@ export class InputComponent implements OnInit {
   }
 
   public analyseDate(startTime: Date): void {
-    this.storageService.setDate('startTime', startTime);
+    this.storageService.setDate('startTime', startTime).subscribe();
 
     this.router.navigate(['/timer']);
   }

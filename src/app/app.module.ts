@@ -4,12 +4,6 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-import {MatButtonModule, MatInputModule} from '@angular/material';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatIconModule} from '@angular/material/icon';
-import {MatCardModule} from '@angular/material/card';
-import {MatMenuModule} from '@angular/material/menu';
 import {MomentModule} from 'ngx-moment';
 import {RoundProgressModule} from 'angular-svg-round-progressbar';
 
@@ -34,23 +28,24 @@ import { AuthGuard } from './shared/auth.guard';
 import { UserComponent } from './user/user.component';
 import { WindowService } from './shared/window.service';
 import { PhoneLoginComponent } from './login/phone-login.component';
+import {AngularFireMessagingModule} from "@angular/fire/messaging";
+import { NotificationsComponent } from './notifications/notifications.component';
+import {MaterialModule} from "./material.module";
 
 @NgModule({
   imports: [
     BrowserModule, NoopAnimationsModule, HttpClientModule,
     FormsModule, ReactiveFormsModule, AppRoutingModule,
-    MatButtonModule, MatInputModule, MatToolbarModule, MatIconModule,
-    MatDialogModule, MatCardModule, MatMenuModule,
+    AngularFireModule.initializeApp(environment.firebase),
+    AngularFirestoreModule, AngularFireAuthModule, AngularFireMessagingModule,
+    MaterialModule,
     RoundProgressModule,
     MomentModule,
-    AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule,
-    AngularFireAuthModule
   ],
   declarations: [
     AppComponent, LoginComponent, PhoneLoginComponent,
     InputComponent, TimerComponent,
-    InfoDialog, UserComponent
+    InfoDialog, UserComponent, NotificationsComponent
   ],
   providers: [AuthService, UserService, AuthGuard, WindowService],
   entryComponents: [

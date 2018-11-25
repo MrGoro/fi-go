@@ -1,0 +1,11 @@
+<div *ngIf="supported">
+  <button mat-icon-button *ngIf="status===Status.Off" matTooltip="Benachrichtigungen aktivieren">
+    <mat-icon aria-label="Toggle Notifications on" (click)="requestPermission()">notifications_off</mat-icon>
+  </button>
+  <button mat-icon-button *ngIf="status===Status.On" matTooltip="Benachrichtigungen deaktivieren">
+    <mat-icon aria-label="Toggle Notifications off" (click)="deleteToken()">notifications_active</mat-icon>
+  </button>
+  <button mat-icon-button *ngIf="status===Status.Denied" matTooltip="Keine Berechtigung für Benachrichtigungen">
+    <mat-icon aria-label="No permission for notifications">warning</mat-icon>
+  </button>
+</div>
