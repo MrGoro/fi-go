@@ -12,6 +12,7 @@ import {versions} from "../../environments/versions";
         Version: {{versions.version}}<br />
         Revision: {{versions.revision}}<br />
         Branch: {{versions.branch}}<br />
+        Build: {{versions.buildTime}}<br />
         <div mat-dialog-actions>
             <button mat-button (click)="dialogRef.close(true)">CLOSE</button>
         </div>`,

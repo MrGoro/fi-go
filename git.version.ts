@@ -7,6 +7,7 @@ const exec = util.promisify(require('child_process').exec);
 async function createVersionsFile(filename: string) {
   const revision = (await exec('git rev-parse --short HEAD')).stdout.toString().trim();
   const branch = (await exec('git rev-parse --abbrev-ref HEAD')).stdout.toString().trim();
+  const buildTime = new Date().toISOString();
 
   console.log(`version: '${process.env.npm_package_version}', revision: '${revision}', branch: '${branch}'`);
 
@@ -15,7 +16,8 @@ async function createVersionsFile(filename: string) {
       export const versions = {
         version: '${process.env.npm_package_version}',
         revision: '${revision}',
-        branch: '${branch}'
+        branch: '${branch}',
+        buildTime: '${buildTime}'
       };`;
 
   writeFileSync(filename, content, {encoding: 'utf8'});
