@@ -38,3 +38,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# auto generated version info
+/src/environments/versions.ts

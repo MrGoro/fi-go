@@ -1,11 +1,12 @@
 {
   "name": "fi-go",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "main": "main.js",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build --prod",
+    "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' git.version.ts",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
