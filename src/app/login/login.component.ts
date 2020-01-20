@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DomSanitizer} from '@angular/platform-browser';
-import {MatIconRegistry} from '@angular/material';
-import { Router, Params } from '@angular/router';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../shared/auth.service';
+import {MatIconRegistry} from '@angular/material/icon';
+import {Router} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
+import {AuthService} from '../shared/auth.service';
 
 @Component({
   selector: 'app-login',
