@@ -1,21 +1,19 @@
 name: WebApp Build & Deploy
 
-on:   
+on:
   push:
     branches:
       - master
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [13.x]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
@@ -25,7 +23,7 @@ jobs:
         npm ci
         npm run build
     - name: Deploy to Firebase
-      uses: w9jds/firebase-action@v1.1.0
+      uses: w9jds/firebase-action@master
       with:
         args: deploy --only hosting
       env:
