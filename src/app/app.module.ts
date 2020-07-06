@@ -5,7 +5,6 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MomentModule } from 'ngx-moment';
-import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -20,13 +19,10 @@ import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { environment } from '../environments/environment';
-import { AuthService } from './shared/auth.service';
-import { UserService } from './shared/user.service';
-import { AuthGuard } from './shared/auth.guard';
 import { UserComponent } from './user/user.component';
-import { WindowService } from './shared/window.service';
 import { PhoneLoginComponent } from './login/phone-login.component';
 import { MaterialModule } from './material.module';
+import { RoundProgressModule } from './round-progress/round-progress.module';
 
 @NgModule({
   imports: [
@@ -34,16 +30,13 @@ import { MaterialModule } from './material.module';
     FormsModule, ReactiveFormsModule, AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule, AngularFireAuthModule,
-    MaterialModule,
-    RoundProgressModule,
-    MomentModule,
+    MaterialModule, MomentModule, RoundProgressModule
   ],
   declarations: [
     AppComponent, LoginComponent, PhoneLoginComponent,
     InputComponent, TimerComponent,
     InfoDialog, UserComponent
   ],
-  providers: [AuthService, UserService, AuthGuard, WindowService],
   entryComponents: [
     InfoDialog
   ],

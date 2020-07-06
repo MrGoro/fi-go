@@ -23,7 +23,6 @@
     "@angular/platform-browser": "^10.0.2",
     "@angular/platform-browser-dynamic": "^10.0.2",
     "@angular/router": "^10.0.2",
-    "angular-svg-round-progressbar": "^3.0.1",
     "core-js": "^3.6.5",
     "firebase": "^7.15.5",
     "material-design-icons": "^3.0.1",

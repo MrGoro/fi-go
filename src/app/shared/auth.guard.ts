@@ -3,8 +3,7 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
 
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
 
   constructor(

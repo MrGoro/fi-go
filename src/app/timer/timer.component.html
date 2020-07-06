@@ -26,7 +26,7 @@
     <button mat-stroked-button type="submit" (click)="reset()">Zurücksetzen</button>
   </div>
 
-  <round-progress
+  <app-round-progress
     [current]="progressCurrent"
     [max]="progressMax"
     [color]="'#ff0000'"
@@ -37,6 +37,6 @@
     [clockwise]="false"
     [responsive]="true"
     [duration]="800"
-    [animation]="'easeInOutQuart'"></round-progress>
+    [animation]="'easeInOutQuart'"></app-round-progress>
 
 </div>

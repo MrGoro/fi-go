@@ -4,7 +4,7 @@ import * as firebase from 'firebase/app';
 import { FirebaseUserModel, User } from './firebaseuser.model';
 import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class UserService {
 
   constructor(
