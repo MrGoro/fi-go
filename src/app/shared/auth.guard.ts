@@ -18,7 +18,7 @@ export class AuthGuard implements CanActivate {
     return new Promise((resolve) => {
       this.afAuth.authState.subscribe(auth => {
         if (auth !== null) {
-          console.log('access granted!');
+          //console.log('access granted!');
           resolve(true);
         } else {
           console.log('access denied!');

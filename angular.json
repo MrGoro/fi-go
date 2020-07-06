@@ -33,7 +33,7 @@
               "@firebase/app",
               "@firebase/util",
               "@firebase/component",
-              "@firebase/firestore",
+              "@firebase/database",
               "moment/locale/de"
             ]
           },

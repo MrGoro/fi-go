@@ -16,7 +16,7 @@ import { TimerComponent } from './timer/timer.component';
 import { InfoDialog } from './shared/info-dialog';
 
 import { AngularFireModule } from '@angular/fire';
-import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 
 import { environment } from '../environments/environment';
@@ -26,8 +26,6 @@ import { AuthGuard } from './shared/auth.guard';
 import { UserComponent } from './user/user.component';
 import { WindowService } from './shared/window.service';
 import { PhoneLoginComponent } from './login/phone-login.component';
-import { AngularFireMessagingModule } from '@angular/fire/messaging';
-import { NotificationsComponent } from './notifications/notifications.component';
 import { MaterialModule } from './material.module';
 
 @NgModule({
@@ -35,7 +33,7 @@ import { MaterialModule } from './material.module';
     BrowserModule, NoopAnimationsModule, HttpClientModule,
     FormsModule, ReactiveFormsModule, AppRoutingModule,
     AngularFireModule.initializeApp(environment.firebase),
-    AngularFirestoreModule, AngularFireAuthModule, AngularFireMessagingModule,
+    AngularFireDatabaseModule, AngularFireAuthModule,
     MaterialModule,
     RoundProgressModule,
     MomentModule,
@@ -43,7 +41,7 @@ import { MaterialModule } from './material.module';
   declarations: [
     AppComponent, LoginComponent, PhoneLoginComponent,
     InputComponent, TimerComponent,
-    InfoDialog, UserComponent, NotificationsComponent
+    InfoDialog, UserComponent
   ],
   providers: [AuthService, UserService, AuthGuard, WindowService],
   entryComponents: [

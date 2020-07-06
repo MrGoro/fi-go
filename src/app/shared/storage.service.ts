@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
-import { filter, flatMap, map } from 'rxjs/operators';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StorageService {
   constructor(
-    private db: AngularFirestore,
+    private db: AngularFireDatabase,
     private afAuth: AngularFireAuth) {
   }
 
@@ -17,13 +17,13 @@ export class StorageService {
     const data = {};
     data[key] = value;
     return this.getRef().pipe(
-      flatMap(ref => ref.set(data, {merge: true}))
+      mergeMap(ref => ref.set(data))
     );
   }
 
   get(key: string): Observable<any> {
     return this.getRef().pipe(
-      flatMap(ref => ref.valueChanges()),
+      mergeMap(ref => ref.valueChanges()),
       map(x => {
         if (x) {
           return x[key]
@@ -43,11 +43,11 @@ export class StorageService {
     );
   }
 
-  getRef(): Observable<AngularFirestoreDocument> {
+  getRef(): Observable<AngularFireObject<any>> {
     return this.afAuth.authState.pipe(
       filter(user => !!user),
       map(user => user.uid),
-      map(uid => this.db.doc<any>('data/' + uid))
+      map(uid => this.db.object<any>('data/' + uid))
     );
   }
 }

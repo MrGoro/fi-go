@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import { FirebaseUserModel, User } from './firebaseuser.model';
+import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
 
 @Injectable()
 export class UserService {
 
   constructor(
-    private db: AngularFirestore,
+    private db: AngularFireDatabase,
     private afAuth: AngularFireAuth
   ) {
   }
@@ -31,7 +31,7 @@ export class UserService {
     const uid: string = firebaseuser.uid;
     const user: FirebaseUserModel = UserService.map(firebaseuser);
     console.log('Updating User: ' + JSON.stringify(user) + ' / UID: ' + uid);
-    const userRef: AngularFirestoreDocument<FirebaseUserModel> = this.db.doc<FirebaseUserModel>('users/' + uid);
+    const userRef: AngularFireObject<FirebaseUserModel> = this.db.object<FirebaseUserModel>('users/' + uid);
     userRef.set(Object.assign({}, user)).then(() =>
       console.log('Update Successful.')
     );
