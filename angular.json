@@ -27,7 +27,15 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "firebase/app",
+              "@firebase/app",
+              "@firebase/util",
+              "@firebase/component",
+              "@firebase/firestore",
+              "moment/locale/de"
+            ]
           },
           "configurations": {
             "production": {

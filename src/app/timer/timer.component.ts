@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Subscription } from 'rxjs';
-import { TimerObservable } from 'rxjs/observable/TimerObservable';
+import { Subscription, timer } from 'rxjs';
 import * as moment from 'moment';
 import 'moment/locale/de';
 
@@ -55,8 +54,7 @@ export class TimerComponent implements OnInit, OnDestroy {
         this.reset();
       }
 
-      const timer = TimerObservable.create(0, 1000);
-      this.subscription = timer.subscribe(() => {
+      this.subscription = timer(0, 1000).subscribe(() => {
         this.refresh();
       });
     });
