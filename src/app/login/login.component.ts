@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
-import {DomSanitizer} from '@angular/platform-browser';
-import {MatIconRegistry} from '@angular/material/icon';
-import {Router} from '@angular/router';
-import {FormBuilder} from '@angular/forms';
-import {AuthService} from '../shared/auth.service';
+import { Component, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
+import { MatIconRegistry } from '@angular/material/icon';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@angular/forms';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -34,9 +34,9 @@ export class LoginComponent implements OnInit {
 
   tryGoogleLogin() {
     this.authService.doGoogleLogin()
-    .then(res => {
-      this.router.navigate(['/']);
-    });
+      .then(res => {
+        this.router.navigate(['/']);
+      });
   }
 
 }

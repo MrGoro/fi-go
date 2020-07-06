@@ -18,7 +18,8 @@ export class InputComponent implements OnInit {
   constructor(
     private storageService: StorageService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     this.storageService.getDate('startTime').subscribe(startTime => {

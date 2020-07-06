@@ -1,10 +1,10 @@
-import {ApplicationRef, Component, OnInit} from '@angular/core';
-import {WindowService} from '../shared/window.service';
-import {AngularFireAuth} from '@angular/fire/auth';
+import { ApplicationRef, Component, OnInit } from '@angular/core';
+import { WindowService } from '../shared/window.service';
+import { AngularFireAuth } from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import 'firebase/auth';
-import {UserService} from '../shared/user.service';
-import {Router} from '@angular/router';
+import { UserService } from '../shared/user.service';
+import { Router } from '@angular/router';
 
 declare var grecaptcha: any;
 
@@ -57,7 +57,7 @@ export class PhoneLoginComponent implements OnInit {
       })
       .catch(error => {
         console.log(JSON.stringify(error));
-        if(error.code === 'auth/invalid-phone-number') {
+        if (error.code === 'auth/invalid-phone-number') {
           this.reset('Die eingegebene Telefonnummer ist ungültig!')
         } else {
           this.reset('Es ist ein Fehler aufgetreten!');
@@ -77,7 +77,7 @@ export class PhoneLoginComponent implements OnInit {
         this.router.navigate(['/']);
       })
       .catch(error => {
-        if(error.code === 'auth/invalid-verification-code') {
+        if (error.code === 'auth/invalid-verification-code') {
           this.error = 'Der eingegebene Login-Code war leider falsch!'
         } else {
           this.error = 'Es ist ein Fehler aufgetreten! Code: ' + error.code;

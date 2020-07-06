@@ -102,9 +102,9 @@ export class NotificationsComponent implements OnInit {
       fcmTokenCollection.get().forEach(querySnapshot => {
         querySnapshot.forEach((doc) => {
           doc.ref.delete().then(() => {
-            console.log("Token successfully deleted!");
+            console.log('Token successfully deleted!');
           }).catch(function (error) {
-            console.error("Error removing token: ", error);
+            console.error('Error removing token: ', error);
           });
         });
       })

@@ -7,9 +7,10 @@ import { UserService } from './user.service';
 export class AuthService {
 
   constructor(
-   private afAuth: AngularFireAuth,
-   private userService: UserService
-  ) {}
+    private afAuth: AngularFireAuth,
+    private userService: UserService
+  ) {
+  }
 
   get authenticated(): boolean {
     return this.afAuth.authState !== null;
@@ -21,14 +22,14 @@ export class AuthService {
       provider.addScope('profile');
       provider.addScope('email');
       this.afAuth
-      .signInWithPopup(provider)
-      .then(res => {
-        this.userService.updateUser(res.user);
-        resolve(res);
-      }, err => {
-        console.log(err);
-        reject(err);
-      });
+        .signInWithPopup(provider)
+        .then(res => {
+          this.userService.updateUser(res.user);
+          resolve(res);
+        }, err => {
+          console.log(err);
+          reject(err);
+        });
     });
   }
 

@@ -21,7 +21,8 @@ export class UserComponent implements OnInit {
     private authService: AuthService,
     private afAuth: AngularFireAuth,
     private router: Router,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog) {
+  }
 
   ngOnInit() {
     this.afAuth.authState.subscribe(user => {
@@ -35,11 +36,11 @@ export class UserComponent implements OnInit {
 
   logout() {
     this.authService.doLogout()
-    .then((res) => {
-      this.router.navigate(['/login']);
-    }, (error) => {
-      console.log('Logout error', error);
-    });
+      .then((res) => {
+        this.router.navigate(['/login']);
+      }, (error) => {
+        console.log('Logout error', error);
+      });
   }
 
   info() {

@@ -7,22 +7,23 @@ import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './shared/auth.guard';
 
 const appRoutes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'input', component: InputComponent, canActivate: [AuthGuard] },
-  { path: 'timer', component: TimerComponent, canActivate: [AuthGuard] },
-  { path: '', redirectTo: '/input', pathMatch: 'full' },
-  { path: '**', redirectTo: '', pathMatch: 'full'}
+  {path: 'login', component: LoginComponent},
+  {path: 'input', component: InputComponent, canActivate: [AuthGuard]},
+  {path: 'timer', component: TimerComponent, canActivate: [AuthGuard]},
+  {path: '', redirectTo: '/input', pathMatch: 'full'},
+  {path: '**', redirectTo: '', pathMatch: 'full'}
 ];
 
 @NgModule({
   imports: [
     RouterModule.forRoot(
       appRoutes,
-      { enableTracing: false } // <-- debugging purposes only
+      {enableTracing: false} // <-- debugging purposes only
     )
   ],
   exports: [
     RouterModule
   ]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

@@ -8,9 +8,10 @@ import { FirebaseUserModel, User } from './firebaseuser.model';
 export class UserService {
 
   constructor(
-   private db: AngularFirestore,
-   private afAuth: AngularFireAuth
-  ) {}
+    private db: AngularFirestore,
+    private afAuth: AngularFireAuth
+  ) {
+  }
 
   getCurrentUser(): Promise<FirebaseUserModel> {
     return new Promise<any>((resolve, reject) => {

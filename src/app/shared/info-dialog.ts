@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material/dialog';
-import {versions} from "../../environments/versions";
+import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
+import { versions } from '../../environments/versions';
 
 @Component({
   selector: 'info-dialog',

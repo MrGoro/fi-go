@@ -2,20 +2,21 @@
 
   <h3>Arbeitszeit erfassen</h3>
 
-  <form (ngSubmit)="analyse()" #form="ngForm"  class="">
+  <form (ngSubmit)="analyse()" #form="ngForm" class="">
 
     <mat-form-field>
       <input matInput placeholder="Beginn Arbeitszeit" type="time" name="time"
-              [(ngModel)]="time" #timeModel="ngModel" required>
+             [(ngModel)]="time" #timeModel="ngModel" required>
 
     </mat-form-field>
     <button mat-icon-button (click)="now()" type="button">
       <mat-icon aria-label="Aktuelle Uhrzeig übernehmen">watch</mat-icon>
     </button>
-    
+
     <div>
-      <button mat-stroked-button type="submit" 
-              [disabled]="!timeModel.valid">Auswerten</button>
+      <button mat-stroked-button type="submit"
+              [disabled]="!timeModel.valid">Auswerten
+      </button>
     </div>
 
   </form>

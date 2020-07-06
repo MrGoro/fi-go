@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import { NgModule } from '@angular/core';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -43,4 +43,5 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatTooltipModule
   ]
 })
-export class MaterialModule {}
+export class MaterialModule {
+}

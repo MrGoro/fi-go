@@ -11,7 +11,8 @@ export class AuthGuard implements CanActivate {
     private afAuth: AngularFireAuth,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) {
+  }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> | boolean {
     return new Promise((resolve) => {

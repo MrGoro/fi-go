@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {AngularFireAuth} from '@angular/fire/auth';
+import { Injectable } from '@angular/core';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { filter, flatMap, map } from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,8 @@ import {Observable} from 'rxjs';
 export class StorageService {
   constructor(
     private db: AngularFirestore,
-    private afAuth: AngularFireAuth) { }
+    private afAuth: AngularFireAuth) {
+  }
 
   set(key: string, value: any): Observable<void> {
     const data = {};
@@ -24,7 +25,7 @@ export class StorageService {
     return this.getRef().pipe(
       flatMap(ref => ref.valueChanges()),
       map(x => {
-        if(x) {
+        if (x) {
           return x[key]
         }
         return null;

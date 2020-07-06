@@ -17,7 +17,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   private subscription: Subscription;
 
   private sixHours: moment.Duration = moment.duration(6, 'hours');
-  public timeToWork: moment.Duration = moment.duration({ hours: 7, minutes: 48 });
+  public timeToWork: moment.Duration = moment.duration({hours: 7, minutes: 48});
   public workTime: moment.Duration = moment.duration();
 
   public myStartTime: moment.Moment;
@@ -35,7 +35,8 @@ export class TimerComponent implements OnInit, OnDestroy {
   constructor(
     private storageService: StorageService,
     private router: Router
-  ) { }
+  ) {
+  }
 
   public ngOnInit(): void {
     moment.locale('de');
@@ -89,10 +90,10 @@ export class TimerComponent implements OnInit, OnDestroy {
 
 
     // Alarm 10 Stunden-Regelung
-    if (this.workTime.clone().subtract({ hour: 9, minute: 30 }).asMilliseconds() > 0 &&
-        this.workTime.clone().subtract({ hour: 10}).asMilliseconds() < 0) {
+    if (this.workTime.clone().subtract({hour: 9, minute: 30}).asMilliseconds() > 0 &&
+      this.workTime.clone().subtract({hour: 10}).asMilliseconds() < 0) {
       this.alertTenHours = true;
-      this.outTillTenHours = moment.utc(this.workTime.clone().subtract({ hour: 10 }).asMilliseconds() * -1).format('mm') + ' Minuten';
+      this.outTillTenHours = moment.utc(this.workTime.clone().subtract({hour: 10}).asMilliseconds() * -1).format('mm') + ' Minuten';
     }
 
     // Progress

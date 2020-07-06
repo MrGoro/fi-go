@@ -8,13 +8,15 @@
       <p [hidden]="!error">{{ error }}</p>
       <mat-form-field>
         <span matPrefix>+49 &nbsp;</span>
-        <input [(ngModel)]="phoneNumber" name="phoneNumber" type="tel" matInput placeholder="Telefonnummer" min="8" required>
+        <input [(ngModel)]="phoneNumber" name="phoneNumber" type="tel" matInput placeholder="Telefonnummer" min="8"
+               required>
         <mat-icon matSuffix>mode_edit</mat-icon>
       </mat-form-field>
-    <mat-card-actions>
+      <mat-card-actions>
 
-    </mat-card-actions>
-      <button mat-raised-button color="primary" type="submit" id="get-login-code-button" [disabled]="!phoneNumberForm.form.valid">
+      </mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" id="get-login-code-button"
+              [disabled]="!phoneNumberForm.form.valid">
         Login-Code per SMS anfordern
       </button>
     </mat-card-content>
@@ -24,12 +26,15 @@
     <mat-card-content>
       <p [hidden]="!error">{{ error }}</p>
       <mat-form-field>
-        <input [(ngModel)]="verificationCode" name="code" type="number" matInput placeholder="Login-Code" min="6" max="6" required>
+        <input [(ngModel)]="verificationCode" name="code" type="number" matInput placeholder="Login-Code" min="6"
+               max="6" required>
       </mat-form-field>
       <mat-card-actions>
         <button mat-raised-button color="warn" (click)="reset('')">Abbrechen</button>
-        <button mat-raised-button color="primary" type="submit" (click)="verifyLoginCode()" [disabled]="!loginCodeForm.form.valid">Überprüfen</button>
+        <button mat-raised-button color="primary" type="submit" (click)="verifyLoginCode()"
+                [disabled]="!loginCodeForm.form.valid">Überprüfen
+        </button>
       </mat-card-actions>
     </mat-card-content>
   </form>
-</mat-card >
+</mat-card>
