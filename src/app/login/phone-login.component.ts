@@ -2,6 +2,7 @@ import {ApplicationRef, Component, OnInit} from '@angular/core';
 import {WindowService} from '../shared/window.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
+import 'firebase/auth';
 import {UserService} from '../shared/user.service';
 import {Router} from '@angular/router';
 
@@ -31,10 +32,11 @@ export class PhoneLoginComponent implements OnInit {
 
   ngOnInit() {
     this.windowRef = this.win.windowRef;
-    this.afAuth.auth.useDeviceLanguage();
+    this.afAuth.useDeviceLanguage();
+    this.afAuth
     this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('get-login-code-button', {
       'size': 'invisible',
-      'callback': (response) => {
+      'callback': () => {
         this.sendLoginCode();
       }
     });
@@ -47,7 +49,7 @@ export class PhoneLoginComponent implements OnInit {
     const appVerifier = this.windowRef.recaptchaVerifier;
     const num = `+49${this.phoneNumber}`;
 
-    this.afAuth.auth.signInWithPhoneNumber(num, appVerifier)
+    this.afAuth.signInWithPhoneNumber(num, appVerifier)
       .then(result => {
         this.windowRef.confirmationResult = result;
         this.codeSent = true;

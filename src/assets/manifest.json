@@ -14,7 +14,7 @@
   ],
   "theme_color": "#f44336",
   "background_color": "#f44336",
-  "start_url": "http://fi-go.philipp-schuermann.de",
+  "start_url": "https://fi-go.philipp-schuermann.de",
   "display": "standalone",
   "gcm_sender_id": "103953800507"
 }

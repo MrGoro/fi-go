@@ -1,8 +1,8 @@
-import {Component, OnInit} from '@angular/core';
-import {AngularFireMessaging} from "@angular/fire/messaging";
-import {mergeMap, mergeMapTo, tap} from "rxjs/operators";
-import {StorageService} from "../shared/storage.service";
-import {AngularFirestore, AngularFirestoreCollection} from "@angular/fire/firestore";
+import { Component, OnInit } from '@angular/core';
+import { AngularFireMessaging } from '@angular/fire/messaging';
+import { mergeMap, mergeMapTo, tap } from 'rxjs/operators';
+import { StorageService } from '../shared/storage.service';
+import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-notifications',
@@ -23,7 +23,6 @@ export class NotificationsComponent implements OnInit {
   ngOnInit() {
     //this.supported = firebase.messaging.isSupported();
     this.supported = true;
-
     this.storage.get('notifications').subscribe(notificationsEnabled => {
       if (notificationsEnabled || notificationsEnabled == undefined) {
         console.log('Notifications enabled!');

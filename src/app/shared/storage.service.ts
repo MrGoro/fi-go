@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {flatMap, map} from 'rxjs/operators';
+import { filter, flatMap, map } from 'rxjs/operators';
 import {Observable} from 'rxjs';
 
 @Injectable({
@@ -44,6 +44,7 @@ export class StorageService {
 
   getRef(): Observable<AngularFirestoreDocument> {
     return this.afAuth.authState.pipe(
+      filter(user => !!user),
       map(user => user.uid),
       map(uid => this.db.doc<any>('data/' + uid))
     );

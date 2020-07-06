@@ -15,7 +15,7 @@ export class UserService {
 
   getCurrentUser(): Promise<FirebaseUserModel> {
     return new Promise<any>((resolve, reject) => {
-      this.afAuth.auth.onAuthStateChanged(firebaseUser => {
+      this.afAuth.onAuthStateChanged(firebaseUser => {
         if (firebaseUser) {
           const user: FirebaseUserModel = UserService.map(firebaseUser);
           console.log('Current User: ' + JSON.stringify(user));

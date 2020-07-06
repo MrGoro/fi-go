@@ -19,7 +19,7 @@ export class AuthService {
   doFacebookLogin() {
     return new Promise<any>((resolve, reject) => {
       const provider = new firebase.auth.FacebookAuthProvider();
-      this.afAuth.auth
+      this.afAuth
       .signInWithPopup(provider)
       .then(res => {
         resolve(res);
@@ -35,7 +35,7 @@ export class AuthService {
       const provider = new firebase.auth.GoogleAuthProvider();
       provider.addScope('profile');
       provider.addScope('email');
-      this.afAuth.auth
+      this.afAuth
       .signInWithPopup(provider)
       .then(res => {
         this.userService.updateUser(res.user);
@@ -49,13 +49,13 @@ export class AuthService {
 
   doLogout() {
     return new Promise((resolve, reject) => {
-      if (this.afAuth.auth.currentUser) {
-        this.afAuth.auth.signOut();
+      if (this.afAuth.currentUser) {
+        this.afAuth.signOut();
         console.log('Logged out');
         resolve();
       } else {
         console.log('Logout rejected');
-        console.log(this.afAuth.auth);
+        console.log(this.afAuth);
         reject();
       }
     });
