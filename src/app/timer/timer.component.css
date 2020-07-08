@@ -31,7 +31,7 @@ round-progress {
 .current {
   position: absolute;
   line-height: 1;
-
+  z-index: 10;
   top: 50%;
   bottom: auto;
   left: 50%;
