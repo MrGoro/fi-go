@@ -41,3 +41,6 @@ Thumbs.db
 
 # auto generated version info
 /src/environments/versions.ts
+
+# Firebase
+/.firebase
