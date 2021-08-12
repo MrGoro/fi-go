@@ -5,7 +5,7 @@
     "ng": "ng",
     "start": "ng serve",
     "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' git.version.ts",
-    "build": "ng build --configuration production",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
