@@ -38,7 +38,7 @@ export class AuthService {
       if (this.afAuth.currentUser) {
         this.afAuth.signOut();
         console.log('Logged out');
-        resolve();
+        resolve(null);
       } else {
         console.log('Logout rejected');
         console.log(this.afAuth);
