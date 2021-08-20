@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { UserComponent } from './user/user.component';
 
-
-
 @NgModule({
   declarations: [
     LoginComponent,
@@ -12,6 +10,9 @@ import { UserComponent } from './user/user.component';
   ],
   imports: [
     CommonModule
+  ],
+  exports: [
+    UserComponent
   ]
 })
 export class AuthModule { }
