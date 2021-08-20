@@ -1,9 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login/login.component';
+import { AngularFireAuthGuard, redirectLoggedInTo } from '@angular/fire/compat/auth-guard';
+
+const redirectLoggedInToTimer = () => redirectLoggedInTo(['timer']);
 
 const routes: Routes = [
-    { path: 'login', component: LoginComponent},
+    { path: 'login', component: LoginComponent, canLoad: [AngularFireAuthGuard], data: { authGuardPipe: redirectLoggedInToTimer }},
 ];
 
 @NgModule({

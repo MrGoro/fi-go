@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
+import { AngularFireModule } from '@angular/fire/compat';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { TimerModule } from './timer/timer.module';
+import { environment } from 'src/environments/environment';
 
 @NgModule({
   declarations: [
@@ -14,6 +16,7 @@ import { TimerModule } from './timer/timer.module';
   ],
   imports: [
     BrowserModule,
+    AngularFireModule.initializeApp(environment.firebase),
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
