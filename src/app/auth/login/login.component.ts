@@ -26,8 +26,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private auth: Auth, 
-    private windowService: WindowService, 
+    private auth: Auth,
+    private windowService: WindowService,
     private appRef: ApplicationRef) { }
 
   ngOnInit(): void {
@@ -37,12 +37,7 @@ export class LoginComponent implements OnInit {
 
   initAuth() {
     this.auth.useDeviceLanguage();
-    this.windowRef.recaptchaVerifier = new RecaptchaVerifier('get-login-code-button', {
-      'size': 'invisible',
-      'callback': () => {
-        this.getLoginCode();
-      }
-    }, this.auth);
+    this.windowRef.recaptchaVerifier = new RecaptchaVerifier('get-login-code-button', {'size': 'invisible'}, this.auth);
   }
 
   getLoginCode() {
@@ -100,5 +95,9 @@ export class LoginComponent implements OnInit {
       grecaptcha.reset(widgetId);
     });
     this.loading = false;
+  }
+
+  doNothing() {
+    console.log('Nothing!');
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router, ActivatedRouteSnapshot, CanActivate, CanLoad, Route, RouterStateSnapshot, UrlSegment, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Auth } from '@angular/fire/auth';
+import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -25,12 +25,15 @@ export class AuthorizedGuard implements CanActivate, CanLoad {
       return this.loggedInOrRedirect();
   }
 
-  loggedInOrRedirect(): boolean {
-    let loggedIn =  this.auth.currentUser !== null;
-    if(!loggedIn) {
-      this.router.navigate(['/auth/login']);
-      return false;
-    }
-    return true;
+  loggedInOrRedirect(): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      onAuthStateChanged(this.auth, (user) => {
+        let loggedIn =  this.auth.currentUser !== null;
+        if(!loggedIn) {
+          this.router.navigate(['/auth/login']);
+        }
+        resolve(loggedIn);
+      });
+    });
   }
 }

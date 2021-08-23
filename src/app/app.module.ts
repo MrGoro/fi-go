@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { TimerModule } from './timer/timer.module';
 import { environment } from 'src/environments/environment';
 import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
-import { provideAuth, initializeAuth } from '@angular/fire/auth';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 
 @NgModule({
   declarations: [
@@ -17,7 +17,7 @@ import { provideAuth, initializeAuth } from '@angular/fire/auth';
   imports: [
     BrowserModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
-    provideAuth(() => initializeAuth(getApp())),
+    provideAuth(() => getAuth()),
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,

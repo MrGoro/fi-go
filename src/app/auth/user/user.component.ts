@@ -19,15 +19,7 @@ import { InfoDialog } from 'src/app/shared/info-dialog';
       </mat-menu>
     </div>
   `,
-  styles: [`
-    .avatar {
-      height: 50px;
-      border-radius: 30%;
-      border: 1px;
-      margin-top: 5px;
-    }
-  `
-  ]
+  styles: []
 })
 export class UserComponent implements OnInit {
 
@@ -42,7 +34,6 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
-        console.log(user);
         this.user = user;
       } else {
         this.user = undefined;
