@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' git-version.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -47,6 +48,7 @@
     "inquirer": "^6.2.2",
     "inquirer-autocomplete-prompt": "^1.0.1",
     "open": "^7.0.3",
-    "jsonc-parser": "^3.0.0"
+    "jsonc-parser": "^3.0.0",
+    "ts-node": "^10.2.1"
   }
 }

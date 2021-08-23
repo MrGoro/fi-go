@@ -1,8 +1,8 @@
 import { ApplicationRef, Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { WindowService } from './window.service';
+import { Router } from '@angular/router';
+import { WindowService } from '../../shared/window.service';
 import { ConfirmationResult, RecaptchaVerifier, UserCredential } from "firebase/auth";
 import { Auth, signInWithPhoneNumber } from '@angular/fire/auth';
-import { Router } from '@angular/router';
 
 declare var grecaptcha: any;
 
