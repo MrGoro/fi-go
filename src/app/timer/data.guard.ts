@@ -34,14 +34,15 @@ export class DataGuard implements CanActivate {
       const data = route.data as GuardData;
       return this.data.get(data.key).pipe(
         map(dbData => dbData !== null && dbData !== undefined),
-        tap(dbData => {
-          console.log(`Data-Guard: Data present ${dbData}; expected ${data.present}`);
+        map(dbData => {
+          console.log(`Data-Guard: Route: ${route.url}; Data present ${dbData}; expected ${data.present}`);
           if(data.present !== dbData ) {
             console.log(`Data-Guard: Redirect to ${data.redirect}`)
             this.router.navigate([data.redirect]);
+            return false;
           }
+          return true;
         })
       );
   }
-  
 }
