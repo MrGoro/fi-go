@@ -1,15 +1,15 @@
 .app-content {
-    padding: 20px;
-  }
+  padding: 20px;
+}
   
-  .toolbar-icon {
-    padding: 0 14px;
-  }
-  
-  .toolbar-spacer {
-    flex: 1 1 auto;
-  }
-  
-  .mat-toolbar.fi {
-    background: #ff0000;
-  }
+.toolbar-icon {
+  padding: 0 14px;
+}
+
+.toolbar-spacer {
+  flex: 1 1 auto;
+}
+
+.mat-toolbar.fi {
+  background: #ff0000;
+}

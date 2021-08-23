@@ -1,0 +1,22 @@
+.center {
+    text-align: center;
+}
+
+.login-card {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.error {
+    color: red;
+    font-weight: bolder;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.half-width {
+    width: 50%;
+}
