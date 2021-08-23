@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AuthorizedGuard } from './auth/authorized.guard';
 
 const routes: Routes = [
   {
     path: 'timer',
+    canLoad: [AuthorizedGuard],
     loadChildren: () => import('./timer/timer.module').then(m => m.TimerModule)
   }, {
     path: 'auth',
