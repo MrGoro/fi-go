@@ -1,1 +1,24 @@
-<p>input works!</p>
+<mat-card class="input-card">
+  <mat-card-header>
+    <mat-card-title>Arbeitszeit erfassen</mat-card-title>
+  </mat-card-header>
+  <form (ngSubmit)="send()" #inputForm="ngForm">
+    <mat-card-content>
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Beginn der Arbeitszeit</mat-label>
+        <input type="time" matInput placeholder="Beginn der Arbeitszeit" autofocus required
+              [disabled]="loading"
+              [(ngModel)]="time" name="time">
+        <mat-icon matSuffix aria-label="Aktuelle Uhrzeig übernehmen" (click)="now()">watch</mat-icon>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="primary" type="submit"  class="full-width"
+              [disabled]="!inputForm.form.valid || loading">Auswerten</button>
+    </mat-card-actions>
+    <mat-card-actions>
+      <button mat-flat-button class="full-width" type="button" (click)="sendNow()"
+              [disabled]="loading">Jetzt</button>
+    </mat-card-actions>
+  </form>
+</mat-card>

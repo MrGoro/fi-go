@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { InputComponent } from './input/input.component';
 import { DisplayComponent } from './display/display.component';
 import { TimerRoutingModule } from './timer-routing.module';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from '../shared/material.module';
 
 @NgModule({
   declarations: [
@@ -11,6 +13,8 @@ import { TimerRoutingModule } from './timer-routing.module';
   ],
   imports: [
     CommonModule,
+    FormsModule,
+    MaterialModule,
     TimerRoutingModule
   ]
 })

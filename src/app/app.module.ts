@@ -7,8 +7,9 @@ import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 import { TimerModule } from './timer/timer.module';
 import { environment } from 'src/environments/environment';
-import { provideFirebaseApp, getApp, initializeApp } from '@angular/fire/app';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
+import { getDatabase, provideDatabase } from '@angular/fire/database';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { provideAuth, getAuth } from '@angular/fire/auth';
     BrowserModule,
     provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
+    provideDatabase(() => getDatabase()),
     AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,

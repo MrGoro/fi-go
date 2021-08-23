@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { DataService } from '../data.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-input',
@@ -7,9 +10,43 @@ import { Component, OnInit } from '@angular/core';
 })
 export class InputComponent implements OnInit {
 
-  constructor() { }
+  public loading = false;
+  public time!: string;
+
+  constructor(private router: Router, private data: DataService) { }
 
   ngOnInit(): void {
   }
 
+  now(): void {
+    this.time = moment().format('HH:mm');
+  }
+  
+  sendNow(): void {
+    this.now();
+    this.send();
+  }
+
+  send(): void {
+    const startTime: Date = this.getTime();
+    this.sendDate(startTime);
+  }
+
+  sendDate(startTime: Date): void {
+    this.loading = true;
+    this.data.setDate('startTime', startTime).subscribe(() => {
+      this.router.navigate(['/timer/display']);
+      this.loading = false;
+    });
+  }
+
+  private getTime(): Date {
+    const hour: string = this.time.substring(0, 2);
+    const minute: string = this.time.substring(3, 5);
+
+    const time: Date = new Date();
+    time.setHours(parseInt(hour), parseInt(minute), 0, 0);
+
+    return time;
+  }
 }

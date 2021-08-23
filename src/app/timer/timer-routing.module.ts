@@ -1,14 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MaterialModule } from '../shared/material.module';
 import { DisplayComponent } from './display/display.component';
 import { InputComponent } from './input/input.component';
-//import { canActivate, redirectUnauthorizedTo } from '@angular/fire/compat/auth-guard';
-
-//const redirectUnauthorizedToLogin = () => redirectUnauthorizedTo(['auth', 'login']);
 
 const routes: Routes = [
-    { path: 'input', component: InputComponent, /**...canActivate(redirectUnauthorizedToLogin)  */},
-    { path: 'display', component: DisplayComponent, /**...canActivate(redirectUnauthorizedToLogin)  */},
+    { path: 'input', component: InputComponent },
+    { path: 'display', component: DisplayComponent },
     { path: '',   redirectTo: 'display', pathMatch: 'full' }
 ];
 

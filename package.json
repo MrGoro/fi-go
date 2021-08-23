@@ -24,6 +24,7 @@
     "@angular/router": "~12.2.0",
     "angular-svg-round-progressbar": "^7.0.0",
     "firebase": "9.0.0-202171919375",
+    "moment": "^2.29.1",
     "rxfire": "6.0.0-rc.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.0",
