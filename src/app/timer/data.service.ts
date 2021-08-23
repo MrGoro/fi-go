@@ -27,7 +27,7 @@ export class DataService {
     return this.getRef().pipe(
       switchMap(dbRef => this.getSnapshot(dbRef)),
       map((snapshot: DataSnapshot) => snapshot.val()),
-      map(value => value[key]),
+      map(value => value ? value[key] : null),
     );
   }
 
@@ -52,7 +52,6 @@ export class DataService {
   getRef(): Observable<DatabaseReference> {
     return this.authService.getUser().pipe(
       map(user => `data/${user?.uid}`),
-      tap(console.log),
       map(dbRef => ref(this.db, dbRef))
     )
   }

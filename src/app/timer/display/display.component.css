@@ -1,0 +1,45 @@
+.negative {
+    color: #ff0000;
+  }
+  
+  .alert {
+    background-color: #ff0000;
+  }
+  
+  table {
+    padding-bottom: 30px;
+  }
+  
+  .center {
+    text-align: center;
+  }
+  
+  .right {
+    text-align: right;
+    padding-left: 20px;
+  }
+  
+  
+  button {
+    width: 100%;
+  }
+  
+  round-progress {
+    z-index: -1;
+  }
+  
+  .current {
+    position: absolute;
+    line-height: 1;
+    z-index: 10;
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+  }
+  
+  .progress-wrapper {
+    position: relative;
+    max-width: 700px;
+    margin: 20px auto;
+  }
