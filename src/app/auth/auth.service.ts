@@ -19,6 +19,6 @@ export class AuthService {
   isLoggedIn(): Observable<boolean> {
     return this.getUser().pipe(
       map(user => user !== null)
-    );   
+    );
   }
 }

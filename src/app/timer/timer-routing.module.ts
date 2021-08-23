@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { MaterialModule } from '../shared/material.module';
+import { canActivateWithData, canActivateWithoutData } from './data.guard';
 import { DisplayComponent } from './display/display.component';
 import { InputComponent } from './input/input.component';
 
 const routes: Routes = [
-    { path: 'input', component: InputComponent },
-    { path: 'display', component: DisplayComponent },
+    { path: 'input', component: InputComponent, ...canActivateWithoutData('startTime', 'timer/display') },
+    { path: 'display', component: DisplayComponent, ...canActivateWithData('startTime', 'timer/input') },
     { path: '',   redirectTo: 'display', pathMatch: 'full' }
 ];
 

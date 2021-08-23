@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
+import { DataService } from '../data.service';
 
 @Component({
   selector: 'app-display',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class DisplayComponent implements OnInit {
 
-  constructor() { }
+  startTime!: Observable<Date>;
+
+  constructor(private data: DataService) { }
 
   ngOnInit(): void {
+    this.startTime = this.data.getDate('startTime');
   }
 
 }

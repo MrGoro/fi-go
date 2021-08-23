@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Database } from '@angular/fire/database';
-import { DatabaseReference, onValue, ref, set } from "firebase/database";
+import { Database, onValue, DataSnapshot, ref, set } from '@angular/fire/database';
+import { DatabaseReference } from "firebase/database";
 import { bindCallback, from, Observable } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -24,12 +24,19 @@ export class DataService {
   }
 
   get(key: string): Observable<any> {
-    const readAsObservable = bindCallback(onValue);
-
     return this.getRef().pipe(
-      mergeMap(dbRef => readAsObservable(dbRef)),
-      map(snapshot => snapshot.val())
+      switchMap(dbRef => this.getSnapshot(dbRef)),
+      map((snapshot: DataSnapshot) => snapshot.val()),
+      map(value => value[key]),
     );
+  }
+
+  getSnapshot(dbRef: DatabaseReference): Observable<DataSnapshot> {
+    return new Observable(subscriber => {
+      onValue(dbRef, (snapshot) => {
+        subscriber.next(snapshot);
+      });
+    });
   }
 
   setDate(key: string, date: Date): Observable<void> {
@@ -45,6 +52,7 @@ export class DataService {
   getRef(): Observable<DatabaseReference> {
     return this.authService.getUser().pipe(
       map(user => `data/${user?.uid}`),
+      tap(console.log),
       map(dbRef => ref(this.db, dbRef))
     )
   }
