@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { onAuthStateChanged, User } from "firebase/auth";
 import { MatDialog } from '@angular/material/dialog';
-import { InfoDialog } from 'src/app/shared/info-dialog';
+import { InfoDialog } from 'projects/web/src/app/shared/info-dialog';
 
 @Component({
   selector: 'app-user',

@@ -20,13 +20,7 @@
     "lib": [
       "es2018",
       "dom"
-    ],
-    "paths": {
-      "timer-lib": [
-        "dist/timer-lib/timer-lib",
-        "dist/timer-lib"
-      ]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
