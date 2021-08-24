@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { DataService } from '../data.service';
-import * as moment from 'moment';
-import 'moment/locale/de';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { timer } from 'rxjs';
+import { DataService } from '../util/data.service';
+import { add, intervalToDuration, sub } from 'date-fns';
+import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from './time-functions';
+
 
 @Component({
   selector: 'app-display',
@@ -13,103 +14,68 @@ import { timer } from 'rxjs';
 })
 export class DisplayComponent implements OnInit {
 
-  private subscription!: Subscription;
+  private timer!: Subscription;
 
-  private sixHours: moment.Duration = moment.duration(6, 'hours');
-  public timeToWork: moment.Duration = moment.duration({hours: 7, minutes: 48});
-  public workTime: moment.Duration = moment.duration();
+  private timeToWork: Duration = {hours: 7, minutes: 48};
+  private pause: Duration = {minutes: 30};
 
-  public myStartTime!: moment.Moment;
-  public myFinishTime!: moment.Moment;
-  public outWorkTime!: string;
-  public outBalance!: string;
-  public outTillTenHours!: string;
-
-  public balanceNegative!: boolean;
-  public alertTenHours!: boolean;
+  public workTime: Duration = {};
+  public startTime!: Date;
+  public finishTime!: Date;
+  public outWorkTime!: TimeDuration;
+  public outBalance: TimeDuration = {negative: false};
+  public minutesTillTenHours: number | undefined
 
   public progressCurrent = 0;
-  public progressMax: number = this.timeToWork.asMilliseconds();
+  public progressMax: number = durationToMillis(this.timeToWork);
 
   constructor(private data: DataService, private router: Router) { }
 
   ngOnInit(): void {
-    moment.locale('de');
-
     this.data.getDate('startTime').subscribe(startTime => {
-      this.myStartTime = moment(startTime);
-
-      this.myFinishTime = this.myStartTime.clone().add({
-        minutes: 30,
-        milliseconds: this.timeToWork.asMilliseconds()
-      });
-
-      // If no time saved => redirect to beginning
-      if (!(startTime instanceof Date) || startTime.toDateString() !== new Date().toDateString()) {
-        this.reset();
-      }
+      this.startTime = startTime;
+      this.finishTime = add(add(startTime, this.timeToWork), this.pause);
     });
 
-    this.subscription = timer(0, 1000).subscribe(() => {
+    this.timer = timer(0, 1000).subscribe(() => {
       this.refresh();
     });
   }
 
   public refresh(): void {
-    const startOfDay: Date = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
     // Bisherige Arbeitszeit
-    this.workTime = moment.duration(moment().diff(this.myStartTime));
-    if (this.workTime.hours() === 6 && this.workTime.minutes() < 30) {
-      this.workTime = this.sixHours;
-    } else if (this.workTime.hours() >= 6) {
-      this.workTime = this.workTime.subtract(30, 'minutes');
+    this.workTime = intervalToDuration({start: this.startTime, end: new Date()});
+    if (this.workTime.hours === 6 && this.workTime.minutes && this.workTime.minutes < 30) {
+      this.workTime.minutes = 0;
+    } else if (this.workTime.hours && this.workTime.hours >= 6) {
+      this.workTime = intervalToDuration({start: this.startTime, end: sub(new Date(), this.pause)});
     }
-    this.outWorkTime = moment.utc(this.workTime.asMilliseconds()).format('HH:mm:ss');
+    this.outWorkTime = toTimeDuration(this.workTime);
 
     // Saldo
-    const myBalance: moment.Duration = this.workTime.clone().subtract(this.timeToWork.clone());
-    if (myBalance.asMilliseconds() < 0) {
-      this.outBalance = '-' + moment.utc(myBalance.asMilliseconds() * -1).format('HH:mm:ss');
-      this.balanceNegative = true;
-    } else {
-      this.outBalance = moment.utc(myBalance.asMilliseconds()).format('HH:mm:ss');
-      this.balanceNegative = false;
-    }
-
+    this.outBalance = subDurations(this.workTime, this.timeToWork);
 
     // Alarm 10 Stunden-Regelung
-    if (this.workTime.clone().subtract({hour: 9, minute: 30}).asMilliseconds() > 0 &&
-      this.workTime.clone().subtract({hour: 10}).asMilliseconds() < 0) {
-      this.alertTenHours = true;
-      this.outTillTenHours = moment.utc(this.workTime.clone().subtract({hour: 10}).asMilliseconds() * -1).format('mm') + ' Minuten';
-    }
+    const tenHours = add(this.startTime, {hours: 10, minutes: 30})
+    const tillTenHours = intervalToDuration({start: new Date(), end: tenHours});
+    this.minutesTillTenHours = tillTenHours.minutes;
 
     // Progress
-    this.progressCurrent = this.workTime.asMilliseconds();
+    this.progressCurrent = durationToMillis(this.workTime);
     // Neuen Kreis bis 10 Stunden zeigen, wenn Arbeitszeit erfüllt
-    if (this.timeToWork.asMilliseconds() < this.progressCurrent) {
-      this.progressCurrent = myBalance.asMilliseconds();
-      this.progressMax = moment.duration('2:12').asMilliseconds();
+    if (!this.outBalance.negative) {
+      this.progressCurrent = durationToMillis(this.outBalance);
+      this.progressMax = durationToMillis({hours: 2, minutes: 12});
     }
   }
 
   public reset(): void {
-    this.data.set('startTime', null).subscribe(() =>
-      this.router.navigate(['/'])
-    );
+    this.data.set('startTime', null).subscribe(() => {
+      this.router.navigate(['timer', 'input']);
+    });
   }
 
   public ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
-  get startTime(): number {
-    return this.myStartTime ? this.myStartTime.date() : 0;
-  }
-
-  get finishTime(): number {
-    return this.myFinishTime ? this.myFinishTime.date(): 0;
+    this.timer.unsubscribe();
   }
 }

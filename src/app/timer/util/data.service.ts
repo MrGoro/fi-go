@@ -3,7 +3,7 @@ import { Database, onValue, DataSnapshot, ref, set } from '@angular/fire/databas
 import { DatabaseReference } from "firebase/database";
 import { bindCallback, from, Observable } from 'rxjs';
 import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +19,7 @@ export class DataService {
 
     return this.getRef().pipe(
       map(dbRef => set(dbRef, data)),
-      mergeMap(result => from(result))
+      switchMap(result => from(result))
     );
   }
 

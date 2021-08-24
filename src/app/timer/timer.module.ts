@@ -6,11 +6,13 @@ import { TimerRoutingModule } from './timer-routing.module';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../shared/material.module';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
+import { TimeDurationPipe } from './util/time-duration.pipe';
 
 @NgModule({
   declarations: [
     InputComponent,
-    DisplayComponent
+    DisplayComponent,
+    TimeDurationPipe
   ],
   imports: [
     CommonModule,

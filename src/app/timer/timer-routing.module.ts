@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { canActivateWithData, canActivateWithoutData } from './data.guard';
+import { canActivateWithData, canActivateWithoutData } from './util/data.guard';
 import { DisplayComponent } from './display/display.component';
 import { InputComponent } from './input/input.component';
 

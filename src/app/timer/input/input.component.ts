@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { DataService } from '../data.service';
-import * as moment from 'moment';
+import { DataService } from '../util/data.service';
+import { format } from 'date-fns';
 
 @Component({
   selector: 'app-input',
@@ -19,9 +19,9 @@ export class InputComponent implements OnInit {
   }
 
   now(): void {
-    this.time = moment().format('HH:mm');
+    this.time = format(new Date(), 'HH:mm');
   }
-  
+
   sendNow(): void {
     this.now();
     this.send();
