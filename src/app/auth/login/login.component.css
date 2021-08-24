@@ -1,22 +1,22 @@
 .center {
-    text-align: center;
+  text-align: center;
 }
 
 .login-card {
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .error {
-    color: red;
-    font-weight: bolder;
+  color: #f44336;
+  font-weight: bolder;
 }
 
 .full-width {
-    width: 100%;
+  width: 100%;
 }
 
-.half-width {
-    width: 50%;
+mat-card-content {
+  margin-top: 20px;
 }

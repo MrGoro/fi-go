@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" class="fi">
+<mat-toolbar color="warn">
   <mat-toolbar-row>
     <span>fi go!</span>
     <span class="toolbar-spacer"></span>
@@ -7,6 +7,6 @@
 </mat-toolbar>
 
 <div class="app-content">
-  <mat-spinner class="center" *ngIf="loading"></mat-spinner>
+  <mat-spinner class="center" color="warn" *ngIf="loading"></mat-spinner>
   <router-outlet></router-outlet>
 </div>
