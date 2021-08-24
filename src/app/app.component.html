@@ -7,5 +7,6 @@
 </mat-toolbar>
 
 <div class="app-content">
+  <mat-spinner class="center" *ngIf="loading"></mat-spinner>
   <router-outlet></router-outlet>
 </div>
