@@ -10,6 +10,8 @@ import { environment } from 'projects/web/src/environments/environment';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { getDatabase, provideDatabase } from '@angular/fire/database';
+import { NotificationsModule } from './notifications/notifications.module';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,14 @@ import { getDatabase, provideDatabase } from '@angular/fire/database';
     BrowserAnimationsModule,
     SharedModule,
     AuthModule,
-    TimerModule
+    TimerModule,
+    NotificationsModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

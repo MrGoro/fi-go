@@ -24,6 +24,7 @@
     "@angular/platform-browser": "~12.2.0",
     "@angular/platform-browser-dynamic": "~12.2.0",
     "@angular/router": "~12.2.0",
+    "@angular/service-worker": "~12.2.0",
     "angular-svg-round-progressbar": "^7.0.0",
     "date-fns": "^2.23.0",
     "firebase": "9.0.0-202171919375",

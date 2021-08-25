@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Database, onValue, DataSnapshot, ref, set } from '@angular/fire/database';
 import { DatabaseReference } from "firebase/database";
-import { bindCallback, from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, tap } from 'rxjs/operators';
-import { AuthService } from '../../auth/auth.service';
+import { from, Observable } from 'rxjs';
+import { map, switchMap} from 'rxjs/operators';
+import { AuthService } from '../../auth/util/auth.service';
 
 @Injectable({
   providedIn: 'root'

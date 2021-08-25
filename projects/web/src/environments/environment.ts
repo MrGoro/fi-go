@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  vapidPublicKey: 'BBlR5PyYBWA1wGjHFNthwRvWKdMXPJZurrTlnZw8EedEEiCcFXhxw72jzi-VU0dPp0Ur3A4CJvAaxTCDiMhq7v4',
   firebase: {
     apiKey: "AIzaSyB1BM8mPlkWOK78AfntrNZD1PPDylXYdbg",
     authDomain: "fi-go-web.firebaseapp.com",

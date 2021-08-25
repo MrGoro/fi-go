@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
 import { Observable, bindCallback } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { Auth, onAuthStateChanged } from '@angular/fire/auth';
 
 @Injectable({
@@ -18,7 +18,8 @@ export class AuthService {
 
   isLoggedIn(): Observable<boolean> {
     return this.getUser().pipe(
-      map(user => user !== null)
+      map(user => user !== null),
+      tap(loggedIn => console.log(`User loggedIn: ${loggedIn}`))
     );
   }
 }

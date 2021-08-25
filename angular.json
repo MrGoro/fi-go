@@ -27,12 +27,16 @@
             "tsConfig": "projects/web/tsconfig.app.json",
             "assets": [
               "projects/web/src/favicon.ico",
-              "projects/web/src/assets"
+              "projects/web/src/assets",
+              "projects/web/src/manifest.webmanifest"
             ],
             "styles": [
+              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/web/src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "serviceWorker": true,
+            "ngswConfigPath": "projects/web/ngsw-config.json"
           },
           "configurations": {
             "production": {
@@ -94,7 +98,8 @@
             "karmaConfig": "projects/web/karma.conf.js",
             "assets": [
               "projects/web/src/favicon.ico",
-              "projects/web/src/assets"
+              "projects/web/src/assets",
+              "projects/web/src/manifest.webmanifest"
             ],
             "styles": [
               "projects/web/src/styles.css"
