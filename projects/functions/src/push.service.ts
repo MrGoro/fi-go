@@ -1,17 +1,14 @@
 import { sendNotification, setVapidDetails } from 'web-push';
 import { Notification } from './notification';
+import { config } from 'firebase-functions';
 
-const vapidKeys = {
-  "publicKey":"BBlR5PyYBWA1wGjHFNthwRvWKdMXPJZurrTlnZw8EedEEiCcFXhxw72jzi-VU0dPp0Ur3A4CJvAaxTCDiMhq7v4",
-  "privateKey":"hXntozMd8dnrLfFQXtZp4b-rhrVPN7EZSWY0IvmJBxI"
-};
+setVapidDetails(
+  'mailto:mail@philipp-schuermann.de',
+  config().vapid.keys.public,
+  config().vapid.keys.private
+);
 
 export async function pushNotification(notification: Notification): Promise<boolean> {
-  setVapidDetails(
-    'mailto:mail@philipp-schuermann.de',
-    vapidKeys.publicKey,
-    vapidKeys.privateKey
-  );
   const notificationPayload = {
     "notification": {
       "title": notification.title,
