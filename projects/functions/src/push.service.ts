@@ -3,7 +3,7 @@ import { Notification } from './notification';
 import { config } from 'firebase-functions';
 
 setVapidDetails(
-  'mailto:mail@philipp-schuermann.de',
+  'mailto:spam@mrgoro.de',
   config().vapid.keys.public,
   config().vapid.keys.private
 );
