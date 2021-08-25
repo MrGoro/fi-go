@@ -28,9 +28,11 @@ export class NotificationUiComponent implements OnInit, OnDestroy {
   constructor(public service: NotificationService, public authService: AuthService) {}
 
   ngOnInit(): void {
-    this.sub$ = this.service.subscription.subscribe(sub => {
-      this.on = sub !== null;
-    });
+    if(this.service.enabled) {
+      this.sub$ = this.service.subscription.subscribe(sub => {
+        this.on = sub !== null;
+      });
+    }
   }
 
   ngOnDestroy(): void {

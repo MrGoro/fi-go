@@ -15,6 +15,7 @@ const keyDisabled = 'notificationsDisabled';
 export class NotificationService {
 
   private disabled = false;
+  private loggedIn = false;
 
   constructor(
     private swPush: SwPush,
@@ -26,7 +27,7 @@ export class NotificationService {
   }
 
   get enabled():boolean {
-    return this.swPush.isEnabled;
+    return this.swPush.isEnabled && this.loggedIn;
   }
 
   get granted(): boolean {
@@ -43,6 +44,7 @@ export class NotificationService {
 
   get subscription(): Observable<PushSubscription | null> {
     return this.authService.isLoggedIn().pipe(
+      tap(loggedIn => this.loggedIn = loggedIn),
       filter(loggedIn => loggedIn),
       switchMap(loggedIn => {
         return this.swPush.subscription.pipe(
