@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TimeDuration } from '../display/time-functions';
+import { TimeDuration } from './time-functions';
 
 function pad(num: number | undefined): string {
   if(!num) return '00';

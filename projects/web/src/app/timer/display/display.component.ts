@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { timer } from 'rxjs';
 import { DataService } from '../util/data.service';
 import { add, intervalToDuration, sub } from 'date-fns';
-import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from './time-functions';
+import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from '../util/time-functions';
 
 
 @Component({

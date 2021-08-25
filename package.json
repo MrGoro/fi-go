@@ -7,7 +7,9 @@
     "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' projects/web/git-version.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer dist/fi-go/stats.json"
+    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer dist/fi-go/stats.json",
+    "fbf-build": "",
+    "fbf-deploy": ""
   },
   "private": true,
   "dependencies": {
