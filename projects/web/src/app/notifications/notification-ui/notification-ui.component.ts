@@ -6,7 +6,7 @@ import { AuthService } from '../../auth/util/auth.service';
 @Component({
   selector: 'app-notification-ui',
   template: `
-    <ng-container *ngIf="service.enabled && !service.denied">
+    <ng-container *ngIf="!service.denied && this.enabled">
       <button mat-icon-button (click)="service.disable()" *ngIf="on"
               aria-label="Push-Benachrichtigungen aktiv">
         <mat-icon>alarm_on</mat-icon>
@@ -23,19 +23,25 @@ import { AuthService } from '../../auth/util/auth.service';
 export class NotificationUiComponent implements OnInit, OnDestroy {
 
   private sub$!: Subscription;
+  private enabled$!: Subscription;
   public on = false;
+  public enabled = false;
 
   constructor(public service: NotificationService, public authService: AuthService) {}
 
   ngOnInit(): void {
-    if(this.service.enabled) {
-      this.sub$ = this.service.subscription.subscribe(sub => {
-        this.on = sub !== null;
-      });
-    }
+    this.enabled$ = this.service.isEnabled().subscribe(enabled => {
+      if(enabled) {
+        this.sub$ = this.service.subscription.subscribe(sub => {
+          this.on = sub !== null;
+        });
+      }
+      this.enabled = enabled;
+    });
   }
 
   ngOnDestroy(): void {
     this.sub$.unsubscribe();
+    this.enabled$.unsubscribe();
   }
 }

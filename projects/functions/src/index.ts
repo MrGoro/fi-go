@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import * as admin from 'firebase-admin';
-import { isAfter, sub, Duration, add, isBefore } from 'date-fns';
+import { isAfter, Duration, add, isBefore } from 'date-fns';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import de from "date-fns/locale/de"
 import { Notification } from './notification';
@@ -116,10 +116,10 @@ export const sendScheduledNotifications = functions.pubsub.schedule('every 5 min
   const notifications: Notification[] = await getNotifications()
   functions.logger.info(`Found ${notifications.length} total.`);
 
-  const filterDate = sub(new Date(), {minutes: 10});
+  const filterDate = add(new Date(), {minutes: 10});
   const notificationsToSend = notifications
-    .filter(notification => isAfter(notification.time, filterDate) && isBefore(notification.time, new Date()));
-  functions.logger.info(`Found ${notificationsToSend.length} to send till ${format(filterDate, 'HH:mm')}.`,
+    .filter(notification => isAfter(notification.time, new Date()) && isBefore(notification.time, filterDate));
+  functions.logger.info(`Found ${notificationsToSend.length} to send between ${format(new Date(), 'HH:mm')} & ${format(filterDate, 'HH:mm')}.`,
     filterDate, notificationsToSend);
 
   await notificationsToSend.forEach(notification => {

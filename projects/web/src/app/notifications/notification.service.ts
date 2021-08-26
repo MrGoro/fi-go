@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SwPush } from '@angular/service-worker';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { LocalStorageService } from '../shared/local-storage.service';
 import { UserService } from '../auth/util/user.service';
 import { AuthService } from '../auth/util/auth.service';
@@ -27,7 +27,13 @@ export class NotificationService {
   }
 
   get enabled():boolean {
-    return this.swPush.isEnabled && this.loggedIn;
+    return this.swPush.isEnabled && 'PushManager' in window;
+  }
+
+  public isEnabled(): Observable<boolean> {
+    return this.authService.isLoggedIn().pipe(
+      map(loggedIn => loggedIn && this.enabled)
+    );
   }
 
   get granted(): boolean {
