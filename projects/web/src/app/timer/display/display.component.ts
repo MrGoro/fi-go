@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { timer } from 'rxjs';
 import { DataService } from '../util/data.service';
-import { add, intervalToDuration, sub } from 'date-fns';
+import { add, intervalToDuration, isToday, sub } from 'date-fns';
 import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from '../util/time-functions';
 
 
@@ -33,6 +33,9 @@ export class DisplayComponent implements OnInit {
 
   ngOnInit(): void {
     this.data.getDate('startTime').subscribe(startTime => {
+      if(!isToday(startTime)) {
+        this.reset();
+      }
       this.startTime = startTime;
       this.finishTime = add(add(startTime, this.timeToWork), this.pause);
     });
