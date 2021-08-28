@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "fi-go-web": {
+      "hosting": {
+        "fi-go": [
+          "fi-go-web"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "fi-go-web"
+  }
+}

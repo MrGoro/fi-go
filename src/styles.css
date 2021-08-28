@@ -1,8 +1,0 @@
-/* Add application styles & imports to this file! */
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
-
-body {
-  margin: 0;
-  background: #eee;
-  font-family: "Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif;
-}

@@ -1,0 +1,42 @@
+<mat-card class="login-card">
+  <mat-card-header>
+    <mat-card-title>Login mit Telefonnummer</mat-card-title>
+  </mat-card-header>
+  <form (ngSubmit)="getLoginCode()" #phoneForm="ngForm" [hidden]="codeSent">
+    <mat-card-content>
+      <p>Du musst dich zuerst mit deiner Telefonnummer einloggen.</p>
+      <p [hidden]="!error" class="error">{{ error }}</p>
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Telefonnummer</mat-label>
+        <span matPrefix>+49 &nbsp;</span>
+        <input type="tel" matInput placeholder="Telefonnummer" autofocus required
+              [disabled]="loading"
+              [(ngModel)]="phoneNumber" name="phoneNumber">
+        <mat-icon matSuffix>phone</mat-icon>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="warn" class="full-width" id="get-login-code-button" type="submit"
+              [disabled]="!phoneForm.form.valid || loading">Login-Code anfordern</button>
+    </mat-card-actions>
+  </form>
+  <form (ngSubmit)="verifyLoginCode()" #verficationForm="ngForm" [hidden]="!codeSent">
+    <mat-card-content>
+      <p>Wir haben einen Code zur Überprüfung an {{phone}} gesendet.</p>
+      <p [hidden]="!error" class="error">{{ error }}</p>
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Bestätigungs-Code</mat-label>
+        <input #codeInput type="number" matInput placeholder="Bestätigungs-Code" inputmode="numeric" autocomplete="one-time-code"
+              [disabled]="loading"
+              [(ngModel)]="verificationCode" name="verificationCode" required>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-flat-button color="warn" class="full-width" type="submit"
+              [disabled]="!verficationForm.form.valid || loading">Einloggen</button>
+    </mat-card-actions>
+    <mat-card-actions>
+      <button mat-stroked-button color="warn" class="full-width" type="button" (click)="reset('')">Abbrechen</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
