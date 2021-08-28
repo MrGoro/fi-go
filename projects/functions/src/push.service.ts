@@ -1,7 +1,6 @@
 import { sendNotification, setVapidDetails } from 'web-push';
 import { Notification } from './notification';
 import { config } from 'firebase-functions';
-import * as functions from 'firebase-functions';
 
 export async function pushNotification(notification: Notification): Promise<boolean> {
 
@@ -10,8 +9,6 @@ export async function pushNotification(notification: Notification): Promise<bool
     config().vapid.keys.public,
     config().vapid.keys.private
   );
-
-  functions.logger.debug('VAPID Public Key: ', config().vapid.keys.public);
 
   const notificationPayload = {
     "notification": {
