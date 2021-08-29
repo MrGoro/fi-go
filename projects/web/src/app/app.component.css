@@ -1,3 +1,11 @@
+.pull-up {
+  background-color: #f44336;
+  position: absolute;
+  top: -50px;
+  height: 50px;
+  width: 100%;
+}
+
 .app-content {
   padding: 20px;
 }
