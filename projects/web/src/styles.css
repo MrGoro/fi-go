@@ -9,7 +9,7 @@ input[type='time'],
 textarea {
   font-size: 16px;
 }
-.app {
+#app {
   background-color: #f8f8f8;
 }
 .box {

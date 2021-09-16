@@ -19,10 +19,6 @@ button {
   width: 100%;
 }
 
-round-progress {
-  z-index: -1;
-}
-
 .current {
   position: absolute;
   line-height: 1;
