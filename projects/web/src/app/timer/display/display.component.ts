@@ -38,10 +38,10 @@ export class DisplayComponent implements OnInit {
       }
       this.startTime = startTime;
       this.finishTime = add(add(startTime, this.timeToWork), this.pause);
-    });
 
-    this.timer = timer(0, 1000).subscribe(() => {
-      this.refresh();
+      this.timer = timer(0, 1000).subscribe(() => {
+        this.refresh();
+      });
     });
   }
 

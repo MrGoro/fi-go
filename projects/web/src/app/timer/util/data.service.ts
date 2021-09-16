@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Database, onValue, DataSnapshot, ref, set } from '@angular/fire/database';
+import { Database, ref, set, objectVal } from '@angular/fire/database';
 import { DatabaseReference } from "firebase/database";
 import { from, Observable } from 'rxjs';
-import { map, switchMap} from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from '../../auth/util/auth.service';
 
 @Injectable({
@@ -23,20 +23,16 @@ export class DataService {
     );
   }
 
-  get(key: string): Observable<any> {
+  getAll(): Observable<{[key: string]: any}> {
     return this.getRef().pipe(
-      switchMap(dbRef => this.getSnapshot(dbRef)),
-      map((snapshot: DataSnapshot) => snapshot.val()),
-      map(value => value ? value[key] : null),
+      switchMap(dbRef => objectVal<any>(dbRef))
     );
   }
 
-  getSnapshot(dbRef: DatabaseReference): Observable<DataSnapshot> {
-    return new Observable(subscriber => {
-      onValue(dbRef, (snapshot) => {
-        subscriber.next(snapshot);
-      });
-    });
+  get(key: string): Observable<any> {
+    return this.getAll().pipe(
+      map(value => value ? value[key] : null)
+    );
   }
 
   setDate(key: string, date: Date): Observable<void> {
