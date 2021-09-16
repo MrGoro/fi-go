@@ -52,7 +52,7 @@ export class NotificationService {
     return this.authService.isLoggedIn().pipe(
       tap(loggedIn => this.loggedIn = loggedIn),
       filter(loggedIn => loggedIn),
-      switchMap(loggedIn => {
+      switchMap(() => {
         return this.swPush.subscription.pipe(
           tap(sub => {
             if(sub === null) {
@@ -93,6 +93,6 @@ export class NotificationService {
 
   private subReceived(sub: PushSubscription | null) {
     console.log(`Sending Push-Token to Server: ${sub !== null}`);
-    this.userService.updateUser('pushToken', sub).subscribe(result => console.log);
+    this.userService.updateUser('pushToken', sub).subscribe();
   }
 }

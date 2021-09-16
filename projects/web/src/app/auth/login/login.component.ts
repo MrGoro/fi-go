@@ -96,8 +96,4 @@ export class LoginComponent implements OnInit {
     });
     this.loading = false;
   }
-
-  doNothing() {
-    console.log('Nothing!');
-  }
 }
