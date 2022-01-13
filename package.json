@@ -40,7 +40,7 @@
     "@types/node": "^12.11.1",
     "firebase-tools": "^9.0.0",
     "fuzzy": "^0.1.3",
-    "inquirer": "^6.2.2",
+    "inquirer": "^8.2.0",
     "inquirer-autocomplete-prompt": "^1.0.1",
     "jsonc-parser": "^3.0.0",
     "ng-packagr": "^13.1.3",
