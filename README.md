@@ -1,8 +1,8 @@
-# fi-go
+# fi-go!
 
 App: https://fi-go.schuermann.app
 
-Arbeitszeitrechner als Angular-Webapp auf der Firebase-Plattform.
+Arbeitszeitrechner als Angular-Webapp auf der Firebase-Plattform:
 * Login mit Firebase Auth
 * Datenspeicherung in Firebase Realtime Database
 * Push-Notifications über Firebase Functions & Cloud Messaging
