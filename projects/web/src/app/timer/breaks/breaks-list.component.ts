@@ -30,8 +30,8 @@ import { format } from 'date-fns';
 
       <ng-container matColumnDef="duration">
         <th mat-header-cell *matHeaderCellDef> Dauer</th>
-        <td mat-cell *matCellDef="let element"> {{ element.duration | timeDuration }} </td>
-        <td mat-footer-cell *matFooterCellDef> {{ dataSource.totalDuration | timeDuration }} </td>
+        <td mat-cell *matCellDef="let element"> {{ element.duration | timeDuration:'short' }} </td>
+        <td mat-footer-cell *matFooterCellDef> {{ dataSource.totalDuration | timeDuration:'short' }} </td>
       </ng-container>
 
       <ng-container matColumnDef="actions">
