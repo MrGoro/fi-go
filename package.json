@@ -4,6 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start-ip": "ng serve --host 0.0.0.0",
     "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' projects/web/git-version.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development"

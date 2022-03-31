@@ -6,7 +6,7 @@ import { AuthService } from '../../auth/util/auth.service';
 @Component({
   selector: 'app-notification-ui',
   template: `
-    <ng-container *ngIf="!service.denied && this.enabled">
+    <ng-container *ngIf="this.enabled && !service.denied">
       <button mat-icon-button (click)="service.disable()" *ngIf="on"
               aria-label="Push-Benachrichtigungen aktiv">
         <mat-icon>alarm_on</mat-icon>
