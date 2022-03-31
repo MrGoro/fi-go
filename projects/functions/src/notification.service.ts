@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import de from 'date-fns/locale/de';
-import { add, Duration, isAfter, isBefore, sub } from 'date-fns';
+import { add, Duration, isAfter, isBefore } from 'date-fns';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Notification } from './notification';
 import { PushSubscription } from 'web-push';
@@ -58,7 +58,7 @@ export async function scheduleNotifications(userId: string, startTime: Date, bre
     });
 
     // Ten Hours Notification
-    const tenHoursTime = add(sub(startTime, pauseWithBreaks), tenHours);
+    const tenHoursTime = add(add(startTime, pauseWithBreaks), tenHours);
     const zonedTenHoursTime = utcToZonedTime(tenHoursTime, timeZone);
     const tenHoursTimeFormatted = format(zonedTenHoursTime, 'HH:mm', options);
     await saveNotification({
