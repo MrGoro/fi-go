@@ -10,6 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
       - run: |
           cd projects/functions
           npm ci
@@ -18,4 +22,4 @@ jobs:
         with:
           args: deploy --only functions
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FI_GO_WEB }}
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
