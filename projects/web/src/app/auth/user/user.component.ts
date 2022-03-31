@@ -13,9 +13,10 @@ import { InfoDialog } from 'projects/web/src/app/shared/info-dialog';
         <mat-icon>account_circle</mat-icon>
       </button>
       <mat-menu #menu="matMenu">
-        <div mat-menu-item>{{ this.user?.phoneNumber }}</div>
-        <button mat-menu-item (click)="info()">Über fi go!</button>
-        <button mat-menu-item (click)="logout()">Logout</button>
+        <div mat-menu-item disabled><mat-icon>phone</mat-icon> {{ this.user?.phoneNumber }}</div>
+        <a mat-menu-item href="https://github.com/MrGoro/fi-go/issues/new" target="_blank"><mat-icon>bug_report</mat-icon> Fehler melden</a>
+        <button mat-menu-item (click)="info()"><mat-icon>info</mat-icon> Über fi go!</button>
+        <button mat-menu-item (click)="logout()"><mat-icon>logout</mat-icon> Logout</button>
       </mat-menu>
     </div>
   `,

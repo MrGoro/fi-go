@@ -13,6 +13,10 @@ export const environment = {
     storageBucket: "fi-go-web.appspot.com",
     messagingSenderId: "38612462977",
     appId: "1:38612462977:web:911e393a16b59746730c80"
+  },
+  timer: {
+    timeToWork: {hours: 7, minutes: 48},
+    pause: {minutes: 30}
   }
 };
 

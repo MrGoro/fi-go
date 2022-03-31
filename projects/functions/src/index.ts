@@ -1,5 +1,6 @@
 import * as functions from "firebase-functions";
 import { deleteAllNotifications, scheduleNotifications, sendNotifications } from './notification.service';
+import { Break, extractBreaks } from './breaks.service';
 
 export const startTimeChanged = functions.database.ref('/data/{userId}')
   .onWrite(async (change, context) => {
@@ -16,7 +17,8 @@ export const startTimeChanged = functions.database.ref('/data/{userId}')
       const startTimeMillis = after.startTime;
       if(!isNaN(startTimeMillis)) {
         const startTime = new Date(startTimeMillis);
-        await scheduleNotifications(userId, startTime);
+        const breaks: Break[] = extractBreaks(change.after);
+        await scheduleNotifications(userId, startTime, breaks);
       }
     }
 
@@ -24,6 +26,6 @@ export const startTimeChanged = functions.database.ref('/data/{userId}')
   });
 
 export const sendScheduledNotifications = functions.pubsub.schedule('every 5 minutes').onRun(async (context) => {
-  sendNotifications();
+  await sendNotifications();
   return null;
 });

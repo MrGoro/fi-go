@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { DataService } from '../util/data.service';
 import { format } from 'date-fns';
+import { timeToDate } from '../util/time-functions';
 
 @Component({
   selector: 'app-input',
@@ -28,7 +29,7 @@ export class InputComponent implements OnInit {
   }
 
   send(): void {
-    const startTime: Date = this.getTime();
+    const startTime: Date = timeToDate(this.time);
     this.sendDate(startTime);
   }
 
@@ -38,15 +39,5 @@ export class InputComponent implements OnInit {
       this.router.navigate(['/timer/display']);
       this.loading = false;
     });
-  }
-
-  private getTime(): Date {
-    const hour: string = this.time.substring(0, 2);
-    const minute: string = this.time.substring(3, 5);
-
-    const time: Date = new Date();
-    time.setHours(parseInt(hour), parseInt(minute), 0, 0);
-
-    return time;
   }
 }

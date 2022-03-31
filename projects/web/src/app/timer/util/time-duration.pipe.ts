@@ -12,8 +12,9 @@ function pad(num: number | undefined): string {
 })
 export class TimeDurationPipe implements PipeTransform {
 
-  transform(value: TimeDuration, ...args: unknown[]): unknown {
-    return `${value?.negative?'-':''}${pad(value?.hours)}:${pad(value?.minutes)}:${pad(value?.seconds)}`;
+  transform(value: TimeDuration, format: string = 'full'): unknown {
+    const seconds = format === 'full' ? `:${pad(value?.seconds)}` : '';
+    return `${value?.negative?'-':''}${pad(value?.hours)}:${pad(value?.minutes)}${seconds}`;
   }
 
 }

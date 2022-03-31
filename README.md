@@ -16,7 +16,9 @@ Arbeitszeitrechner als Angular-Webapp auf der Firebase-Plattform:
 Erreichen der 10-Stunden-Grenze
 
 ## Zeiten
-Folgende Zeiten sind fix in der Anwendung konfiguriert und können nicht geändert werden:
+Folgende Zeiten sind in der Anwendung konfiguriert:
 * Arbeitszeit: 7:48 Stunden
 * Pause: 30 Minuten nach Ablauf von 6 Stunden
-* Warnung vor 10-Stunden-Grenze nach 9:30 Stunden
+* Manuelle Pausen können hinzugefügt werden
+* Hinweis auf 10-Stunden-Grenze nach 9:30 Stunden
+* Warnung, nachdem 10-Stunden-Grenze überschritten ist
