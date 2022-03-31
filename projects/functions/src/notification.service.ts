@@ -1,19 +1,20 @@
 import * as functions from 'firebase-functions';
 import de from 'date-fns/locale/de';
-import { add, Duration, isAfter, isBefore } from 'date-fns';
+import { add, Duration, isAfter, isBefore, sub } from 'date-fns';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Notification } from './notification';
 import { PushSubscription } from 'web-push';
 import { pushNotification } from './push.service';
 import * as admin from 'firebase-admin';
+import { Break, getPause } from './breaks.service';
 
 const app = admin.initializeApp();
 const db = app.database();
 
 const timeZone = 'Europe/Berlin'
 const timeToWork: Duration = {hours: 7, minutes: 48};
-const pause: Duration = {minutes: 30};
-const tenHours: Duration = {hours: 10, minutes: 30};
+const defaultPause: Duration = {minutes: 30};
+const tenHours: Duration = {hours: 10};
 
 function getPushToken(userId: string): Promise<PushSubscription | null> {
   const ref = db.ref(`users/${userId}`);
@@ -33,16 +34,19 @@ function getPushToken(userId: string): Promise<PushSubscription | null> {
   );
 }
 
-export async function scheduleNotifications(userId: string, startTime: Date) {
-  functions.logger.debug('Scheduling Notifications: ', userId, startTime);
+export async function scheduleNotifications(userId: string, startTime: Date, breaks: Break[] = []) {
+  functions.logger.debug('Scheduling Notifications: ', userId, startTime, breaks);
 
   const options = { locale: de, timeZone: timeZone };
 
   const pushToken = await getPushToken(userId);
   if(pushToken) {
+    // Pause
+    const pauseWithBreaks = getPause(breaks, defaultPause);
+    functions.logger.debug('Pause: ', pauseWithBreaks);
 
     // Finish Time Notification
-    const finishTime = add(add(startTime, timeToWork), pause);
+    const finishTime = add(add(startTime, timeToWork), pauseWithBreaks);
     const zonedFinishTime = utcToZonedTime(finishTime, timeZone);
     const finishTimeFormatted = format(zonedFinishTime, 'HH:mm', options);
     await saveNotification({
@@ -54,7 +58,7 @@ export async function scheduleNotifications(userId: string, startTime: Date) {
     });
 
     // Ten Hours Notification
-    const tenHoursTime = add(startTime, tenHours);
+    const tenHoursTime = add(sub(startTime, pauseWithBreaks), tenHours);
     const zonedTenHoursTime = utcToZonedTime(tenHoursTime, timeZone);
     const tenHoursTimeFormatted = format(zonedTenHoursTime, 'HH:mm', options);
     await saveNotification({
