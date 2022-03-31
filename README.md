@@ -22,3 +22,11 @@ Folgende Zeiten sind in der Anwendung konfiguriert:
 * Manuelle Pausen können hinzugefügt werden
 * Hinweis auf 10-Stunden-Grenze nach 9:30 Stunden
 * Warnung, nachdem 10-Stunden-Grenze überschritten ist
+
+## Screenshots
+
+![Login mit Telefonnummer](screens/01-login.png)
+![Eingabe der Arbeitszeit](screens/02-time-input.png)
+![Verwalten von Pausen](screens/03-breaks.png)
+![Anzeige der Arbeitszeit](screens/04-timer.png)
+![Warnung vor Überschreiten der 10-Stunden-Grenze](screens/05-warning.png)
