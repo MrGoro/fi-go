@@ -1,7 +1,6 @@
 import { database } from 'firebase-admin';
 import DataSnapshot = database.DataSnapshot;
-import { environment } from '../../web/src/environments/environment';
-import { millisToDuration } from '../../web/src/app/timer/util/time-functions';
+import { intervalToDuration } from 'date-fns';
 
 const propertyName = 'breaks';
 
@@ -36,10 +35,9 @@ export function getPause(breaks: Break[], defaultPause: Duration): Duration {
 export function calculateTotalDuration(breaks: Break[]): Duration {
   const totalMillis = breaks.map(element => element.end.getTime() - element.start.getTime())
     .reduce((a, b) => a + b, 0);
-
-  if(totalMillis === 0) {
-    return environment.timer.pause;
-  }
-
   return millisToDuration(totalMillis);
+}
+
+export function millisToDuration(millis: number): Duration {
+  return intervalToDuration({start: new Date(0), end: new Date(millis)});
 }
