@@ -24,3 +24,4 @@ jobs:
           projectId: fi-go-web
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
+
