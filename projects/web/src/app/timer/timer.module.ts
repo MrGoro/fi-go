@@ -7,12 +7,24 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../shared/material.module';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { TimeDurationPipe } from './util/time-duration.pipe';
+import { BreaksComponent } from './breaks/breaks.component';
+import { BreaksButtonComponent } from './breaks/breaks-button.component';
+import { BreaksListComponent } from './breaks/breaks-list.component';
+import { DurationValidationDirective } from './util/duration-validation.directive';
 
 @NgModule({
   declarations: [
     InputComponent,
     DisplayComponent,
-    TimeDurationPipe
+    TimeDurationPipe,
+    BreaksComponent,
+    BreaksListComponent,
+    BreaksButtonComponent,
+    DurationValidationDirective
+  ],
+  exports: [
+    BreaksComponent,
+    BreaksButtonComponent
   ],
   imports: [
     CommonModule,

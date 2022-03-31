@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { versions } from '../../environments/versions';
 
@@ -20,14 +20,9 @@ import { versions } from '../../environments/versions';
         </mat-dialog-actions>`,
   styles: []
 })
-export class InfoDialog implements OnInit {
+export class InfoDialog {
 
   public versions = versions;
 
-  constructor(public dialogRef: MatDialogRef<InfoDialog>) {
-  }
-
-  ngOnInit() {
-  }
-
+  constructor(public dialogRef: MatDialogRef<InfoDialog>) {}
 }

@@ -1,10 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { timer } from 'rxjs';
 import { DataService } from '../util/data.service';
 import { add, intervalToDuration, isToday, sub } from 'date-fns';
 import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from '../util/time-functions';
+import { environment } from '../../../environments/environment';
+import { Break, BreaksService } from '../breaks/breaks.service';
+import { calculateTotalDuration } from '../breaks/break-functions';
 
 
 @Component({
@@ -12,24 +15,26 @@ import { durationToMillis, subDurations, TimeDuration, toTimeDuration } from '..
   templateUrl: './display.component.html',
   styleUrls: ['./display.component.css']
 })
-export class DisplayComponent implements OnInit {
+export class DisplayComponent implements OnInit, OnDestroy {
 
   private timer!: Subscription;
 
-  private timeToWork: Duration = {hours: 7, minutes: 48};
-  private pause: Duration = {minutes: 30};
+  private readonly timeToWork: Duration = environment.timer.timeToWork;
+
+  private totalPause: Duration = environment.timer.pause;
 
   public workTime: Duration = {};
   public startTime!: Date;
   public finishTime!: Date;
   public outWorkTime!: TimeDuration;
+  public outPause!: TimeDuration;
   public outBalance: TimeDuration = {negative: false};
   public minutesTillTenHours: number | undefined
 
   public progressCurrent = 0;
   public progressMax: number = durationToMillis(this.timeToWork);
 
-  constructor(private data: DataService, private router: Router) { }
+  constructor(private data: DataService, private breaksService: BreaksService, private router: Router) { }
 
   ngOnInit(): void {
     this.data.getDate('startTime').subscribe(startTime => {
@@ -37,22 +42,45 @@ export class DisplayComponent implements OnInit {
         this.reset();
       }
       this.startTime = startTime;
-      this.finishTime = add(add(startTime, this.timeToWork), this.pause);
+      this.pauseUpdated([]);
 
       this.timer = timer(0, 1000).subscribe(() => {
         this.refresh();
       });
+
+      this.breaksService.getBreaks().subscribe(breaks => {
+        this.pauseUpdated(breaks);
+      });
     });
+  }
+
+  private pauseUpdated(breaks: Break[]): void {
+    if(breaks.length === 0) {
+      this.totalPause = environment.timer.pause;
+    } else {
+      this.totalPause = calculateTotalDuration(breaks);
+    }
+    this.finishTime = add(add(this.startTime, this.timeToWork), this.totalPause);
   }
 
   public refresh(): void {
     // Bisherige Arbeitszeit
     this.workTime = intervalToDuration({start: this.startTime, end: new Date()});
-    if (this.workTime.hours === 6 && this.workTime.minutes && this.workTime.minutes < 30) {
-      this.workTime.minutes = 0;
-    } else if (this.workTime.hours && this.workTime.hours >= 6) {
-      this.workTime = intervalToDuration({start: this.startTime, end: sub(new Date(), this.pause)});
+
+    // Pause
+    let pause: Duration = {};
+    if(this.totalPause === environment.timer.pause) {
+      if (this.workTime.hours === 6 && this.workTime.minutes && this.workTime.minutes < 30) {
+        pause = {hours: 0, minutes: this.workTime.minutes, seconds: this.workTime.seconds};
+      } else if (this.workTime.hours && this.workTime.hours >= 6) {
+        pause = this.totalPause;
+      }
+    } else {
+      pause = this.totalPause;
     }
+    this.outPause = toTimeDuration(pause);
+
+    this.workTime = intervalToDuration({start: this.startTime, end: sub(new Date(), pause)});
     this.outWorkTime = toTimeDuration(this.workTime);
 
     // Saldo

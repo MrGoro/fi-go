@@ -2,8 +2,10 @@ import { Injectable } from '@angular/core';
 import { Database, ref, set, objectVal } from '@angular/fire/database';
 import { DatabaseReference } from "firebase/database";
 import { from, Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../auth/util/auth.service';
+import { list, listVal } from 'rxfire/database';
+import { DataSnapshot } from '@firebase/database';
 
 @Injectable({
   providedIn: 'root'
@@ -50,5 +52,33 @@ export class DataService {
       map(user => `data/${user?.uid}`),
       map(dbRef => ref(this.db, dbRef))
     )
+  }
+
+  listElement(property: string, key: string): Observable<DatabaseReference> {
+    return this.authService.getUser().pipe(
+      map(user => `data/${user?.uid}/${property}/${key}`),
+      map(dbRef => ref(this.db, dbRef))
+    );
+  }
+
+  listRef(property: string): Observable<DatabaseReference> {
+    return this.authService.getUser().pipe(
+      map(user => `data/${user?.uid}/${property}`),
+      map(dbRef => ref(this.db, dbRef))
+    );
+  }
+
+  list(property: string): Observable<DataSnapshot[]> {
+    return this.listRef(property).pipe(
+      switchMap(ref => list(ref)),
+      map(changes => changes.map(change => change.snapshot)),
+    );
+  }
+
+  listData<T>(property: string): Observable<T[] | null> {
+    return this.listRef(property).pipe(
+      switchMap(query => listVal<T>(query)),
+      tap(data => console.log(data))
+    );
   }
 }

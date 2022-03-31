@@ -22,6 +22,10 @@
         <td>bisher:</td>
         <td class="right">{{outWorkTime | timeDuration}}</td>
       </tr>
+      <tr>
+        <td>Pause:</td>
+        <td class="right">{{outPause | timeDuration}}</td>
+      </tr>
       <tr [ngClass]="outBalance.negative?'negative':''">
         <td>Saldo:</td>
         <td class="right">{{outBalance | timeDuration}}</td>
