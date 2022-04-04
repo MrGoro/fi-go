@@ -87,7 +87,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     this.outBalance = subDurations(this.workTime, this.timeToWork);
 
     // Alarm 10 Stunden-Regelung
-    const tenHours = add(this.startTime, {hours: 10, minutes: 30})
+    const tenHours = add(add(this.startTime, {hours: 10}), pause);
     const tillTenHours = intervalToDuration({start: new Date(), end: tenHours});
     this.minutesTillTenHours = tillTenHours.minutes;
 
