@@ -1,17 +1,9 @@
-.pull-up {
-  background-color: #f44336;
-  position: absolute;
-  top: -50px;
-  height: 50px;
-  width: 100%;
+.toolbar-safe {
+  padding-top: env(safe-area-inset-top);
 }
 
 .app-content {
   padding: 20px;
-}
-
-.toolbar-icon {
-  padding: 0 14px;
 }
 
 .toolbar-spacer {

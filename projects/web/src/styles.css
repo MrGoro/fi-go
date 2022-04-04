@@ -15,7 +15,8 @@ textarea {
 .box {
   display: flex;
   flex-flow: column;
-  height: 100%;
+  --safe-area-inset-top: env(safe-area-inset-top);
+  height: calc(100% + (var(--safe-area-inset-top)));
 }
 .box .row {
   flex: 1 1 auto;
