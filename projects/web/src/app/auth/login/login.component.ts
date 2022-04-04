@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
   }
 
   getLoginCode() {
-    const phone = parsePhoneNumber(this.phoneNumber).number;
+    const phone = parsePhoneNumber(this.phoneNumber, defaultCountry).number;
     const verifier = this.windowRef.recaptchaVerifier;
 
     console.log(`Request Login-Code for ${phone}`);
