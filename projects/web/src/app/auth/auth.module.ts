@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { UserComponent } from './user/user.component';
 import { AuthRoutingModule } from './auth-routing.module';
-import { MaterialModule } from '../shared/material.module';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -14,7 +14,7 @@ import { MaterialModule } from '../shared/material.module';
   imports: [
     CommonModule,
     FormsModule,
-    MaterialModule,
+    SharedModule,
     AuthRoutingModule
   ],
   exports: [

@@ -1,18 +1,46 @@
 <mat-card class="login-card">
   <mat-card-header>
-    <mat-card-title>Login mit Telefonnummer</mat-card-title>
+    <mat-card-title>Login</mat-card-title>
   </mat-card-header>
   <form (ngSubmit)="getLoginCode()" #phoneForm="ngForm" [hidden]="codeSent">
     <mat-card-content>
-      <p>Du musst dich zuerst mit deiner Telefonnummer einloggen.</p>
+      <p>fi go! ist ein Arbeitszeitrechner mit folgende Funktionen:</p>
+      <ul>
+        <li>Anzeige der verbleibenden Arbeitszeit oder Überstunden</li>
+        <li>Benachrichtigung bei Erreichen der Arbeitszeit</li>
+        <li>Synchronisation über alle Geräte</li>
+      </ul>
+      <p>
+        Du musst dich zuerst mit deiner Telefonnummer einloggen.
+        Somit werden deine Zeiten über alle Geräte synchronisiert.
+      </p>
       <p [hidden]="!error" class="error">{{ error }}</p>
       <mat-form-field class="full-width" appearance="outline">
         <mat-label>Telefonnummer</mat-label>
-        <span matPrefix>+49 &nbsp;</span>
-        <input type="tel" matInput placeholder="Telefonnummer" autofocus required
-              [disabled]="loading"
+        <span matPrefix>{{countryCode}} &nbsp;</span>
+        <input type="tel" matInput placeholder="Telefonnummer" autofocus required validatePhone
+              [disabled]="loading"  #phoneInput="ngModel"
               [(ngModel)]="phoneNumber" name="phoneNumber">
         <mat-icon matSuffix>phone</mat-icon>
+        <mat-hint>Du bekommst einen Einmal-Code an diese Telefonnummer.</mat-hint>
+
+        <mat-error *ngIf="phoneInput.errors?.['required']">
+          Phone number is required.
+        </mat-error>
+        <mat-error *ngIf="phoneInput.errors?.['phoneNumber'] &&
+                        (phoneInput.errors?.['phoneNumber']['invalid'] ||
+                          phoneInput.errors?.['phoneNumber']['error'] === 'NOT_A_NUMBER')">
+          No valid phone number
+        </mat-error>
+        <mat-error *ngIf="phoneInput.errors?.['phoneNumber'] && phoneInput.errors?.['phoneNumber']['error'] === 'INVALID_COUNTRY'">
+          Invalid country code.
+        </mat-error>
+        <mat-error *ngIf="phoneInput.errors?.['phoneNumber'] && phoneInput.errors?.['phoneNumber']['error'] === 'TOO_SHORT'">
+          Phone number is too short.
+        </mat-error>
+        <mat-error *ngIf="phoneInput.errors?.['phoneNumber'] && phoneInput.errors?.['phoneNumber']['error'] === 'TOO_LONG'">
+          Phone number is too long.
+        </mat-error>
       </mat-form-field>
     </mat-card-content>
     <mat-card-actions>

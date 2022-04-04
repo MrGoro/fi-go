@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { WindowService } from '../../shared/window.service';
 import { ConfirmationResult, RecaptchaVerifier, UserCredential } from "firebase/auth";
 import { Auth, signInWithPhoneNumber } from '@angular/fire/auth';
+import { isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 declare var grecaptcha: any;
+const defaultCountry = 'DE';
 
 @Component({
   selector: 'app-login',
@@ -41,7 +43,7 @@ export class LoginComponent implements OnInit {
   }
 
   getLoginCode() {
-    const phone = this.phone;
+    const phone = parsePhoneNumber(this.phoneNumber).number;
     const verifier = this.windowRef.recaptchaVerifier;
 
     console.log(`Request Login-Code for ${phone}`);
@@ -84,7 +86,16 @@ export class LoginComponent implements OnInit {
   }
 
   get phone(): string {
-    return this.phoneNumber !== undefined ? `+49${this.phoneNumber}` : '';
+    return this.phoneNumber && isValidPhoneNumber(this.phoneNumber, defaultCountry) ?
+      parsePhoneNumber(this.phoneNumber, defaultCountry).formatInternational() : '';
+  }
+
+  get countryCode(): string {
+    if(this.phoneNumber && isValidPhoneNumber(this.phoneNumber, defaultCountry)) {
+      const phone = parsePhoneNumber(this.phoneNumber, defaultCountry);
+      return `+${phone.countryCallingCode}`;
+    }
+    return '+49';
   }
 
   reset(error: string): void {

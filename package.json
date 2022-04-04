@@ -26,6 +26,7 @@
     "angular-svg-round-progressbar": "^8.0.0",
     "date-fns": "^2.23.0",
     "firebase": "9.6.10",
+    "libphonenumber-js": "^1.9.50",
     "rxfire": "6.0.3",
     "rxjs": "~7.5.5",
     "tslib": "^2.3.0",
