@@ -1,10 +1,10 @@
-import { sendNotification, setVapidDetails } from 'web-push';
+import * as webPush from 'web-push'
 import { Notification } from './notification';
 import { config } from 'firebase-functions';
 
 export async function pushNotification(notification: Notification): Promise<boolean> {
 
-  setVapidDetails(
+  webPush.setVapidDetails(
     'mailto:spam@mrgoro.de',
     config().vapid.keys.public,
     config().vapid.keys.private
@@ -22,7 +22,7 @@ export async function pushNotification(notification: Notification): Promise<bool
     }
   };
 
-  const result = await sendNotification(notification.pushToken, JSON.stringify(notificationPayload));
+  const result = await webPush.sendNotification(notification.pushToken, JSON.stringify(notificationPayload));
 
   return result.statusCode == 200;
 }
