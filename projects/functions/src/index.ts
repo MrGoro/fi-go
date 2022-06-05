@@ -10,12 +10,11 @@ export const startTimeChanged = functions.database.ref('/data/{userId}')
 
     functions.logger.debug('Data Changed: ', userId, before, after);
 
-    if(after === null) {
-      await deleteAllNotifications(userId);
+    await deleteAllNotifications(userId);
 
-    } else if(after && after.startTime) {
+    if(after !== null) {
       const startTimeMillis = after.startTime;
-      if(!isNaN(startTimeMillis)) {
+      if (!isNaN(startTimeMillis)) {
         const startTime = new Date(startTimeMillis);
         const breaks: Break[] = extractBreaks(change.after);
         await scheduleNotifications(userId, startTime, breaks);
