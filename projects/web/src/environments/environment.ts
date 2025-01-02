@@ -15,7 +15,7 @@ export const environment = {
     appId: "1:38612462977:web:911e393a16b59746730c80"
   },
   timer: {
-    timeToWork: {hours: 7, minutes: 48},
+    timeToWork: {hours: 7, minutes: 36},
     pause: {minutes: 30}
   }
 };

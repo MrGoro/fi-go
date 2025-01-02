@@ -16,7 +16,7 @@ import { versions } from '../../environments/versions';
           </ul>
           <table>
             <tr class="header"><td colspan="2">Verwendete Zeiten</td></tr>
-            <tr><td>Arbeitszeit:</td><td>7:48 Stunden</td></tr>
+            <tr><td>Arbeitszeit:</td><td>7:36 Stunden</td></tr>
             <tr><td>Pause:</td><td>30 Minuten nach Ablauf von 6 Stunden</td></tr>
             <tr><td>Warnung:</td><td>vor 10-Stunden-Grenze nach 9:30 Stunden</td></tr>
             <tr class="header"><td colspan="2">Versions-Informationen</td></tr>
