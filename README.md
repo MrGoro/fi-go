@@ -17,7 +17,7 @@ Erreichen der 10-Stunden-Grenze
 
 ## Zeiten
 Folgende Zeiten sind in der Anwendung konfiguriert:
-* Arbeitszeit: 7:48 Stunden
+* Arbeitszeit: 7:36 Stunden
 * Pause: 30 Minuten nach Ablauf von 6 Stunden
 * Manuelle Pausen können hinzugefügt werden
 * Hinweis auf 10-Stunden-Grenze nach 9:30 Stunden

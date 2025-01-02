@@ -12,7 +12,7 @@ const app = admin.initializeApp();
 const db = app.database();
 
 const timeZone = 'Europe/Berlin'
-const timeToWork: Duration = {hours: 7, minutes: 48};
+const timeToWork: Duration = {hours: 7, minutes: 36};
 const defaultPause: Duration = {minutes: 30};
 const tenHours: Duration = {hours: 10};
 
