@@ -96,7 +96,7 @@ export class DisplayComponent implements OnInit, OnDestroy {
     // Neuen Kreis bis 10 Stunden zeigen, wenn Arbeitszeit erfüllt
     if (!this.outBalance.negative) {
       this.progressCurrent = durationToMillis(this.outBalance);
-      this.progressMax = durationToMillis({hours: 2, minutes: 12});
+      this.progressMax = durationToMillis({hours: 2, minutes: 24});
     }
   }
 
