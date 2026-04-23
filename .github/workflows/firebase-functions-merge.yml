@@ -4,25 +4,31 @@ on:
     branches:
       - master
     paths:
+      - 'projects/shared/**'
       - 'projects/functions/**'
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '22'
           cache: 'npm'
-          cache-dependency-path: projects/functions/package-lock.json
       - name: Install dependencies
-        run: |
-          cd projects/functions
-          npm ci
-      - name: Deploy to Firebase Functions
-        uses: w9jds/firebase-action@master
+        run: npm ci
+      - name: Build Shared
+        run: npm run shared:build
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          args: deploy --only functions
-        env:
-          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Deploy to Firebase Functions
+        run: firebase deploy --only functions
+
+

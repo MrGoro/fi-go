@@ -1,0 +1,171 @@
+import { useEffect, useState } from 'react';
+import { ref, onValue, set, push, remove } from 'firebase/database';
+import { db } from '../config/firebase';
+import { useAuth } from './useAuth';
+import { isToday } from 'date-fns';
+import { resetWorkSession } from '../lib/firebase-actions';
+import { useToast } from './use-toast';
+import type { BreakRecord } from '@figo/shared';
+
+export interface FirebaseBreakRecord extends BreakRecord {
+  id: string;
+}
+
+export interface SessionData {
+  startTime: Date | null;
+  breaks: FirebaseBreakRecord[];
+  loading: boolean;
+}
+
+export function useSessionData() {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [data, setData] = useState<SessionData>({
+    startTime: null,
+    breaks: [],
+    loading: true
+  });
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    // Reset state and ensure loading is true when we start fetching for a new user
+    setData({
+      startTime: null,
+      breaks: [],
+      loading: true
+    });
+
+    // Listen to the parent node for atomic updates
+    const sessionRef = ref(db, `data/${user.uid}`);
+    const unsubscribe = onValue(
+      sessionRef, 
+      (snapshot) => {
+        const val = snapshot.val();
+        
+        let startTime: Date | null = null;
+        let breaks: FirebaseBreakRecord[] = [];
+
+        if (val) {
+          // Parse Start Time
+          if (val.startTime) {
+            const date = new Date(val.startTime);
+            if (!isToday(date)) {
+              // Auto-reset if it's an old session
+              resetWorkSession(user.uid).catch((error) => {
+                console.error('Auto-reset failed:', error);
+                toast({
+                  title: 'Fehler beim Zurücksetzen',
+                  description: 'Der gestrige Arbeitstag konnte nicht zurückgesetzt werden.',
+                  variant: 'destructive'
+                });
+              });
+              startTime = null;
+              breaks = [];
+            } else {
+              startTime = date;
+            }
+          }
+
+          // Parse Breaks
+          if (val.breaks && startTime) {
+            breaks = Object.keys(val.breaks).map(key => ({
+              id: key,
+              start: new Date(val.breaks[key].start),
+              end: new Date(val.breaks[key].end)
+            }));
+          }
+        }
+
+        setData({
+          startTime,
+          breaks,
+          loading: false
+        });
+      },
+      (error) => {
+        console.error('Session listener error:', error);
+        toast({
+          title: 'Verbindungsfehler',
+          description: 'Deine Daten konnten nicht geladen werden.',
+          variant: 'destructive'
+        });
+        setData(prev => ({ ...prev, loading: false }));
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, toast]);
+
+  const clockIn = async (date: Date = new Date()) => {
+    if (!user) return;
+    try {
+      const startRef = ref(db, `data/${user.uid}/startTime`);
+      await set(startRef, date.getTime());
+    } catch (error) {
+      console.error('Clock in error:', error);
+      toast({
+        title: 'Fehler beim Einstempeln',
+        description: 'Bitte versuche es erneut.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const clockOut = async () => {
+    if (!user) return;
+    try {
+      await resetWorkSession(user.uid);
+    } catch (error) {
+      console.error('Clock out error:', error);
+      toast({
+        title: 'Fehler beim Ausstempeln',
+        description: 'Der Arbeitstag konnte nicht beendet werden.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const addBreak = async (start: Date, end: Date) => {
+    if (!user) return;
+    try {
+      const breaksRef = ref(db, `data/${user.uid}/breaks`);
+      await push(breaksRef, {
+        start: start.getTime(),
+        end: end.getTime()
+      });
+    } catch (error) {
+      console.error('Add break error:', error);
+      toast({
+        title: 'Fehler beim Speichern',
+        description: 'Die Pause konnte nicht gespeichert werden.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const removeBreak = async (id: string) => {
+    if (!user) return;
+    try {
+      const breakRef = ref(db, `data/${user.uid}/breaks/${id}`);
+      await remove(breakRef);
+    } catch (error) {
+      console.error('Remove break error:', error);
+      toast({
+        title: 'Fehler beim Löschen',
+        description: 'Die Pause konnte nicht gelöscht werden.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  return { 
+    ...data, 
+    clockIn, 
+    clockOut, 
+    addBreak, 
+    removeBreak 
+  };
+}
