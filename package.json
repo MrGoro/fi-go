@@ -1,48 +1,22 @@
 {
   "name": "fi-go",
-  "version": "3.1.1",
   "private": true,
+  "version": "4.0.0",
+  "workspaces": [
+    "projects/*"
+  ],
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "start-ip": "ng serve --host 0.0.0.0",
-    "prebuild": "ts-node -O '{\"module\": \"commonjs\"}' projects/web/git-version.ts",
-    "build": "ng build",
-    "bundle-report": "ng build --stats-json && webpack-bundle-analyzer dist/web/stats.json"
-  },
-  "dependencies": {
-    "@angular/animations": "^14.0.1",
-    "@angular/cdk": "^14.0.1",
-    "@angular/common": "^14.0.1",
-    "@angular/compiler": "^14.0.1",
-    "@angular/core": "^14.0.1",
-    "@angular/fire": "^7.4.1",
-    "@angular/forms": "^14.0.1",
-    "@angular/material": "^14.0.1",
-    "@angular/platform-browser": "^14.0.1",
-    "@angular/platform-browser-dynamic": "^14.0.1",
-    "@angular/router": "^14.0.1",
-    "@angular/service-worker": "^14.0.1",
-    "angular-svg-round-progressbar": "^9.0.0",
-    "date-fns": "^2.23.0",
-    "firebase": "9.8.2",
-    "libphonenumber-js": "^1.9.50",
-    "rxfire": "6.0.3",
-    "rxjs": "~7.5.5",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.11.4"
+    "shared:build": "npm run build -w @figo/shared",
+    "dev": "npm run build -w @figo/shared && npm run dev -w web",
+    "build": "npm run build -w @figo/shared && npm run build -w web",
+    "lint": "npm run lint -w web",
+    "preview": "npm run preview -w web",
+    "functions:build": "npm run build -w @figo/shared && npm run build -w functions",
+    "functions:deploy": "npm run build -w @figo/shared && npm run deploy -w functions"
   },
   "devDependencies": {
-    "@angular-devkit/architect": "^0.1400.1",
-    "@angular-devkit/build-angular": "^14.0.1",
-    "@angular/cli": "^14.0.1",
-    "@angular/compiler-cli": "^14.0.1",
-    "@types/node": "^17.0.41",
-    "firebase-tools": "^11.0.1",
-    "jsonc-parser": "^3.0.0",
-    "open": "^8.4.0",
-    "ts-node": "^10.2.1",
-    "typescript": "~4.6.3",
-    "webpack-bundle-analyzer": "^4.5.0"
+    "@babel/core": "^7.26.0",
+    "vite": "^8.0.9",
+    "typescript": "^5.7.2"
   }
 }

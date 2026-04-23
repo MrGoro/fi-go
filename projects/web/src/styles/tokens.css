@@ -1,0 +1,233 @@
+/* =============================================================================
+   Design Tokens — fi-go
+   Primärfarbe: #E5173F ≈ oklch(0.59 0.23 22°) / hsl(348 82% 49%)
+   ============================================================================= */
+
+@theme {
+
+  /* ---------------------------------------------------------------------------
+     COLORS — oklch für perceptuelle Gleichmäßigkeit
+     11 Abstufungen pro Palette (50 – 950).
+     Utilities: bg-primary-500, text-error-700, border-success-300, …
+
+     Flat-Tokens ohne Suffix (bg-primary, bg-background, …) werden in
+     index.css via hsl(var(--…)) gehalten und sind separat — kein Konflikt.
+     --------------------------------------------------------------------------- */
+
+  /* Primary — Crimson Rot (22° Hue) — Markenfarbe #E5173F */
+  --color-primary-50:  oklch(0.975 0.012 22);
+  --color-primary-100: oklch(0.940 0.035 22);
+  --color-primary-200: oklch(0.880 0.075 22);
+  --color-primary-300: oklch(0.795 0.135 22);
+  --color-primary-400: oklch(0.695 0.195 22);
+  --color-primary-500: oklch(0.590 0.228 22);   /* ≈ #E5173F */
+  --color-primary-600: oklch(0.510 0.230 22);
+  --color-primary-700: oklch(0.430 0.210 22);
+  --color-primary-800: oklch(0.350 0.165 22);
+  --color-primary-900: oklch(0.265 0.115 22);
+  --color-primary-950: oklch(0.190 0.075 22);
+
+  /* Neutral — kühles Grau (264° Hue, minimale Chroma) */
+  --color-neutral-50:  oklch(0.985 0.002 264);
+  --color-neutral-100: oklch(0.962 0.005 264);
+  --color-neutral-200: oklch(0.925 0.008 264);
+  --color-neutral-300: oklch(0.869 0.011 264);
+  --color-neutral-400: oklch(0.768 0.013 264);
+  --color-neutral-500: oklch(0.638 0.015 264);
+  --color-neutral-600: oklch(0.525 0.013 264);
+  --color-neutral-700: oklch(0.415 0.010 264);
+  --color-neutral-800: oklch(0.310 0.008 264);
+  --color-neutral-900: oklch(0.215 0.005 264);
+  --color-neutral-950: oklch(0.145 0.003 264);
+
+  /* Surface — Warm-neutral (20° Hue, niedrige Chroma) — Karten, Panels */
+  --color-surface-50:  oklch(0.993 0.002 20);
+  --color-surface-100: oklch(0.975 0.005 20);
+  --color-surface-200: oklch(0.948 0.009 20);
+  --color-surface-300: oklch(0.905 0.014 20);
+  --color-surface-400: oklch(0.840 0.018 20);
+  --color-surface-500: oklch(0.755 0.020 20);
+  --color-surface-600: oklch(0.635 0.018 20);
+  --color-surface-700: oklch(0.510 0.015 20);
+  --color-surface-800: oklch(0.385 0.011 20);
+  --color-surface-900: oklch(0.275 0.007 20);
+  --color-surface-950: oklch(0.188 0.005 20);
+
+  /* Background — seidig-weiß mit minimalem Warm-Ton */
+  --color-background-50:  oklch(0.998 0.001 20);
+  --color-background-100: oklch(0.980 0.003 20);
+  --color-background-200: oklch(0.955 0.006 20);
+
+  /* Success — Smaragd (162° Hue) */
+  --color-success-50:  oklch(0.972 0.022 162);
+  --color-success-100: oklch(0.940 0.054 162);
+  --color-success-200: oklch(0.889 0.097 162);
+  --color-success-300: oklch(0.812 0.143 162);
+  --color-success-400: oklch(0.720 0.177 162);
+  --color-success-500: oklch(0.624 0.188 162);
+  --color-success-600: oklch(0.527 0.170 162);
+  --color-success-700: oklch(0.433 0.144 162);
+  --color-success-800: oklch(0.350 0.112 162);
+  --color-success-900: oklch(0.272 0.078 162);
+  --color-success-950: oklch(0.192 0.051 162);
+
+  /* Warning — Amber (80° Hue) */
+  --color-warning-50:  oklch(0.987 0.020 80);
+  --color-warning-100: oklch(0.960 0.055 80);
+  --color-warning-200: oklch(0.920 0.110 80);
+  --color-warning-300: oklch(0.860 0.165 80);
+  --color-warning-400: oklch(0.790 0.193 80);
+  --color-warning-500: oklch(0.720 0.198 80);
+  --color-warning-600: oklch(0.640 0.180 80);
+  --color-warning-700: oklch(0.545 0.155 80);
+  --color-warning-800: oklch(0.440 0.120 80);
+  --color-warning-900: oklch(0.340 0.085 80);
+  --color-warning-950: oklch(0.245 0.057 80);
+
+  /* Error — Reines Rot (0° Hue) — klar von Primary (348°) getrennt */
+  --color-error-50:  oklch(0.971 0.013 0);
+  --color-error-100: oklch(0.936 0.032 0);
+  --color-error-200: oklch(0.885 0.069 0);
+  --color-error-300: oklch(0.808 0.114 0);
+  --color-error-400: oklch(0.704 0.191 0);
+  --color-error-500: oklch(0.628 0.258 0);
+  --color-error-600: oklch(0.552 0.243 0);
+  --color-error-700: oklch(0.464 0.210 0);
+  --color-error-800: oklch(0.381 0.166 0);
+  --color-error-900: oklch(0.300 0.119 0);
+  --color-error-950: oklch(0.215 0.079 0);
+
+  /* ---------------------------------------------------------------------------
+     TYPOGRAFIE
+     Größen mit Companion-Line-Height (--text-*--line-height).
+     Leading- und Tracking-Tokens für leading-* / tracking-* Utilities.
+     --------------------------------------------------------------------------- */
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+
+  /* Schriftgrößen */
+  --text-2xs:               0.625rem;    /*  10px */
+  --text-2xs--line-height:  0.875rem;    /*  14px */
+  --text-xs:                0.75rem;     /*  12px */
+  --text-xs--line-height:   1rem;        /*  16px */
+  --text-sm:                0.875rem;    /*  14px */
+  --text-sm--line-height:   1.25rem;     /*  20px */
+  --text-base:              1rem;        /*  16px */
+  --text-base--line-height: 1.5rem;      /*  24px */
+  --text-lg:                1.125rem;    /*  18px */
+  --text-lg--line-height:   1.75rem;     /*  28px */
+  --text-xl:                1.25rem;     /*  20px */
+  --text-xl--line-height:   1.75rem;     /*  28px */
+  --text-2xl:               1.5rem;      /*  24px */
+  --text-2xl--line-height:  2rem;        /*  32px */
+  --text-3xl:               1.875rem;    /*  30px */
+  --text-3xl--line-height:  2.25rem;     /*  36px */
+  --text-4xl:               2.25rem;     /*  36px */
+  --text-4xl--line-height:  2.5rem;      /*  40px */
+  --text-5xl:               3rem;        /*  48px */
+  --text-5xl--line-height:  1;
+  --text-6xl:               3.75rem;     /*  60px */
+  --text-6xl--line-height:  1;
+  --text-7xl:               4.5rem;      /*  72px */
+  --text-7xl--line-height:  1;
+
+  /* Schriftgewichte */
+  --font-weight-light:     300;
+  --font-weight-normal:    400;
+  --font-weight-medium:    500;
+  --font-weight-semibold:  600;
+  --font-weight-bold:      700;
+  --font-weight-extrabold: 800;
+
+  /* Zeilenhöhen (standalone für leading-* Utilities) */
+  --leading-none:    1;
+  --leading-tight:   1.25;
+  --leading-snug:    1.375;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.625;
+  --leading-loose:   2;
+
+  /* Buchstabenabstand */
+  --tracking-tighter: -0.05em;
+  --tracking-tight:   -0.025em;
+  --tracking-normal:   0em;
+  --tracking-wide:     0.025em;
+  --tracking-wider:    0.05em;
+  --tracking-widest:   0.1em;
+
+  /* ---------------------------------------------------------------------------
+     SPACING
+     Basis: 0.25rem (4px). Ganzzahlige Vielfache werden von Tailwind v4
+     automatisch via calc(var(--spacing) * n) berechnet.
+     Hier nur Bruch- und Sonderwerte, die außerhalb der Formel liegen.
+     --------------------------------------------------------------------------- */
+
+  --spacing: 0.25rem;
+
+  --spacing-px:  1px;
+  --spacing-0-5: 0.125rem;   /*  2px */
+  --spacing-1-5: 0.375rem;   /*  6px */
+  --spacing-2-5: 0.625rem;   /* 10px */
+  --spacing-3-5: 0.875rem;   /* 14px */
+  --spacing-18:  4.5rem;     /* 72px */
+
+  /* ---------------------------------------------------------------------------
+     BORDER RADIUS
+     --------------------------------------------------------------------------- */
+
+  --radius-none: 0px;
+  --radius-xs:   0.125rem;   /*  2px */
+  --radius-sm:   0.25rem;    /*  4px */
+  --radius-md:   0.375rem;   /*  6px */
+  --radius-lg:   0.5rem;     /*  8px */
+  --radius-xl:   0.75rem;    /* 12px */
+  --radius-2xl:  1rem;       /* 16px */
+  --radius-3xl:  1.5rem;     /* 24px */
+  --radius-full: 9999px;
+
+  /* ---------------------------------------------------------------------------
+     SHADOWS
+     Neutral: oklch-Schwarz. Primary-Tinted: für interaktive Elemente.
+     --------------------------------------------------------------------------- */
+
+  --shadow-xs:
+    0 1px 2px 0 oklch(0 0 0 / 0.05);
+
+  --shadow-sm:
+    0 1px 3px 0 oklch(0 0 0 / 0.10),
+    0 1px 2px -1px oklch(0 0 0 / 0.08);
+
+  --shadow-md:
+    0 4px 6px -1px oklch(0 0 0 / 0.10),
+    0 2px 4px -2px oklch(0 0 0 / 0.08);
+
+  --shadow-lg:
+    0 10px 15px -3px oklch(0 0 0 / 0.10),
+    0 4px 6px -4px oklch(0 0 0 / 0.08);
+
+  --shadow-xl:
+    0 20px 25px -5px oklch(0 0 0 / 0.10),
+    0 8px 10px -6px oklch(0 0 0 / 0.08);
+
+  --shadow-2xl:
+    0 25px 50px -12px oklch(0 0 0 / 0.25);
+
+  --shadow-inner:
+    inset 0 2px 4px 0 oklch(0 0 0 / 0.06);
+
+  --shadow-none: none;
+
+  /* Brand-gefärbte Schatten für Buttons, fokussierte Inputs, Cards */
+  --shadow-primary-sm:
+    0 1px 3px 0 oklch(0.510 0.230 22 / 0.25),
+    0 1px 2px -1px oklch(0.510 0.230 22 / 0.18);
+
+  --shadow-primary-md:
+    0 4px 6px -1px oklch(0.510 0.230 22 / 0.22),
+    0 2px 4px -2px oklch(0.510 0.230 22 / 0.16);
+
+  --shadow-primary-lg:
+    0 10px 15px -3px oklch(0.510 0.230 22 / 0.22),
+    0 4px 6px -4px oklch(0.510 0.230 22 / 0.16);
+}

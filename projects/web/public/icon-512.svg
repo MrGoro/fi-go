@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <filter id="glow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="11" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- iOS-style rounded background (~22% border-radius) -->
+  <rect width="512" height="512" rx="113" fill="#E5173F"/>
+
+  <!-- Track: full 240° arc, white 20% opacity -->
+  <path
+    d="M 107 342 A 172 172 0 1 1 405 342"
+    fill="none"
+    stroke="rgba(255,255,255,0.22)"
+    stroke-width="50"
+    stroke-linecap="round"
+  />
+
+  <!-- Progress arc: ~65% of the ring (156° sweep), full white -->
+  <path
+    d="M 107 342 A 172 172 0 0 1 357 117"
+    fill="none"
+    stroke="white"
+    stroke-width="50"
+    stroke-linecap="round"
+  />
+
+  <!-- Glowing end cap at arc tip -->
+  <circle cx="357" cy="117" r="14" fill="white" filter="url(#glow)"/>
+</svg>

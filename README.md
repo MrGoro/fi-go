@@ -1,29 +1,50 @@
 # fi-go [![Deploy to Firebase Hosting](https://github.com/MrGoro/fi-go/actions/workflows/firebase-hosting-merge.yml/badge.svg)](https://github.com/MrGoro/fi-go/actions/workflows/firebase-hosting-merge.yml)
 
-App: https://fi-go.schuermann.app
+**fi-go** ist eine moderne, hochperformante Progressiv Web App (PWA) zur präzisen Erfassung und Verwaltung von Arbeitszeiten. Entwickelt für maximale Effizienz auf der Firebase-Plattform, bietet fi-go eine nahtlose Synchronisation über alle Endgeräte hinweg – spezialisiert auf die Anforderungen moderner Browser-Technologien inklusive nativer Safari-Push-Benachrichtigungen unter iOS.
 
-Arbeitszeitrechner als Angular-Webapp auf der Firebase-Plattform:
-* Login mit Firebase Auth
-* Datenspeicherung in Firebase Realtime Database
-* Push-Notifications über Firebase Functions & Cloud Messaging
-* Hosting der Anwendung über Firebase Hosting
+**Live App:** [https://fi-go.schuermann.app](https://fi-go.schuermann.app)
 
-## Features
-* Login ohne Passwort per Telefonnummer
-* Synchronisation über alle Geräte
-* Fortschrittsanzeige
-* Push-Notifications kurz vor Ender der Arbeitszeit und vor 
-Erreichen der 10-Stunden-Grenze
+---
 
-## Zeiten
-Folgende Zeiten sind in der Anwendung konfiguriert:
-* Arbeitszeit: 7:36 Stunden
-* Pause: 30 Minuten nach Ablauf von 6 Stunden
-* Manuelle Pausen können hinzugefügt werden
-* Hinweis auf 10-Stunden-Grenze nach 9:30 Stunden
-* Warnung, nachdem 10-Stunden-Grenze überschritten ist
+## 🚀 Moderne Architektur
+Die Anwendung wurde von Grund auf modernisiert und nutzt eine skalierbare Monorepo-Struktur:
 
-## Screenshots
+*   **Frontend**: React mit Vite 8 & Tailwind CSS v4 für ein blitzschnelles und premium UI/UX Erlebnis.
+*   **Shared Logic (`@figo/shared`)**: Zentralisierte Geschäftslogik für Zeit- und Pausenberechnungen, die konsistent von Frontend und Backend genutzt wird.
+*   **Backend**: Firebase Functions (V2) auf Node.js 22 LTS Basis.
+*   **Push-Engine**: Hochpräzises Benachrichtigungs-Scheduling via **Google Cloud Tasks** (sekundengenaue Trigger).
+*   **Realtime-Sync**: Datenspeicherung in der Firebase Realtime Database für sofortige Geräteübergreifende Updates.
+
+## ✨ Features
+*   **Passwordless Login**: Sicherer und einfacher Einstieg per Telefonnummer (Firebase Auth).
+*   **Native Push-Notifications**: Intelligente Reminder kurz vor Feierabend und vor Erreichen der 10-Stunden-Grenze – optimiert für Desktop Safari und iOS PWA.
+*   **Echtzeit-Fortschritt**: Dynamische Anzeige der verbleibenden Arbeitszeit und des Saldos direkt im Browser.
+*   **Pausen-Management**: Automatische Berechnung gesetzlicher Pausenzeiten sowie Unterstützung für manuelle Pausenerfassungen.
+*   **Cross-Device**: Stemple am Desktop ein und verwalte deinen Fortschritt mobil am iPhone – alles in Echtzeit.
+
+## 🕒 Zeitregeln (Default)
+In der Shared-Logik sind aktuell folgende Standardwerte konfiguriert:
+*   **Soll-Arbeitszeit**: 7:36 Stunden.
+*   **Pausenregelung**: 
+    *   30 Minuten nach 6 Stunden Arbeitszeit.
+    *   45 Minuten nach 9 Stunden Arbeitszeit.
+*   **10-Stunden-Warnung**: Proaktive Benachrichtigung vor Erreichen der gesetzlichen Höchstarbeitszeit.
+
+## 🛠 Entwicklung
+fi-go nutzt npm workspaces. Zum lokalen Starten einfach im Root-Verzeichnis:
+
+```bash
+# Abhängigkeiten installieren
+npm install
+
+# Shared Package bauen
+npm run shared:build
+
+# Web App im Dev-Modus starten
+npm run dev
+```
+
+## 📸 Screenshots
 
 ![Login mit Telefonnummer](screens/01-login.png)
 
