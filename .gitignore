@@ -1,40 +1,39 @@
-# compiled output
-/dist
-/projects/shared/dist
-/tmp
-/out-tsc
+# Dependencies
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
 
-# dependencies
-/node_modules
-/projects/functions/node_modules
-/projects/web/node_modules
-/projects/shared/node_modules
+# Next.js / Vite
+.next/
+out/
+build/
+dev-dist/
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+# IDEs
+.idea/
+.vscode/
 *.iml
+*.sublime-*
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-.history/*
-
-# System Files
+# OS
 .DS_Store
 Thumbs.db
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-.env
-dev-dist/
+# TypeScript
+*.tsbuildinfo
+
+# Firebase
+.firebase/
+firebase-debug.log*
+firestore-debug.log*
+pubsub-debug.log*
+ui-debug.log*
 projects/functions/shared/

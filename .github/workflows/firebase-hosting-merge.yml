@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - master
+permissions:
+  contents: read
+  id-token: write
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -29,14 +33,18 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_FIREBASE_VAPID_KEY: ${{ secrets.VITE_FIREBASE_VAPID_KEY }}
-      - name: Deploy to Firebase Hosting
 
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FI_GO_WEB }}'
-          channelId: live
-          projectId: fi-go-web
+          token_format: 'access_token'
+          workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT_HOSTING }}
+          project_id: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+
+      - name: Deploy to Firebase Hosting
+        run: npx firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token "${{ steps.auth.outputs.access_token }}"
         env:
-          FIREBASE_CLI_PREVIEWS: hostingchannels
+          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
 

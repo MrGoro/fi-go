@@ -84,6 +84,7 @@ export default function InputScreen({ onStart, loading: parentLoading }: InputSc
                   'px-4 pr-11 text-center text-2xl tracking-[0.08em] font-mono outline-none',
                   'shadow-[0_2px_10px_rgba(0,0,0,0.07)]',
                   'transition-all duration-150',
+                  'appearance-none',
                   'focus:border-[rgba(229,23,63,0.4)] focus:ring-3 focus:ring-primary/10 focus:bg-white',
                   'dark:bg-neutral-900 dark:border-neutral-800 dark:focus:bg-neutral-950',
                   '[&::-webkit-calendar-picker-indicator]:hidden',
