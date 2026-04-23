@@ -9,6 +9,7 @@ import DisplayScreen from './components/features/timer/DisplayScreen';
 import BreaksDrawer from './components/features/breaks/BreaksDrawer';
 import LoginView from './components/features/auth/LoginView';
 import { Button } from './components/ui/button';
+import { Surface } from './components/ui/surface';
 import { LogOut } from 'lucide-react';
 
 export default function App() {
@@ -46,7 +47,7 @@ export default function App() {
   }
 
   const bottomBar = (
-    <div className="flex justify-around items-center w-full py-3 px-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-[rgba(229,23,63,0.1)]">
+    <Surface variant="bar" className="flex justify-around items-center w-full py-3 px-4">
       <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} />
       <Button
         variant="ghost"
@@ -56,7 +57,7 @@ export default function App() {
         <LogOut className="h-6 w-6" />
         <span className="text-[10px] font-medium uppercase tracking-wider">Feierabend</span>
       </Button>
-    </div>
+    </Surface>
   );
 
   const desktopActions = (

@@ -1,12 +1,35 @@
 import { useState, useEffect } from 'react';
-import { 
-  onAuthStateChanged, 
-  signOut, 
-  signInWithPhoneNumber, 
-  RecaptchaVerifier 
+import {
+  onAuthStateChanged,
+  signOut,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
 } from 'firebase/auth';
 import type { User, ConfirmationResult } from 'firebase/auth';
 import { auth } from '../config/firebase';
+
+function clearRecaptcha() {
+  if (window.recaptchaVerifier) {
+    window.recaptchaVerifier.clear();
+    window.recaptchaVerifier = undefined;
+  }
+}
+
+function initRecaptcha(containerId: string) {
+  if (window.recaptchaVerifier) return window.recaptchaVerifier;
+
+  window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
+    size: 'invisible',
+    callback: () => {
+      // reCAPTCHA solved - will proceed with submit
+    },
+    'expired-callback': () => {
+      // Response expired. Ask user to solve reCAPTCHA again.
+    },
+  });
+
+  return window.recaptchaVerifier;
+}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -21,22 +44,6 @@ export function useAuth() {
     return () => unsubscribe();
   }, []);
 
-  const initRecaptcha = (containerId: string) => {
-    if (window.recaptchaVerifier) return window.recaptchaVerifier;
-
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-      size: 'invisible',
-      callback: () => {
-        // reCAPTCHA solved - will proceed with submit
-      },
-      'expired-callback': () => {
-        // Response expired. Ask user to solve reCAPTCHA again.
-      }
-    });
-
-    return window.recaptchaVerifier;
-  };
-
   const requestOtp = async (phoneNumber: string, containerId: string) => {
     try {
       const verifier = initRecaptcha(containerId);
@@ -46,10 +53,7 @@ export function useAuth() {
     } catch (error) {
       console.error('Error requesting OTP:', error);
       // Reset recaptcha if it fails so it can be re-initialized
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = undefined;
-      }
+      clearRecaptcha();
       throw error;
     }
   };
@@ -59,10 +63,7 @@ export function useAuth() {
     try {
       await confirmationResult.confirm(code);
       setConfirmationResult(null);
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = undefined;
-      }
+      clearRecaptcha();
       return true;
     } catch (error) {
       console.error('Error verifying OTP:', error);
@@ -73,22 +74,19 @@ export function useAuth() {
   const logout = async () => {
     try {
       await signOut(auth);
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-        window.recaptchaVerifier = undefined;
-      }
+      clearRecaptcha();
     } catch (error) {
       console.error('Error during logout:', error);
     }
   };
 
-  return { 
-    user, 
-    loading, 
-    requestOtp, 
-    verifyOtp, 
+  return {
+    user,
+    loading,
+    requestOtp,
+    verifyOtp,
     logout,
-    hasSentOtp: !!confirmationResult 
+    hasSentOtp: !!confirmationResult,
   };
 }
 
