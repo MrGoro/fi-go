@@ -17,7 +17,7 @@ interface BreaksAddFormProps {
 export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) {
   const [startStr, setStartStr] = useState('');
   const [endStr, setEndStr] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const isOrderInvalid = !!(startStr && endStr && parseToTodayDate(endStr) <= parseToTodayDate(startStr));
   const isBeforeStart  = !!(startStr && parseToTodayDate(startStr) < startTime);
@@ -31,9 +31,9 @@ export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) 
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (isInvalid || submitting) return;
+    if (isInvalid || loading) return;
 
-    setSubmitting(true);
+    setLoading(true);
     try {
       await onAdd(parseToTodayDate(startStr), parseToTodayDate(endStr));
       setStartStr('');
@@ -41,7 +41,7 @@ export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) 
     } catch (error) {
       console.error('Add break error:', error);
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -81,7 +81,7 @@ export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) 
         <SubmitButton
           type="submit"
           disabled={isInvalid}
-          loading={submitting}
+          loading={loading}
           className="h-12"
         >
           <Plus className="h-5 w-5" />
