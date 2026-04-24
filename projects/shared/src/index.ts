@@ -1,37 +1,20 @@
 import { differenceInMilliseconds } from 'date-fns';
+import {
+  WORK_TIME_TARGET_MINUTES,
+  BREAK_RULE_1_THRESHOLD_MINUTES,
+  BREAK_RULE_1_REQUIRED_MINUTES,
+  BREAK_RULE_2_THRESHOLD_MINUTES,
+  BREAK_RULE_2_REQUIRED_MINUTES,
+} from './constants';
+import type {
+  TimeDuration,
+  BreakRecord,
+  LegalPauseStatus,
+  LegalPauseZone,
+} from './types';
 
-export const WORK_TIME_TARGET_MINUTES = 7 * 60 + 36; // 456 — daily target work time (Soll)
-
-export const BREAK_RULE_1_THRESHOLD_MINUTES = 6 * 60; // 360
-export const BREAK_RULE_1_REQUIRED_MINUTES  = 30;     // legal break duration once threshold 1 is reached
-
-export const BREAK_RULE_2_THRESHOLD_MINUTES = 9 * 60; // 540
-export const BREAK_RULE_2_REQUIRED_MINUTES  = 45;     // legal break duration once threshold 2 is reached
-
-export const MAX_WORK_LIMIT_MINUTES = 10 * 60; // 600
-
-// Workday-status thresholds. Used to choose contextual messages.
-export const WORKDAY_TEN_HOUR_URGENT_MINUTES = 10;  // ≤ this min to 10h → urgent
-export const WORKDAY_TEN_HOUR_WARN_MINUTES   = 30;  // ≤ this min to 10h → warning
-export const WORKDAY_PAUSE_URGENT_MINUTES    = 5;   // next pause in ≤ this → urgent
-export const WORKDAY_PAUSE_WARN_MINUTES      = 15;  // next pause in ≤ this → warning
-export const WORKDAY_PAUSE_TIP_MINUTES       = 30;  // next pause in ≤ this → info nudge
-export const WORKDAY_FEIERABEND_NOW_MINUTES  = 5;   // ≤ this to Feierabend → success
-export const WORKDAY_FEIERABEND_NEAR_MINUTES = 15;  // ≤ this to Feierabend → info
-export const WORKDAY_SOLL_REACHED_MINUTES    = 5;   // overtime ∈ [0, this] → success "Soll geschafft"
-export const WORKDAY_OVERTIME_STRONG_MINUTES = 60;  // overtime > this → success
-
-export interface TimeDuration {
-  hours: number;
-  minutes: number;
-  seconds: number;
-  negative: boolean;
-}
-
-export interface BreakRecord {
-  start: Date;
-  end: Date;
-}
+export * from './constants';
+export * from './types';
 
 // Gross work time in milliseconds
 export function calculateGrossWorkTimeMillis(startTime: Date, now: Date): number {
@@ -48,22 +31,22 @@ export function calculateLegalMinimumBreakMinutes(grossWorkMinutes: number): num
   if (grossWorkMinutes <= BREAK_RULE_1_THRESHOLD_MINUTES) {
     return 0; // Under 6 hours: no mandatory break
   }
-  
+
   if (grossWorkMinutes <= BREAK_RULE_1_THRESHOLD_MINUTES + BREAK_RULE_1_REQUIRED_MINUTES) {
     // Sliding scale from 6 to 6:30
     return grossWorkMinutes - BREAK_RULE_1_THRESHOLD_MINUTES;
   }
-  
+
   if (grossWorkMinutes <= BREAK_RULE_2_THRESHOLD_MINUTES) {
     // Between 6:30 and 9:00
     return BREAK_RULE_1_REQUIRED_MINUTES; // 30 mins
   }
-  
+
   if (grossWorkMinutes <= BREAK_RULE_2_THRESHOLD_MINUTES + (BREAK_RULE_2_REQUIRED_MINUTES - BREAK_RULE_1_REQUIRED_MINUTES)) {
     // Sliding scale from 9:00 to 9:15
     return BREAK_RULE_1_REQUIRED_MINUTES + (grossWorkMinutes - BREAK_RULE_2_THRESHOLD_MINUTES);
   }
-  
+
   // Over 9:15
   return BREAK_RULE_2_REQUIRED_MINUTES; // 45 mins
 }
@@ -92,28 +75,6 @@ export function calculateNetWorkTimeMinutes(grossWorkMinutes: number, appliedBre
 // Get Saldo
 export function calculateSaldoMinutes(netWorkMinutes: number): number {
   return netWorkMinutes - WORK_TIME_TARGET_MINUTES;
-}
-
-export interface LegalPauseStatus {
-  /** True while a legal pause is actively being deducted. */
-  isRunning: boolean;
-  /** Gross-work-minutes remaining until the active zone ends. 0 when not running. */
-  minsRemaining: number;
-  /** Gross-work-minutes until the next legal deduction zone starts. null if none pending. */
-  nextPauseIn: number | null;
-  /** Net minutes that will be deducted when the next zone completes. null when nextPauseIn is null. */
-  nextPauseDeduction: number | null;
-}
-
-export interface LegalPauseZone {
-  /** Gross-work-minute where this zone starts (e.g. 360 for the 6h zone). */
-  startMin: number;
-  /** Gross-work-minute where this zone ends (start + tier required minutes). */
-  endMin: number;
-  /** Minutes the zone would still deduct after manual coverage — render as hint. */
-  potentialMin: number;
-  /** Minutes already deducted at the current grossWorkMinutes — render as active. */
-  activeMin: number;
 }
 
 interface PauseTier {
