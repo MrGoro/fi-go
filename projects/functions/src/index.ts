@@ -20,6 +20,11 @@ interface PushPayload {
   breaksDurationMinutes: number;
 }
 
+interface FcmToken {
+  token: string;
+  lastSeen: number;
+}
+
 export const onSessionDataWritten = onValueWritten({
   ref: '/data/{userId}',
   region: FUNCTIONS_REGION,
@@ -120,8 +125,8 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
     // Passed verification, calculate user specific timezone/time string if needed
     // Fetch FCM tokens
     const tokensSnap = await admin.database().ref(`/users/${payload.userId}/fcmTokens`).once('value');
-    const tokensData = tokensSnap.val();
-    
+    const tokensData = tokensSnap.val() as Record<string, FcmToken> | null;
+
     if (!tokensData) {
       logger.info(`Task aborted: No FCM Tokens found for user ${payload.userId}`);
       return;
@@ -131,7 +136,7 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
 
     // Filter active tokens (lastSeen within STALE_TOKEN_AGE_MS)
     const activeTokens = Object.entries(tokensData)
-      .map(([key, value]: [string, any]) => ({ key, ...value }))
+      .map(([key, value]) => ({ key, ...value }))
       .filter(t => (now - t.lastSeen) < STALE_TOKEN_AGE_MS);
 
     if (activeTokens.length === 0) {
@@ -190,21 +195,19 @@ export const cleanupStaleTokens = onSchedule('0 0 * * *', async () => {
 
 
   const usersSnap = await admin.database().ref('/users').once('value');
-  const users = usersSnap.val();
-  
+  const users = usersSnap.val() as Record<string, { fcmTokens?: Record<string, FcmToken> }> | null;
+
   if (!users) return;
 
   const updates: Record<string, null> = {};
   let cleanupCount = 0;
 
-  for (const userId of Object.keys(users)) {
-    const tokens = users[userId].fcmTokens;
-    if (tokens) {
-      for (const tokenKey of Object.keys(tokens)) {
-        if (tokens[tokenKey].lastSeen < cutoff) {
-          updates[`/users/${userId}/fcmTokens/${tokenKey}`] = null;
-          cleanupCount++;
-        }
+  for (const [userId, user] of Object.entries(users)) {
+    if (!user.fcmTokens) continue;
+    for (const [tokenKey, token] of Object.entries(user.fcmTokens)) {
+      if (token.lastSeen < cutoff) {
+        updates[`/users/${userId}/fcmTokens/${tokenKey}`] = null;
+        cleanupCount++;
       }
     }
   }
