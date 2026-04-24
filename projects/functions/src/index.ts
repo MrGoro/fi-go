@@ -25,6 +25,16 @@ interface FcmToken {
   lastSeen: number;
 }
 
+type RtdbBreak = { start: number; end: number };
+
+function parseBreaksFromRtdb(rtdbBreaks: Record<string, RtdbBreak> | null | undefined): BreakRecord[] {
+  if (!rtdbBreaks) return [];
+  return Object.values(rtdbBreaks).map(b => ({
+    start: new Date(b.start),
+    end:   new Date(b.end),
+  }));
+}
+
 export const onSessionDataWritten = onValueWritten({
   ref: '/data/{userId}',
   region: FUNCTIONS_REGION,
@@ -40,17 +50,7 @@ export const onSessionDataWritten = onValueWritten({
   }
 
   const startTimeMillis = data.startTime;
-  // Extract Breaks
-  const breaks: BreakRecord[] = [];
-  if (data.breaks) {
-    for (const key of Object.keys(data.breaks)) {
-      breaks.push({
-        start: new Date(data.breaks[key].start),
-        end: new Date(data.breaks[key].end)
-      });
-    }
-  }
-
+  const breaks          = parseBreaksFromRtdb(data.breaks);
   const manualBreaksMinutes = calculateManualBreaksMinutes(breaks);
   const projectedBreakMinutesTarget = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMinutes);
   const projectedBreakMinutesLimit  = calculateAppliedBreakMinutes(MAX_WORK_LIMIT_MINUTES,  manualBreaksMinutes);
@@ -106,16 +106,7 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
-    const breaks: BreakRecord[] = [];
-    if (data.breaks) {
-      for (const key of Object.keys(data.breaks)) {
-        breaks.push({
-          start: new Date(data.breaks[key].start),
-          end: new Date(data.breaks[key].end)
-        });
-      }
-    }
-
+    const breaks = parseBreaksFromRtdb(data.breaks);
     const currentManualBreaksMinutes = calculateManualBreaksMinutes(breaks);
     if (currentManualBreaksMinutes !== payload.breaksDurationMinutes) {
       logger.info(`Task aborted: Breaks duration changed. Task was for ${payload.breaksDurationMinutes}m, now ${currentManualBreaksMinutes}m. A newer task should be queued.`);
