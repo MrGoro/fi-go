@@ -3,23 +3,23 @@ import { differenceInMilliseconds } from 'date-fns';
 export const WORK_TIME_TARGET_MINUTES = 7 * 60 + 36; // 456 — daily target work time (Soll)
 
 export const BREAK_RULE_1_THRESHOLD_MINUTES = 6 * 60; // 360
-export const BREAK_RULE_1_MIN_BREAK_MINUTES = 30;
+export const BREAK_RULE_1_REQUIRED_MINUTES  = 30;     // legal break duration once threshold 1 is reached
 
 export const BREAK_RULE_2_THRESHOLD_MINUTES = 9 * 60; // 540
-export const BREAK_RULE_2_MIN_BREAK_MINUTES = 45;
+export const BREAK_RULE_2_REQUIRED_MINUTES  = 45;     // legal break duration once threshold 2 is reached
 
 export const MAX_WORK_LIMIT_MINUTES = 10 * 60; // 600
 
-// Workday-status thresholds (minutes). Used to choose contextual messages.
-export const WORKDAY_TEN_HOUR_URGENT_MIN = 10;  // ≤ this min to 10h → urgent
-export const WORKDAY_TEN_HOUR_WARN_MIN   = 30;  // ≤ this min to 10h → warning
-export const WORKDAY_PAUSE_URGENT_MIN    = 5;   // next pause in ≤ this → urgent
-export const WORKDAY_PAUSE_WARN_MIN      = 15;  // next pause in ≤ this → warning
-export const WORKDAY_FEIERABEND_NOW_MIN  = 5;   // ≤ this to Feierabend → success
-export const WORKDAY_FEIERABEND_NEAR_MIN = 15;  // ≤ this to Feierabend → info
-export const WORKDAY_SOLL_REACHED_MIN    = 5;   // overtime ∈ [0, this] → success "Soll geschafft"
-export const WORKDAY_OVERTIME_STRONG_MIN = 60;  // overtime > this → success
-export const WORKDAY_PAUSE_TIP_MIN       = 30;  // next pause in ≤ this → info nudge
+// Workday-status thresholds. Used to choose contextual messages.
+export const WORKDAY_TEN_HOUR_URGENT_MINUTES = 10;  // ≤ this min to 10h → urgent
+export const WORKDAY_TEN_HOUR_WARN_MINUTES   = 30;  // ≤ this min to 10h → warning
+export const WORKDAY_PAUSE_URGENT_MINUTES    = 5;   // next pause in ≤ this → urgent
+export const WORKDAY_PAUSE_WARN_MINUTES      = 15;  // next pause in ≤ this → warning
+export const WORKDAY_PAUSE_TIP_MINUTES       = 30;  // next pause in ≤ this → info nudge
+export const WORKDAY_FEIERABEND_NOW_MINUTES  = 5;   // ≤ this to Feierabend → success
+export const WORKDAY_FEIERABEND_NEAR_MINUTES = 15;  // ≤ this to Feierabend → info
+export const WORKDAY_SOLL_REACHED_MINUTES    = 5;   // overtime ∈ [0, this] → success "Soll geschafft"
+export const WORKDAY_OVERTIME_STRONG_MINUTES = 60;  // overtime > this → success
 
 export interface TimeDuration {
   hours: number;
@@ -49,23 +49,23 @@ export function calculateLegalMinimumBreakMinutes(grossWorkMinutes: number): num
     return 0; // Under 6 hours: no mandatory break
   }
   
-  if (grossWorkMinutes <= BREAK_RULE_1_THRESHOLD_MINUTES + BREAK_RULE_1_MIN_BREAK_MINUTES) {
+  if (grossWorkMinutes <= BREAK_RULE_1_THRESHOLD_MINUTES + BREAK_RULE_1_REQUIRED_MINUTES) {
     // Sliding scale from 6 to 6:30
     return grossWorkMinutes - BREAK_RULE_1_THRESHOLD_MINUTES;
   }
   
   if (grossWorkMinutes <= BREAK_RULE_2_THRESHOLD_MINUTES) {
     // Between 6:30 and 9:00
-    return BREAK_RULE_1_MIN_BREAK_MINUTES; // 30 mins
+    return BREAK_RULE_1_REQUIRED_MINUTES; // 30 mins
   }
   
-  if (grossWorkMinutes <= BREAK_RULE_2_THRESHOLD_MINUTES + (BREAK_RULE_2_MIN_BREAK_MINUTES - BREAK_RULE_1_MIN_BREAK_MINUTES)) {
+  if (grossWorkMinutes <= BREAK_RULE_2_THRESHOLD_MINUTES + (BREAK_RULE_2_REQUIRED_MINUTES - BREAK_RULE_1_REQUIRED_MINUTES)) {
     // Sliding scale from 9:00 to 9:15
-    return BREAK_RULE_1_MIN_BREAK_MINUTES + (grossWorkMinutes - BREAK_RULE_2_THRESHOLD_MINUTES);
+    return BREAK_RULE_1_REQUIRED_MINUTES + (grossWorkMinutes - BREAK_RULE_2_THRESHOLD_MINUTES);
   }
   
   // Over 9:15
-  return BREAK_RULE_2_MIN_BREAK_MINUTES; // 45 mins
+  return BREAK_RULE_2_REQUIRED_MINUTES; // 45 mins
 }
 
 // Calculate the total manual breaks from a list of BreakRecords
@@ -127,8 +127,8 @@ interface PauseTier {
 }
 
 function buildPauseTiers(grossWorkMinutes: number, manualBreaksMinutes: number): PauseTier[] {
-  const z1Required = BREAK_RULE_1_MIN_BREAK_MINUTES;                                  // 30
-  const z2Required = BREAK_RULE_2_MIN_BREAK_MINUTES - BREAK_RULE_1_MIN_BREAK_MINUTES; // 15
+  const z1Required = BREAK_RULE_1_REQUIRED_MINUTES;                                  // 30
+  const z2Required = BREAK_RULE_2_REQUIRED_MINUTES - BREAK_RULE_1_REQUIRED_MINUTES; // 15
   const tierSpecs = [
     { startMin: BREAK_RULE_1_THRESHOLD_MINUTES, requiredMin: z1Required, manualOffset: 0 },
     { startMin: BREAK_RULE_2_THRESHOLD_MINUTES, requiredMin: z2Required, manualOffset: z1Required },

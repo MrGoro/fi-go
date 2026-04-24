@@ -3,9 +3,9 @@ import { Eyebrow } from '@/components/ui/eyebrow';
 import {
   WORK_TIME_TARGET_MINUTES,
   BREAK_RULE_1_THRESHOLD_MINUTES,
-  BREAK_RULE_1_MIN_BREAK_MINUTES,
+  BREAK_RULE_1_REQUIRED_MINUTES,
   BREAK_RULE_2_THRESHOLD_MINUTES,
-  BREAK_RULE_2_MIN_BREAK_MINUTES,
+  BREAK_RULE_2_REQUIRED_MINUTES,
   MAX_WORK_LIMIT_MINUTES,
 } from '@figo/shared';
 
@@ -54,12 +54,12 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
 
             <span>Pause 1:</span>
             <span className="font-medium text-foreground">
-              {BREAK_RULE_1_MIN_BREAK_MINUTES} Min (nach {BREAK_RULE_1_THRESHOLD_MINUTES / 60}h)
+              {BREAK_RULE_1_REQUIRED_MINUTES} Min (nach {BREAK_RULE_1_THRESHOLD_MINUTES / 60}h)
             </span>
 
             <span>Pause 2:</span>
             <span className="font-medium text-foreground">
-              {BREAK_RULE_2_MIN_BREAK_MINUTES} Min (nach {BREAK_RULE_2_THRESHOLD_MINUTES / 60}h)
+              {BREAK_RULE_2_REQUIRED_MINUTES} Min (nach {BREAK_RULE_2_THRESHOLD_MINUTES / 60}h)
             </span>
 
             <span>Warnung:</span>
