@@ -101,41 +101,84 @@ export interface LegalPauseStatus {
   nextPauseDeduction: number | null;
 }
 
+export interface LegalPauseZone {
+  /** Gross-work-minute where this zone starts (e.g. 360 for the 6h zone). */
+  startMin: number;
+  /** Gross-work-minute where this zone ends (start + tier required minutes). */
+  endMin: number;
+  /** Minutes the zone would still deduct after manual coverage — render as hint. */
+  potentialMin: number;
+  /** Minutes already deducted at the current grossWorkMinutes — render as active. */
+  activeMin: number;
+}
+
+interface PauseTier {
+  startMin: number;
+  endMin: number;
+  requiredMin: number;
+  manualCoverageMin: number;
+  potentialMin: number;
+  accumulatedMin: number;
+  activeDeductionMin: number;
+}
+
+function buildPauseTiers(grossWorkMinutes: number, manualBreaksMinutes: number): PauseTier[] {
+  const z1Required = BREAK_RULE_1_MIN_BREAK_MINUTES;                                  // 30
+  const z2Required = BREAK_RULE_2_MIN_BREAK_MINUTES - BREAK_RULE_1_MIN_BREAK_MINUTES; // 15
+  const tierSpecs = [
+    { startMin: BREAK_RULE_1_THRESHOLD_MINUTES, requiredMin: z1Required, manualOffset: 0 },
+    { startMin: BREAK_RULE_2_THRESHOLD_MINUTES, requiredMin: z2Required, manualOffset: z1Required },
+  ];
+
+  return tierSpecs.map(spec => {
+    const manualCoverageMin  = Math.min(spec.requiredMin, Math.max(0, manualBreaksMinutes - spec.manualOffset));
+    const accumulatedMin     = Math.min(Math.max(0, grossWorkMinutes - spec.startMin), spec.requiredMin);
+    return {
+      startMin:           spec.startMin,
+      endMin:             spec.startMin + spec.requiredMin,
+      requiredMin:        spec.requiredMin,
+      manualCoverageMin,
+      potentialMin:       Math.max(0, spec.requiredMin - manualCoverageMin),
+      accumulatedMin,
+      activeDeductionMin: Math.max(0, accumulatedMin - manualCoverageMin),
+    };
+  });
+}
+
+/**
+ * Per-zone breakdown of how much legal pause is currently deducted vs. still
+ * pending. Used to render the legal-pause hints and active deductions on the ring.
+ */
+export function calculateLegalPauseZones(
+  grossWorkMinutes: number,
+  manualBreaksMinutes: number,
+): LegalPauseZone[] {
+  return buildPauseTiers(grossWorkMinutes, manualBreaksMinutes).map(t => ({
+    startMin:     t.startMin,
+    endMin:       t.endMin,
+    potentialMin: t.potentialMin,
+    activeMin:    t.activeDeductionMin,
+  }));
+}
+
 export function calculateLegalPauseStatus(
   grossWorkMinutes: number,
   manualBreaksMinutes: number,
 ): LegalPauseStatus {
-  const z1Len    = BREAK_RULE_1_MIN_BREAK_MINUTES;                                   // 30
-  const z2AddLen = BREAK_RULE_2_MIN_BREAK_MINUTES - BREAK_RULE_1_MIN_BREAK_MINUTES;  // 15
-  const z1Start  = BREAK_RULE_1_THRESHOLD_MINUTES;                                   // 360
-  const z1End    = z1Start + z1Len;                                                  // 390
-  const z2Start  = BREAK_RULE_2_THRESHOLD_MINUTES;                                   // 540
-  const z2End    = z2Start + z2AddLen;                                               // 555
+  const tiers = buildPauseTiers(grossWorkMinutes, manualBreaksMinutes);
 
-  const manualAtTier1 = Math.min(z1Len, manualBreaksMinutes);
-  const manualAtTier2 = Math.min(z2AddLen, Math.max(0, manualBreaksMinutes - z1Len));
-  const z1Potential   = Math.max(0, z1Len    - manualAtTier1);
-  const z2Potential   = Math.max(0, z2AddLen - manualAtTier2);
-
-  const t1Accum = Math.min(Math.max(0, grossWorkMinutes - z1Start), z1Len);
-  const legalZ1 = Math.max(0, t1Accum - manualAtTier1);
-  const t2Accum = Math.min(Math.max(0, grossWorkMinutes - z2Start), z2AddLen);
-  const legalZ2 = Math.max(0, t2Accum - manualAtTier2);
-
-  if (grossWorkMinutes > z1Start && grossWorkMinutes < z1End && legalZ1 > 0) {
-    return { isRunning: true, minsRemaining: Math.ceil(z1End - grossWorkMinutes), nextPauseIn: null, nextPauseDeduction: null };
-  }
-  if (grossWorkMinutes > z2Start && grossWorkMinutes < z2End && legalZ2 > 0) {
-    return { isRunning: true, minsRemaining: Math.ceil(z2End - grossWorkMinutes), nextPauseIn: null, nextPauseDeduction: null };
+  for (const tier of tiers) {
+    if (grossWorkMinutes > tier.startMin && grossWorkMinutes < tier.endMin && tier.activeDeductionMin > 0) {
+      return { isRunning: true, minsRemaining: Math.ceil(tier.endMin - grossWorkMinutes), nextPauseIn: null, nextPauseDeduction: null };
+    }
   }
 
-  // Find earliest pending zone — handles the case where z1 is fully covered by manual
-  // breaks but z2 is not, even when grossWorkMinutes is still before z1Start.
-  if (grossWorkMinutes < z1Start && z1Potential > 0) {
-    return { isRunning: false, minsRemaining: 0, nextPauseIn: z1Start - grossWorkMinutes, nextPauseDeduction: z1Potential };
-  }
-  if (grossWorkMinutes < z2Start && z2Potential > 0) {
-    return { isRunning: false, minsRemaining: 0, nextPauseIn: Math.max(0, z2Start - grossWorkMinutes), nextPauseDeduction: z2Potential };
+  // Earliest pending zone — handles the case where an earlier tier is fully covered
+  // by manual breaks but a later one is not.
+  for (const tier of tiers) {
+    if (grossWorkMinutes < tier.startMin && tier.potentialMin > 0) {
+      return { isRunning: false, minsRemaining: 0, nextPauseIn: tier.startMin - grossWorkMinutes, nextPauseDeduction: tier.potentialMin };
+    }
   }
 
   return { isRunning: false, minsRemaining: 0, nextPauseIn: null, nextPauseDeduction: null };

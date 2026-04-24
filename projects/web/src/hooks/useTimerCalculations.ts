@@ -8,19 +8,14 @@ import {
   calculateNetWorkTimeMinutes,
   calculateSaldoMinutes,
   calculateLegalPauseStatus,
+  calculateLegalPauseZones,
   minutesToTimeDuration,
   WORK_TIME_TARGET_MINUTES,
   MAX_WORK_LIMIT_MINUTES,
 } from '@figo/shared';
-import { RING, clamp, minToAngle } from '@/lib/ring-geometry';
+import { RING, minToAngle } from '@/lib/ring-geometry';
 import { buildSegments, placeInZone, trimTotal, type Interval, type Seg } from '@/lib/break-placement';
 import { getWorkdayMessage, type WorkdayMessage } from '@/components/features/timer/workdayStatus';
-
-// Gesetzliche Pausen-Zonen — Positionen in Wall-Minutes seit Start
-const LEGAL_Z1_START = 6 * 60;   // 6:00 — 30-Min-Abzug spannt bis 6:30
-const LEGAL_Z1_LEN   = 30;
-const LEGAL_Z2_START = 9 * 60;   // 9:00 — zusätzliche 15 Min spannt bis 9:15
-const LEGAL_Z2_LEN   = 15;
 
 export interface BreakHoverItem {
   start: number;
@@ -92,23 +87,11 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     }))
     .filter(m => m.end > m.start);
 
-  // Manuelle Pausen decken tier-weise (erst die 30, dann die zusätzlichen 15).
-  const manualAtTier1    = Math.min(LEGAL_Z1_LEN, manualBreaksMin);
-  const manualAtTier2    = Math.min(LEGAL_Z2_LEN, Math.max(0, manualBreaksMin - LEGAL_Z1_LEN));
-  // Akkumulierter Abzug an aktueller Gross-Zeit (gleitend 6:00→6:30 bzw. 9:00→9:15)
-  const t1Accum          = clamp(grossMin - LEGAL_Z1_START, 0, LEGAL_Z1_LEN);
-  const t2Accum          = clamp(grossMin - LEGAL_Z2_START, 0, LEGAL_Z2_LEN);
-  // Was JETZT abzuziehen ist (= nicht durch manuelle Pause gedeckt)
-  const legalActiveZ1    = Math.max(0, t1Accum - manualAtTier1);
-  const legalActiveZ2    = Math.max(0, t2Accum - manualAtTier2);
-  // Voll-Potenzial → Hint-Darstellung
-  const legalPotentialZ1 = Math.max(0, LEGAL_Z1_LEN - manualAtTier1);
-  const legalPotentialZ2 = Math.max(0, LEGAL_Z2_LEN - manualAtTier2);
-
-  const zone1HintSlots   = placeInZone(LEGAL_Z1_START, LEGAL_Z1_START + LEGAL_Z1_LEN, legalPotentialZ1, manualIntervals);
-  const zone2HintSlots   = placeInZone(LEGAL_Z2_START, LEGAL_Z2_START + LEGAL_Z2_LEN, legalPotentialZ2, manualIntervals);
-  const zone1ActiveSlots = trimTotal(zone1HintSlots, legalActiveZ1);
-  const zone2ActiveSlots = trimTotal(zone2HintSlots, legalActiveZ2);
+  const [zone1, zone2]   = calculateLegalPauseZones(grossMin, manualBreaksMin);
+  const zone1HintSlots   = placeInZone(zone1.startMin, zone1.endMin, zone1.potentialMin, manualIntervals);
+  const zone2HintSlots   = placeInZone(zone2.startMin, zone2.endMin, zone2.potentialMin, manualIntervals);
+  const zone1ActiveSlots = trimTotal(zone1HintSlots, zone1.activeMin);
+  const zone2ActiveSlots = trimTotal(zone2HintSlots, zone2.activeMin);
 
   const allBreakIntervals: Interval[] = [
     ...manualIntervals
