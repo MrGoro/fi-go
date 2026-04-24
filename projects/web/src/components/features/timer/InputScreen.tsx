@@ -13,7 +13,7 @@ interface InputScreenProps {
   loading: boolean;
 }
 
-export default function InputScreen({ onStart, loading: parentLoading }: InputScreenProps) {
+export function InputScreen({ onStart, loading: parentLoading }: InputScreenProps) {
   const [timeStr, setTimeStr] = useState('');
   const [localLoading, setLocalLoading] = useState(false);
   const loading = parentLoading || localLoading;

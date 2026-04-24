@@ -14,7 +14,7 @@ interface AppLayoutProps {
   desktopActions?: ReactNode;
 }
 
-export default function AppLayout({
+export function AppLayout({
   children,
   user,
   onLogout,

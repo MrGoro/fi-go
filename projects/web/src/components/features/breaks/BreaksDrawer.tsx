@@ -21,7 +21,7 @@ interface BreaksDrawerProps {
   desktopMode?: boolean;
 }
 
-export default function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, desktopMode }: BreaksDrawerProps) {
+export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, desktopMode }: BreaksDrawerProps) {
   const [open, setOpen] = useState(false);
   const focusRef = useRef<HTMLDivElement>(null);
 

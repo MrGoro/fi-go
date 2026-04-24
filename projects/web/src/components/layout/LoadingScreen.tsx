@@ -4,7 +4,7 @@ import { Surface } from '../ui/surface';
 import { AppBarShell } from '../ui/app-bar-shell';
 import { RING, RING_COLORS, RING_TRACK_PATH } from '@/lib/ring-geometry';
 
-export default function LoadingScreen() {
+export function LoadingScreen() {
   return (
     <div className="min-h-svh flex flex-col">
 

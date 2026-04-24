@@ -36,7 +36,7 @@ interface DisplayScreenProps {
   breaks: BreakRecord[];
 }
 
-export default function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
+export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {

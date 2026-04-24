@@ -6,7 +6,7 @@ import { BrandPanel } from './BrandPanel';
 import { PhoneStep } from './PhoneStep';
 import { OtpStep } from './OtpStep';
 
-export default function LoginView() {
+export function LoginView() {
   const { requestOtp, verifyOtp, hasSentOtp } = useAuth();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
