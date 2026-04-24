@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import { Logo } from '../ui/Logo';
 import { Surface } from '../ui/surface';
+import { AppBarShell } from '../ui/app-bar-shell';
 import { RING, RING_COLORS, RING_TRACK_PATH } from '@/lib/ring-geometry';
 
 export default function LoadingScreen() {
@@ -8,7 +9,7 @@ export default function LoadingScreen() {
     <div className="min-h-svh flex flex-col">
 
       {/* ── AppBar skeleton ──────────────────────────────────────────── */}
-      <header className="h-14 shrink-0 w-full flex items-center px-4 sm:px-6 bg-white/80 backdrop-blur-xl border-b border-white/70 sticky top-0 z-50 shadow-sm">
+      <AppBarShell>
         <Logo height={22} />
         <div className="flex-1" />
         <div className="hidden sm:flex items-center gap-3 mr-2">
@@ -20,7 +21,7 @@ export default function LoadingScreen() {
           <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 animate-pulse" />
           <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60" />
         </div>
-      </header>
+      </AppBarShell>
 
       {/* ── Main content ─────────────────────────────────────────────── */}
       <div className="flex-1 flex max-w-5xl mx-auto w-full sm:px-8 py-6 pb-32 sm:pb-6 overflow-x-hidden">
