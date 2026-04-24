@@ -10,6 +10,7 @@ import BreaksDrawer from './components/features/breaks/BreaksDrawer';
 import LoginView from './components/features/auth/LoginView';
 import { Button } from './components/ui/button';
 import { Surface } from './components/ui/surface';
+import { BottomBarAction } from './components/ui/bottom-bar-action';
 import { LogOut } from 'lucide-react';
 
 export default function App() {
@@ -49,14 +50,11 @@ export default function App() {
   const bottomBar = (
     <Surface variant="bar" className="flex justify-around items-center w-full py-3 px-4">
       <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} />
-      <Button
-        variant="ghost"
+      <BottomBarAction
+        icon={<LogOut className="h-6 w-6" />}
+        label="Feierabend"
         onClick={clockOut}
-        className="flex flex-col gap-1 h-auto py-2.5 px-5 text-[#999] hover:text-[#E5173F] hover:bg-transparent"
-      >
-        <LogOut className="h-6 w-6" />
-        <span className="text-[10px] font-medium uppercase tracking-wider">Feierabend</span>
-      </Button>
+      />
     </Surface>
   );
 

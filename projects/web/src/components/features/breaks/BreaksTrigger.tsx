@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { Coffee } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { BottomBarAction } from '@/components/ui/bottom-bar-action';
 
 interface BreaksTriggerProps {
   /** Desktop-Variante: Pill-Button mit Icon + Label. Mobile: vertikal im BottomBar. */
@@ -22,15 +23,12 @@ export const BreaksTrigger = forwardRef<HTMLButtonElement, BreaksTriggerProps>(
       );
     }
     return (
-      <Button
+      <BottomBarAction
         ref={ref}
-        variant="ghost"
-        className="flex flex-col gap-1 h-auto py-2.5 px-5 text-[#999] hover:text-[#E5173F] hover:bg-transparent"
+        icon={<Coffee className="h-6 w-6" />}
+        label="Pausen"
         {...props}
-      >
-        <Coffee className="h-6 w-6" />
-        <span className="text-[10px] font-medium uppercase tracking-wider">Pausen</span>
-      </Button>
+      />
     );
   },
 );
