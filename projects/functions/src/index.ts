@@ -9,6 +9,10 @@ import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaks
 // Initialize Firebase Admin
 admin.initializeApp();
 
+const FUNCTIONS_REGION   = 'us-central1';
+const FCM_LINK           = 'https://fi-go.schuermann.app';
+const STALE_TOKEN_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+
 interface PushPayload {
   userId: string;
   type: 'TARGET' | 'LIMIT';
@@ -18,7 +22,7 @@ interface PushPayload {
 
 export const onSessionDataWritten = onValueWritten({
   ref: '/data/{userId}',
-  region: 'us-central1'
+  region: FUNCTIONS_REGION,
 }, async (event) => {
   const userId = event.data.after.key;
   if (!userId) return;
@@ -83,7 +87,7 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
   {
     retryConfig: { maxAttempts: 3 },
     rateLimits: { maxConcurrentDispatches: 10 },
-    region: 'us-central1'
+    region: FUNCTIONS_REGION,
   },
   async (request) => {
     const payload = request.data;
@@ -123,13 +127,12 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
-    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
     const now = Date.now();
-    
-    // Filter active tokens (lastSeen < 30 days)
+
+    // Filter active tokens (lastSeen within STALE_TOKEN_AGE_MS)
     const activeTokens = Object.entries(tokensData)
       .map(([key, value]: [string, any]) => ({ key, ...value }))
-      .filter(t => (now - t.lastSeen) < THIRTY_DAYS_MS);
+      .filter(t => (now - t.lastSeen) < STALE_TOKEN_AGE_MS);
 
     if (activeTokens.length === 0) {
       logger.info(`Task aborted: No active FCM Tokens found for user ${payload.userId} (all stale).`);
@@ -144,10 +147,8 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
     const message = {
       notification: { title, body },
       webpush: {
-        fcmOptions: {
-          link: 'https://fi-go.schuermann.app'
-        }
-      }
+        fcmOptions: { link: FCM_LINK },
+      },
     };
 
     try {
@@ -185,9 +186,9 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
  * Runs once every 24 hours at midnight.
  */
 export const cleanupStaleTokens = onSchedule('0 0 * * *', async () => {
-  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-  const cutoff = Date.now() - THIRTY_DAYS_MS;
-  
+  const cutoff = Date.now() - STALE_TOKEN_AGE_MS;
+
+
   const usersSnap = await admin.database().ref('/users').once('value');
   const users = usersSnap.val();
   
