@@ -18,7 +18,9 @@ export const WORKDAY_PAUSE_URGENT_MIN    = 5;   // next pause in ≤ this → ur
 export const WORKDAY_PAUSE_WARN_MIN      = 15;  // next pause in ≤ this → warning
 export const WORKDAY_FEIERABEND_NOW_MIN  = 5;   // ≤ this to Feierabend → success
 export const WORKDAY_FEIERABEND_NEAR_MIN = 15;  // ≤ this to Feierabend → info
+export const WORKDAY_SOLL_REACHED_MIN    = 5;   // overtime ∈ [0, this] → success "Soll geschafft"
 export const WORKDAY_OVERTIME_STRONG_MIN = 60;  // overtime > this → success
+export const WORKDAY_PAUSE_TIP_MIN       = 30;  // next pause in ≤ this → info nudge
 
 export interface TimeDuration {
   hours: number;

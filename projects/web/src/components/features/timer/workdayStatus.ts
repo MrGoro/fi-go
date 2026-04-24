@@ -4,8 +4,10 @@ import {
   WORKDAY_TEN_HOUR_WARN_MIN,
   WORKDAY_PAUSE_URGENT_MIN,
   WORKDAY_PAUSE_WARN_MIN,
+  WORKDAY_PAUSE_TIP_MIN,
   WORKDAY_FEIERABEND_NOW_MIN,
   WORKDAY_FEIERABEND_NEAR_MIN,
+  WORKDAY_SOLL_REACHED_MIN,
   WORKDAY_OVERTIME_STRONG_MIN,
 } from '@figo/shared';
 
@@ -103,6 +105,13 @@ export function getWorkdayMessage({
     };
   }
 
+  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_TIP_MIN) {
+    return {
+      text: `Pause in den nächsten ${Math.ceil(nextLegalPauseIn)} Min. spart ${nextLegalPauseDeduction} Min. Abzug`,
+      severity: 'info',
+    };
+  }
+
   if (minutesToFeierabend > 0 && minutesToFeierabend <= WORKDAY_FEIERABEND_NOW_MIN) {
     return {
       text: `Feierabend in ${Math.floor(minutesToFeierabend)} Minuten`,
@@ -114,6 +123,13 @@ export function getWorkdayMessage({
     return {
       text: `Noch ${Math.floor(minutesToFeierabend)} Minuten bis Feierabend`,
       severity: 'info',
+    };
+  }
+
+  if (overtimeMin >= 0 && overtimeMin <= WORKDAY_SOLL_REACHED_MIN) {
+    return {
+      text: `Soll-Zeit erreicht – Feierabend möglich`,
+      severity: 'success',
     };
   }
 
