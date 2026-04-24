@@ -9,7 +9,8 @@ import {
 } from '@/lib/ring-geometry';
 import type { Interval, Seg } from '@/lib/break-placement';
 import { TickMarker } from './TickMarker';
-import { BreakTooltip, type BreakHoverItem } from './BreakTooltip';
+import { BreakTooltip } from './BreakTooltip';
+import type { BreakHoverItem } from '@/hooks/useTimerCalculations';
 
 interface TimerRingProps {
   grossMin: number;

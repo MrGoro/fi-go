@@ -1,12 +1,5 @@
 import { format } from 'date-fns';
-
-export interface BreakHoverItem {
-  start: number;
-  end: number;
-  kind: 'manual' | 'legal';
-  wallStart: Date;
-  wallEnd: Date;
-}
+import type { BreakHoverItem } from '@/hooks/useTimerCalculations';
 
 interface BreakTooltipProps {
   /** Position als Prozent der SVG-Fläche (0..100). */
