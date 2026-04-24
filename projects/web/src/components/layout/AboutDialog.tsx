@@ -11,11 +11,11 @@ import {
 } from '@figo/shared';
 
 interface AboutDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
+export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
   const targetFormatted = `${WORK_TIME_TARGET_HOURS}:${String(WORK_TIME_TARGET_MINUTES).padStart(2, '0')}`;
   const warningMinutes = MAX_WORK_LIMIT_MINUTES - 30;
   const warningHours   = Math.floor(warningMinutes / 60);
@@ -31,7 +31,7 @@ export function AboutDialog({ isOpen, onClose }: AboutDialogProps) {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} title="Über fi go!">
+    <Dialog open={open} onOpenChange={onOpenChange} title="Über fi go!">
       <div className="space-y-6 text-sm text-muted-foreground leading-relaxed">
         <p>
           Ein moderner Arbeitszeitrechner, optimiert für Schnelligkeit und Benutzerfreundlichkeit.

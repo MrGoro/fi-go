@@ -24,7 +24,7 @@ export function MinimalLayout({ children, user, onLogout }: MinimalLayoutProps) 
         {children}
       </div>
 
-      <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <AboutDialog open={isAboutOpen} onOpenChange={setIsAboutOpen} />
     </div>
   );
 }

@@ -48,7 +48,7 @@ export function AppLayout({
         </div>
       )}
 
-      <AboutDialog isOpen={isAboutOpen} onClose={() => setIsAboutOpen(false)} />
+      <AboutDialog open={isAboutOpen} onOpenChange={setIsAboutOpen} />
     </div>
   );
 }
