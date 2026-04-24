@@ -4,7 +4,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { getFunctions } from 'firebase-admin/functions';
 import * as admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
-import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateLegalMinimumBreakMinutes } from '@figo/shared';
+import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateAppliedBreakMinutes } from '@figo/shared';
 
 // Initialize Firebase Admin
 admin.initializeApp();
@@ -48,14 +48,12 @@ export const onSessionDataWritten = onValueWritten({
   }
 
   const manualBreaksMinutes = calculateManualBreaksMinutes(breaks);
-  const projectedBreakMinutesTarget = Math.max(calculateLegalMinimumBreakMinutes(WORK_TIME_TARGET_MINUTES), manualBreaksMinutes);
+  const projectedBreakMinutesTarget = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMinutes);
+  const projectedBreakMinutesLimit  = calculateAppliedBreakMinutes(MAX_WORK_LIMIT_MINUTES,  manualBreaksMinutes);
 
   // Calculate projected finish times
-  const targetFinishTimeMillis = startTimeMillis + (WORK_TIME_TARGET_MINUTES + projectedBreakMinutesTarget) * 60 * 1000;
-
-  // 10 hours limit finish time
-  const projectedBreakMinutesLimit = Math.max(45, manualBreaksMinutes);
-  const tenHoursFinishTimeMillis = startTimeMillis + (MAX_WORK_LIMIT_MINUTES + projectedBreakMinutesLimit) * 60 * 1000;
+  const targetFinishTimeMillis  = startTimeMillis + (WORK_TIME_TARGET_MINUTES + projectedBreakMinutesTarget) * 60 * 1000;
+  const tenHoursFinishTimeMillis = startTimeMillis + (MAX_WORK_LIMIT_MINUTES   + projectedBreakMinutesLimit)  * 60 * 1000;
 
   const queue = getFunctions().taskQueue('onSendPushNotification');
 

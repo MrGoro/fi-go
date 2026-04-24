@@ -70,9 +70,9 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   const netMin           = calculateNetWorkTimeMinutes(grossMin, appliedBreaksMin);
   const saldoMin         = calculateSaldoMinutes(netMin);
 
-  // Wall-clock Anker
-  const sollBreakMin     = Math.max(30, manualBreaksMin); // legal @ 7:36h = 30 min
-  const tenBreakMin      = Math.max(45, manualBreaksMin); // legal @ 10h   = 45 min
+  // Wall-clock Anker — projizierter Break am Soll- bzw. 10h-Anker
+  const sollBreakMin     = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMin);
+  const tenBreakMin      = calculateAppliedBreakMinutes(MAX_WORK_LIMIT_MINUTES,  manualBreaksMin);
   const finishTime       = addMinutes(startTime, WORK_TIME_TARGET_MINUTES + sollBreakMin);
   const tenLimitTime     = addMinutes(startTime, MAX_WORK_LIMIT_MINUTES + tenBreakMin);
 

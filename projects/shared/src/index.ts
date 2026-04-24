@@ -74,9 +74,13 @@ export function calculateManualBreaksMinutes(breaks: BreakRecord[]): number {
   return Math.floor(millis / 60000);
 }
 
-// Real Break (max of legal and manual)
-export function calculateAppliedBreakMinutes(grossWorkMinutes: number, manualBreaksMinutes: number): number {
-  const legalBreaksMinutes = calculateLegalMinimumBreakMinutes(grossWorkMinutes);
+/**
+ * The break that will be applied (= max of legal minimum and manual) for a given
+ * gross-work-time. Pass the current grossMin for the live value, or a future anchor
+ * (target or 10h-limit) to project what the break would be at that point.
+ */
+export function calculateAppliedBreakMinutes(workMinutes: number, manualBreaksMinutes: number): number {
+  const legalBreaksMinutes = calculateLegalMinimumBreakMinutes(workMinutes);
   return Math.max(legalBreaksMinutes, manualBreaksMinutes);
 }
 
