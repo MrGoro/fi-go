@@ -1,7 +1,6 @@
 import { differenceInMilliseconds } from 'date-fns';
 
-export const WORK_TIME_TARGET_HOURS = 7;
-export const WORK_TIME_TARGET_MINUTES = 36;
+export const WORK_TIME_TARGET_MINUTES = 7 * 60 + 36; // 456 — daily target work time (Soll)
 
 export const BREAK_RULE_1_THRESHOLD_MINUTES = 6 * 60; // 360
 export const BREAK_RULE_1_MIN_BREAK_MINUTES = 30;
@@ -88,8 +87,7 @@ export function calculateNetWorkTimeMinutes(grossWorkMinutes: number, appliedBre
 
 // Get Saldo
 export function calculateSaldoMinutes(netWorkMinutes: number): number {
-  const targetMinutes = WORK_TIME_TARGET_HOURS * 60 + WORK_TIME_TARGET_MINUTES;
-  return netWorkMinutes - targetMinutes;
+  return netWorkMinutes - WORK_TIME_TARGET_MINUTES;
 }
 
 export interface LegalPauseStatus {

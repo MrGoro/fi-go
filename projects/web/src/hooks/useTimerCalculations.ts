@@ -9,7 +9,6 @@ import {
   calculateSaldoMinutes,
   calculateLegalPauseStatus,
   minutesToTimeDuration,
-  WORK_TIME_TARGET_HOURS,
   WORK_TIME_TARGET_MINUTES,
   MAX_WORK_LIMIT_MINUTES,
 } from '@figo/shared';
@@ -76,12 +75,10 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   const netMin           = calculateNetWorkTimeMinutes(grossMin, appliedBreaksMin);
   const saldoMin         = calculateSaldoMinutes(netMin);
 
-  const targetMin        = WORK_TIME_TARGET_HOURS * 60 + WORK_TIME_TARGET_MINUTES;
-
   // Wall-clock Anker
   const sollBreakMin     = Math.max(30, manualBreaksMin); // legal @ 7:36h = 30 min
   const tenBreakMin      = Math.max(45, manualBreaksMin); // legal @ 10h   = 45 min
-  const finishTime       = addMinutes(startTime, targetMin + sollBreakMin);
+  const finishTime       = addMinutes(startTime, WORK_TIME_TARGET_MINUTES + sollBreakMin);
   const tenLimitTime     = addMinutes(startTime, MAX_WORK_LIMIT_MINUTES + tenBreakMin);
 
   // Ring-Skala: 0 bis 10h-Grenze in Wall-Minutes seit Start
@@ -121,7 +118,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     ...zone2ActiveSlots,
   ];
 
-  const segments  = buildSegments(grossMin, targetMin, allBreakIntervals);
+  const segments  = buildSegments(grossMin, WORK_TIME_TARGET_MINUTES, allBreakIntervals);
   const hintSlots = [...zone1HintSlots, ...zone2HintSlots];
 
   const breakHoverItems: BreakHoverItem[] = [
@@ -143,7 +140,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   ];
 
   // Marker
-  const sollAngle = minToAngle(targetMin + sollBreakMin, ringMaxMin);
+  const sollAngle = minToAngle(WORK_TIME_TARGET_MINUTES + sollBreakMin, ringMaxMin);
   const tenAngle  = RING.END_ANGLE;
 
   // Saldo-Anzeige
@@ -155,7 +152,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   const legalPauseStatus = calculateLegalPauseStatus(grossMin, manualBreaksMin);
   const workdayMsg = getWorkdayMessage({
     currentTime:             now,
-    sollMinutes:             targetMin,
+    sollMinutes:             WORK_TIME_TARGET_MINUTES,
     workedMinutes:           netMin,
     legalPauseRunning:       legalPauseStatus.isRunning,
     legalPauseMinsRemaining: legalPauseStatus.minsRemaining,
