@@ -14,6 +14,17 @@ export function mapAuthErrorToMessage(code: string | undefined): string {
 }
 
 /**
+ * Extrahiert den Firebase-Auth-Fehlercode aus einem unknown-Error.
+ * Firebase-SDK wirft Objekte der Form `{ code: 'auth/...', message: string }`.
+ */
+export function extractAuthErrorMessage(err: unknown): string {
+  if (err && typeof err === 'object' && 'code' in err && typeof err.code === 'string') {
+    return mapAuthErrorToMessage(err.code);
+  }
+  return mapAuthErrorToMessage(undefined);
+}
+
+/**
  * Normalisiert eine deutsche Telefonnummer-Eingabe zu E.164-Format.
  * Entfernt alle Nicht-Ziffern außer +. Ergänzt +49 wenn Nummer mit 0 beginnt.
  * Gibt null zurück, wenn die Nummer unplausibel kurz ist.

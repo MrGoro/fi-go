@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
-import { mapAuthErrorToMessage, normalizeGermanPhone } from '@/lib/auth-errors';
+import { extractAuthErrorMessage, normalizeGermanPhone } from '@/lib/auth-errors';
 import { PageHeading } from '@/components/ui/page-heading';
 import { BrandPanel } from './BrandPanel';
 import { PhoneStep } from './PhoneStep';
@@ -23,9 +23,9 @@ export default function LoginView() {
       }
       await requestOtp(formatted, 'recaptcha-container');
       setPhoneNumber(formatted);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Login error:', err);
-      setError(mapAuthErrorToMessage(err.code));
+      setError(extractAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -36,8 +36,8 @@ export default function LoginView() {
     setError(null);
     try {
       await verifyOtp(code);
-    } catch (err: any) {
-      setError(mapAuthErrorToMessage(err.code));
+    } catch (err) {
+      setError(extractAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
