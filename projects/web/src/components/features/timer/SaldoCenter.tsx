@@ -1,7 +1,9 @@
+import type { ComponentType } from 'react';
+import { AlertTriangle, AlertCircle, CheckCircle2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RING_COLORS } from '@/lib/ring-geometry';
 import { Eyebrow } from '@/components/ui/eyebrow';
-import type { WorkdayMessage } from '@/utils/workdayMessages';
+import type { WorkdayMessage, WorkdayMessageSeverity } from './workdayStatus';
 
 interface SaldoCenterProps {
   saldoText: string;
@@ -9,10 +11,17 @@ interface SaldoCenterProps {
   message?: WorkdayMessage | null;
 }
 
-const MESSAGE_COLOR: Record<NonNullable<WorkdayMessage>['type'], string> = {
-  urgent:  'text-destructive',
-  warning: 'text-orange-500',
-  success: 'text-green-500',
+const SEVERITY_ICON: Record<WorkdayMessageSeverity, ComponentType<{ className?: string }>> = {
+  urgent:  AlertTriangle,
+  warning: AlertCircle,
+  success: CheckCircle2,
+  info:    Info,
+};
+
+const SEVERITY_CLASS: Record<WorkdayMessageSeverity, string> = {
+  urgent:  'bg-destructive/12 text-destructive animate-pulse',
+  warning: 'bg-orange-500/12 text-orange-700 dark:text-orange-300',
+  success: 'text-green-600 dark:text-green-500',
   info:    'text-muted-foreground/90',
 };
 
@@ -20,6 +29,9 @@ const MESSAGE_COLOR: Record<NonNullable<WorkdayMessage>['type'], string> = {
  * Zentrum des Timer-Rings: Saldo-/Überstunden-Anzeige, kontextuelle Statusnachricht.
  */
 export function SaldoCenter({ saldoText, isOvertime, message }: SaldoCenterProps) {
+  const Icon = message ? SEVERITY_ICON[message.severity] : null;
+  const isProminent = message?.severity === 'urgent' || message?.severity === 'warning';
+
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none px-8">
       <Eyebrow size="xs" className="text-muted-foreground/50 mb-2.5">
@@ -34,15 +46,19 @@ export function SaldoCenter({ saldoText, isOvertime, message }: SaldoCenterProps
       >
         {saldoText}
       </div>
-      {message && (
-        <p
+      {message && Icon && (
+        <div
+          role={message.severity === 'urgent' ? 'alert' : 'status'}
           className={cn(
-            'text-[12px] sm:text-[13px] mt-3 font-medium leading-snug text-balance max-w-[58%]',
-            MESSAGE_COLOR[message.type],
+            'mt-3 max-w-[80%] flex items-start justify-center gap-1.5',
+            'text-[12px] sm:text-[13px] font-medium leading-snug',
+            isProminent && 'px-2.5 py-1 rounded-full',
+            SEVERITY_CLASS[message.severity],
           )}
         >
-          {message.text}
-        </p>
+          <Icon className="h-3.5 w-3.5 shrink-0 mt-px" />
+          <span className="text-balance">{message.text}</span>
+        </div>
       )}
     </div>
   );

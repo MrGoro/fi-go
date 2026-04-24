@@ -11,6 +11,15 @@ export const BREAK_RULE_2_MIN_BREAK_MINUTES = 45;
 
 export const MAX_WORK_LIMIT_MINUTES = 10 * 60; // 600
 
+// Workday-status thresholds (minutes). Used to choose contextual messages.
+export const WORKDAY_TEN_HOUR_URGENT_MIN = 10;  // ≤ this min to 10h → urgent
+export const WORKDAY_TEN_HOUR_WARN_MIN   = 30;  // ≤ this min to 10h → warning
+export const WORKDAY_PAUSE_URGENT_MIN    = 5;   // next pause in ≤ this → urgent
+export const WORKDAY_PAUSE_WARN_MIN      = 15;  // next pause in ≤ this → warning
+export const WORKDAY_FEIERABEND_NOW_MIN  = 5;   // ≤ this to Feierabend → success
+export const WORKDAY_FEIERABEND_NEAR_MIN = 15;  // ≤ this to Feierabend → info
+export const WORKDAY_OVERTIME_STRONG_MIN = 60;  // overtime > this → success
+
 export interface TimeDuration {
   hours: number;
   minutes: number;

@@ -5,7 +5,6 @@ import { StatCell } from '@/components/ui/stat-cell';
 import { useTimerCalculations } from '@/hooks/useTimerCalculations';
 import { TimerRing } from './TimerRing';
 import { SaldoCenter } from './SaldoCenter';
-import { WorkTimeWarnings } from './WorkTimeWarnings';
 
 interface DisplayScreenProps {
   startTime: Date;
@@ -14,7 +13,6 @@ interface DisplayScreenProps {
 
 export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
   const {
-    netMin,
     manualBreaksMin,
     appliedBreaksMin,
     ringMaxMin,
@@ -33,8 +31,6 @@ export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full px-5 py-6 animate-in fade-in duration-700">
-      <WorkTimeWarnings netMin={netMin} />
-
       <TimerRing
         grossMin={grossMin}
         ringMaxMin={ringMaxMin}

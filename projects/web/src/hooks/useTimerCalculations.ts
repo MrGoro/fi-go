@@ -15,7 +15,7 @@ import {
 } from '@figo/shared';
 import { RING, clamp, minToAngle } from '@/lib/ring-geometry';
 import { buildSegments, placeInZone, trimTotal, type Interval, type Seg } from '@/lib/break-placement';
-import { getWorkdayMessage, type WorkdayMessage } from '@/utils/workdayMessages';
+import { getWorkdayMessage, type WorkdayMessage } from '@/components/features/timer/workdayStatus';
 
 // Gesetzliche Pausen-Zonen — Positionen in Wall-Minutes seit Start
 const LEGAL_Z1_START = 6 * 60;   // 6:00 — 30-Min-Abzug spannt bis 6:30
