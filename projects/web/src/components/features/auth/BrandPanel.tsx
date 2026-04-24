@@ -1,4 +1,4 @@
-import { Logo } from '../../ui/Logo';
+import { Logo } from '../../ui/logo';
 
 /**
  * Abstrakte Timer-Bögen, bewusst asymmetrisch in den Randbereich verschoben.

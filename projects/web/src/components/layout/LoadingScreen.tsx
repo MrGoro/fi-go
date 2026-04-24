@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { Logo } from '../ui/Logo';
+import { Logo } from '../ui/logo';
 import { Surface } from '../ui/surface';
 import { AppBarShell } from '../ui/app-bar-shell';
 import { RING, RING_COLORS, RING_TRACK_PATH } from '@/lib/ring-geometry';

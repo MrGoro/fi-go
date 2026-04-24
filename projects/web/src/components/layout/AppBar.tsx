@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
 import type { User } from 'firebase/auth';
-import { Logo } from '../ui/Logo';
+import { Logo } from '../ui/logo';
 import { AppBarShell } from '../ui/app-bar-shell';
 import { ProfileMenu } from './ProfileMenu';
 
