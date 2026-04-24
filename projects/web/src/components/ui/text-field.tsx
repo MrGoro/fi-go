@@ -2,7 +2,7 @@ import { forwardRef, type InputHTMLAttributes, type ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Eyebrow } from './eyebrow';
 
-export const FIELD_BASE_CLASS =
+const FIELD_BASE_CLASS =
   'w-full h-13 rounded-2xl border border-[rgba(229,23,63,0.2)] bg-white/90 ' +
   'shadow-[0_2px_10px_rgba(0,0,0,0.07)] outline-none ' +
   'placeholder:text-muted-foreground/40 ' +
