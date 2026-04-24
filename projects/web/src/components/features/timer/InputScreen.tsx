@@ -5,6 +5,7 @@ import { PageHeading } from '@/components/ui/page-heading';
 import { TextField } from '@/components/ui/text-field';
 import { SubmitButton } from '@/components/ui/submit-button';
 import { FormError } from '@/components/ui/form-error';
+import { Eyebrow } from '@/components/ui/eyebrow';
 import { parseToTodayDate, isFutureTimeToday } from '@/lib/time';
 
 interface InputScreenProps {
@@ -90,9 +91,7 @@ export default function InputScreen({ onStart, loading: parentLoading }: InputSc
 
           <div className="flex items-center gap-3">
             <div className="h-px bg-border flex-1" />
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/50">
-              oder
-            </span>
+            <Eyebrow size="sm" className="text-muted-foreground/50">oder</Eyebrow>
             <div className="h-px bg-border flex-1" />
           </div>
 
