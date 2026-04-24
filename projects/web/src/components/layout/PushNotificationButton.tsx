@@ -3,7 +3,7 @@ import { Bell, BellOff, Smartphone } from 'lucide-react';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { SURFACE_CLASS } from '@/components/ui/surface';
+import { SURFACE_CLASS } from '@/components/ui/surface-classes';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { cn } from '@/lib/utils';
 

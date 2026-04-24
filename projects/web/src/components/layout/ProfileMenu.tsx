@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserAvatar } from '@/components/ui/user-avatar';
-import { SURFACE_CLASS } from '@/components/ui/surface';
+import { SURFACE_CLASS } from '@/components/ui/surface-classes';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { cn } from '@/lib/utils';
 
