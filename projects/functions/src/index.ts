@@ -1,7 +1,7 @@
 import { onValueWritten } from 'firebase-functions/v2/database';
 import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { getFunctions } from 'firebase-admin/functions';
+import { getFunctions, type TaskQueue } from 'firebase-admin/functions';
 import * as admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
 import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateAppliedBreakMinutes, type BreakRecord } from '@figo/shared';
@@ -35,6 +35,20 @@ function parseBreaksFromRtdb(rtdbBreaks: Record<string, RtdbBreak> | null | unde
   }));
 }
 
+async function scheduleNotification(
+  queue: TaskQueue<PushPayload>,
+  payload: PushPayload,
+  scheduleTimeMillis: number,
+): Promise<void> {
+  if (scheduleTimeMillis <= Date.now()) return;
+  try {
+    await queue.enqueue(payload, { scheduleTime: new Date(scheduleTimeMillis) });
+    logger.info(`Scheduled ${payload.type} notification for ${payload.userId} at ${new Date(scheduleTimeMillis).toISOString()}`);
+  } catch (e) {
+    logger.error(`Failed to enqueue ${payload.type} task`, e);
+  }
+}
+
 export const onSessionDataWritten = onValueWritten({
   ref: '/data/{userId}',
   region: FUNCTIONS_REGION,
@@ -59,33 +73,11 @@ export const onSessionDataWritten = onValueWritten({
   const targetFinishTimeMillis  = startTimeMillis + (WORK_TIME_TARGET_MINUTES + projectedBreakMinutesTarget) * 60 * 1000;
   const tenHoursFinishTimeMillis = startTimeMillis + (MAX_WORK_LIMIT_MINUTES   + projectedBreakMinutesLimit)  * 60 * 1000;
 
-  const queue = getFunctions().taskQueue('onSendPushNotification');
+  const queue = getFunctions().taskQueue<PushPayload>('onSendPushNotification');
+  const basePayload = { userId, startTimeMillis, breaksDurationMinutes: manualBreaksMinutes };
 
-  // Enqueue Target (Feierabend)
-  if (targetFinishTimeMillis > Date.now()) {
-    try {
-      await queue.enqueue(
-        { userId, type: 'TARGET', startTimeMillis, breaksDurationMinutes: manualBreaksMinutes },
-        { scheduleTime: new Date(targetFinishTimeMillis) }
-      );
-      logger.info(`Scheduled TARGET notification for ${userId} at ${new Date(targetFinishTimeMillis).toISOString()}`);
-    } catch (e) {
-      logger.error('Failed to enqueue TARGET task', e);
-    }
-  }
-
-  // Enqueue Limit (10 Hours)
-  if (tenHoursFinishTimeMillis > Date.now()) {
-    try {
-      await queue.enqueue(
-        { userId, type: 'LIMIT', startTimeMillis, breaksDurationMinutes: manualBreaksMinutes },
-        { scheduleTime: new Date(tenHoursFinishTimeMillis) }
-      );
-      logger.info(`Scheduled LIMIT notification for ${userId} at ${new Date(tenHoursFinishTimeMillis).toISOString()}`);
-    } catch (e) {
-      logger.error('Failed to enqueue LIMIT task', e);
-    }
-  }
+  await scheduleNotification(queue, { ...basePayload, type: 'TARGET' }, targetFinishTimeMillis);
+  await scheduleNotification(queue, { ...basePayload, type: 'LIMIT' },  tenHoursFinishTimeMillis);
 });
 
 export const onSendPushNotification = onTaskDispatched<PushPayload>(
