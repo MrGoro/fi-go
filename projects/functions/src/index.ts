@@ -4,15 +4,10 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { getFunctions } from 'firebase-admin/functions';
 import * as admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
-import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateAppliedBreakMinutes } from '@figo/shared';
+import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateAppliedBreakMinutes, type BreakRecord } from '@figo/shared';
 
 // Initialize Firebase Admin
 admin.initializeApp();
-
-interface BreakRecord {
-  start: Date;
-  end: Date;
-}
 
 interface PushPayload {
   userId: string;
@@ -189,7 +184,7 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
  * Scheduled cleanup of stale tokens (older than 30 days) across all users.
  * Runs once every 24 hours at midnight.
  */
-export const cleanupStaleTokens = onSchedule('0 0 * * *', async (event) => {
+export const cleanupStaleTokens = onSchedule('0 0 * * *', async () => {
   const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
   const cutoff = Date.now() - THIRTY_DAYS_MS;
   
