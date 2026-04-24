@@ -1,7 +1,6 @@
 import { useAuth } from './hooks/useAuth';
 import { useSessionData } from './hooks/useSessionData';
 import { AuthLayout } from './components/layout/AuthLayout';
-import { MinimalLayout } from './components/layout/MinimalLayout';
 import { AppLayout } from './components/layout/AppLayout';
 import { LoadingScreen } from './components/layout/LoadingScreen';
 import { InputScreen } from './components/features/timer/InputScreen';
@@ -41,9 +40,9 @@ export default function App() {
 
   if (!startTime) {
     return (
-      <MinimalLayout user={user} onLogout={logout}>
+      <AppLayout user={user} onLogout={logout} minimal>
         <InputScreen onStart={clockIn} loading={sessionLoading} />
-      </MinimalLayout>
+      </AppLayout>
     );
   }
 
