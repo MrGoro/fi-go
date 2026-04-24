@@ -17,6 +17,10 @@ dev-dist/
 *.iml
 *.sublime-*
 
+# Local Claude Code settings (per-user, not shared)
+.claude/settings.local.json
+.claude/settings.json
+
 # OS
 .DS_Store
 Thumbs.db
