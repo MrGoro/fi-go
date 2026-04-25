@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git ls-tree *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git stash *)",
+      "Bash(git fetch *)",
+      "Bash(git reflog *)",
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx pwa-assets-generator *)",
+      "Bash(npx eslint *)",
+      "Bash(grep -E \"^[^$]\")",
+      "Bash(git mv *)",
+      "Bash(npx --yes npm-check-updates --format group)",
+      "Bash(npx npm-check-updates *)"
+    ]
+  }
+}
