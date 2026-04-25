@@ -1,5 +1,5 @@
 import type { User } from 'firebase/auth';
-import { LogOut, ChevronDown, Github, Bug, Info } from 'lucide-react';
+import { LogOut, ChevronDown, ExternalLink, Bug, Info } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +59,7 @@ export function ProfileMenu({ user, onLogout, onOpenAbout }: ProfileMenuProps) {
               onClick={() => window.open('https://github.com/MrGoro/fi-go', '_blank')}
               className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer"
             >
-              <Github className="h-4 w-4 shrink-0" />
+              <ExternalLink className="h-4 w-4 shrink-0" />
               <span className="font-medium">Quellcode auf GitHub</span>
             </DropdownMenuItem>
             <DropdownMenuItem

@@ -12,7 +12,9 @@
       "Bash(npx pwa-assets-generator *)",
       "Bash(npx eslint *)",
       "Bash(grep -E \"^[^$]\")",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "Bash(npx --yes npm-check-updates --format group)",
+      "Bash(npx npm-check-updates *)"
     ]
   }
 }
