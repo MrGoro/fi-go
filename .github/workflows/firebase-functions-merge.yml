@@ -39,4 +39,10 @@ jobs:
           project_id: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
 
       - name: Deploy to Firebase Functions
-        run: npx firebase deploy --only functions --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
+        run: |
+          for attempt in 1 2 3; do
+            npx firebase deploy --only functions --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} && break
+            if [ $attempt -eq 3 ]; then exit 1; fi
+            echo "Attempt $attempt failed, retrying in $((attempt * 20))s..."
+            sleep $((attempt * 20))
+          done

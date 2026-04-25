@@ -14,7 +14,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@figo/shared": "file:../shared",
+    "@figo/shared": "file:./shared",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "firebase-admin": "^13.0.0",
