@@ -3,6 +3,12 @@ import { Input as InputPrimitive } from "@base-ui/react/input"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * Kompakte Input-Primitive (h-8, rounded-lg) — nur für enge Grids/Spalten,
+ * wo der full-size `<TextField>` (h-13, rounded-2xl Pill) zu dominant wäre.
+ * Aktuell einziger Aufrufer: die nebeneinander stehenden Start/Ende-Felder
+ * in BreaksAddForm. Bevorzuge `<TextField>` für alle neuen Eingaben.
+ */
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
     return (

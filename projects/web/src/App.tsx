@@ -1,14 +1,15 @@
 import { useAuth } from './hooks/useAuth';
 import { useSessionData } from './hooks/useSessionData';
 import { AuthLayout } from './components/layout/AuthLayout';
-import { MinimalLayout } from './components/layout/MinimalLayout';
-import AppLayout from './components/layout/AppLayout';
-import LoadingScreen from './components/layout/LoadingScreen';
-import InputScreen from './components/features/timer/InputScreen';
-import DisplayScreen from './components/features/timer/DisplayScreen';
-import BreaksDrawer from './components/features/breaks/BreaksDrawer';
-import LoginView from './components/features/auth/LoginView';
+import { AppLayout } from './components/layout/AppLayout';
+import { LoadingScreen } from './components/layout/LoadingScreen';
+import { InputScreen } from './components/features/timer/InputScreen';
+import { DisplayScreen } from './components/features/timer/DisplayScreen';
+import { BreaksDrawer } from './components/features/breaks/BreaksDrawer';
+import { LoginView } from './components/features/auth/LoginView';
 import { Button } from './components/ui/button';
+import { Surface } from './components/ui/surface';
+import { BottomBarAction } from './components/ui/bottom-bar-action';
 import { LogOut } from 'lucide-react';
 
 export default function App() {
@@ -39,24 +40,21 @@ export default function App() {
 
   if (!startTime) {
     return (
-      <MinimalLayout user={user} onLogout={logout}>
+      <AppLayout user={user} onLogout={logout} minimal>
         <InputScreen onStart={clockIn} loading={sessionLoading} />
-      </MinimalLayout>
+      </AppLayout>
     );
   }
 
   const bottomBar = (
-    <div className="flex justify-around items-center w-full py-3 px-4 rounded-2xl bg-white/80 backdrop-blur-xl border border-[rgba(229,23,63,0.1)]">
+    <Surface variant="bar" className="flex justify-around items-center w-full py-3 px-4">
       <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} />
-      <Button
-        variant="ghost"
+      <BottomBarAction
+        icon={<LogOut className="h-6 w-6" />}
+        label="Feierabend"
         onClick={clockOut}
-        className="flex flex-col gap-1 h-auto py-2.5 px-5 text-[#999] hover:text-[#E5173F] hover:bg-transparent"
-      >
-        <LogOut className="h-6 w-6" />
-        <span className="text-[10px] font-medium uppercase tracking-wider">Feierabend</span>
-      </Button>
-    </div>
+      />
+    </Surface>
   );
 
   const desktopActions = (

@@ -7,9 +7,11 @@ on:
 permissions:
   contents: read
   id-token: write
+  pull-requests: write
 
 jobs:
   build_and_preview:
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,6 +43,28 @@ jobs:
           project_id: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
 
       - name: Deploy to Firebase Hosting Preview
-        run: npx firebase hosting:channel:deploy ${{ github.event.pull_request.head.ref }} --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token "${{ steps.auth.outputs.access_token }}"
+        id: deploy
+        run: |
+          RESULT=$(npx firebase hosting:channel:deploy ${{ github.event.pull_request.head.ref }} --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token "${{ steps.auth.outputs.access_token }}" --json)
+          URL=$(echo $RESULT | jq -r '.result | to_entries | .[0].value.url')
+          echo "url=$URL" >> $GITHUB_OUTPUT
         env:
           FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
+
+      - name: Find Comment
+        uses: peter-evans/find-comment@v3
+        id: fc
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: Firebase Hosting Preview
+
+      - name: Comment Preview Link
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🚀 Firebase Hosting Preview: [${{ steps.deploy.outputs.url }}](${{ steps.deploy.outputs.url }})
+            *Expires in 7 days*
+          edit-mode: replace
