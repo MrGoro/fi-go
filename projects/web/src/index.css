@@ -70,6 +70,8 @@
     --border: 240 6% 90%;
     --input: 240 6% 90%;
     --ring: 348 82% 49%;              /* primär */
+    --ring-over: 25 95% 53%;          /* Timer-Overtime-Bogen ≈ #F97316 */
+    --ring-track: oklch(0.928 0.006 264); /* Timer-Track (leerer Bogen) */
     --radius: 0.5rem;
   }
 
@@ -93,6 +95,8 @@
     --border: 240 5% 18%;
     --input: 240 5% 18%;
     --ring: 348 80% 65%;
+    --ring-over: 25 90% 60%;          /* Overtime-Bogen, etwas heller für dunklen Track */
+    --ring-track: oklch(0.28 0.008 264); /* Track im Dark — gedämpft, klar sichtbar */
   }
 
   * {
@@ -105,6 +109,14 @@
       radial-gradient(ellipse 80% 60% at 85% 0%,   oklch(0.965 0.030 30  / 0.9), transparent 60%),
       radial-gradient(ellipse 70% 55% at 10% 100%,  oklch(0.970 0.025 355 / 0.8), transparent 60%),
       linear-gradient(135deg, oklch(0.994 0.006 30) 0%, oklch(0.984 0.012 22) 55%, oklch(0.976 0.018 355) 100%);
+    background-attachment: fixed;
+  }
+
+  .dark body {
+    background:
+      radial-gradient(ellipse 80% 60% at 85% 0%,   oklch(0.20 0.045 22 / 0.55), transparent 60%),
+      radial-gradient(ellipse 70% 55% at 10% 100%,  oklch(0.22 0.040 355 / 0.45), transparent 60%),
+      linear-gradient(135deg, oklch(0.13 0.010 30) 0%, oklch(0.12 0.015 22) 55%, oklch(0.13 0.018 355) 100%);
     background-attachment: fixed;
   }
 }

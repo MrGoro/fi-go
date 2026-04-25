@@ -18,8 +18,8 @@ export function BreakTooltip({ x, y, item }: BreakTooltipProps) {
         transform: 'translate(-50%, -50%)',
       }}
     >
-      <div className="bg-white/95 backdrop-blur-sm shadow-lg border border-border/30 rounded-xl px-2.5 py-1.5 text-center whitespace-nowrap">
-        <p className="text-[12px] font-semibold tabular-nums text-foreground leading-none">
+      <div className="bg-popover/95 backdrop-blur-sm shadow-lg border border-border/50 rounded-xl px-2.5 py-1.5 text-center whitespace-nowrap">
+        <p className="text-[12px] font-semibold tabular-nums text-popover-foreground leading-none">
           {format(item.wallStart, 'HH:mm')} – {format(item.wallEnd, 'HH:mm')}
         </p>
         {item.kind === 'legal' && (

@@ -13,9 +13,9 @@ export const RING = {
 export const RING_SWEEP = RING.END_ANGLE - RING.START_ANGLE; // 240°
 
 export const RING_COLORS = {
-  track:     'oklch(0.928 0.006 264)',
-  work:      '#E5173F',
-  over:      '#F97316',
+  track:     'var(--ring-track)',
+  work:      'hsl(var(--primary))',
+  over:      'hsl(var(--ring-over))',
   break:     'oklch(0.78 0.115 22)',
   breakHint: 'oklch(0.90 0.060 22)',
 } as const;

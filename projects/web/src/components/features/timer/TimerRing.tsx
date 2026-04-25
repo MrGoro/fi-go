@@ -84,7 +84,7 @@ export function TimerRing({
         })}
 
         {/* Work/Over-Segmente mit Drop-Shadow für Tiefe */}
-        <g style={{ filter: 'drop-shadow(0 0 5px rgba(229,23,63,0.28))' }}>
+        <g style={{ filter: 'drop-shadow(0 0 5px hsl(var(--primary) / 0.28))' }}>
           {segments.filter(s => s.kind !== 'break').map((seg, i) => {
             const a0 = minToAngle(seg.start, ringMaxMin);
             const a1 = minToAngle(seg.end, ringMaxMin);
@@ -126,7 +126,7 @@ export function TimerRing({
             cy={tipPoint.y}
             r={6}
             fill={RING_COLORS.work}
-            style={{ filter: 'drop-shadow(0 0 7px #E5173F)' }}
+            style={{ filter: 'drop-shadow(0 0 7px hsl(var(--primary)))' }}
           />
         )}
 

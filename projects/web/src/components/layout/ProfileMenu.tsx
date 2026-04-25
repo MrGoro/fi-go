@@ -1,15 +1,30 @@
 import type { User } from 'firebase/auth';
-import { LogOut, ChevronDown, ExternalLink, Bug, Info } from 'lucide-react';
+import {
+  LogOut,
+  ChevronDown,
+  ExternalLink,
+  Bug,
+  Info,
+  Sun,
+  Moon,
+  MonitorSmartphone,
+} from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { UserAvatar } from '@/components/ui/user-avatar';
 import { SURFACE_CLASS } from '@/components/ui/surface-classes';
 import { Eyebrow } from '@/components/ui/eyebrow';
+import { useTheme, type ThemeMode } from '@/hooks/use-theme';
 import { cn } from '@/lib/utils';
 
 interface ProfileMenuProps {
@@ -18,7 +33,16 @@ interface ProfileMenuProps {
   onOpenAbout: () => void;
 }
 
+const MODE_ICON: Record<ThemeMode, typeof Sun> = {
+  system: MonitorSmartphone,
+  light: Sun,
+  dark: Moon,
+};
+
 export function ProfileMenu({ user, onLogout, onOpenAbout }: ProfileMenuProps) {
+  const { mode, setMode } = useTheme();
+  const ActiveModeIcon = MODE_ICON[mode];
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -50,6 +74,47 @@ export function ProfileMenu({ user, onLogout, onOpenAbout }: ProfileMenuProps) {
                 <span className="font-medium text-xs">Abmelden</span>
               </DropdownMenuItem>
             )}
+          </div>
+
+          <DropdownMenuSeparator className="my-2 opacity-40" />
+
+          <div className="px-1">
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer">
+                <ActiveModeIcon className="h-4 w-4 shrink-0" />
+                <span className="font-medium">Erscheinungsbild</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent
+                className={cn(SURFACE_CLASS.popover, 'w-44 p-2 z-50')}
+              >
+                <DropdownMenuRadioGroup
+                  value={mode}
+                  onValueChange={(value) => setMode(value as ThemeMode)}
+                >
+                  <DropdownMenuRadioItem
+                    value="system"
+                    className="flex items-center gap-3 pl-3 pr-9 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <MonitorSmartphone className="h-4 w-4 shrink-0" />
+                    <span className="font-medium">System</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem
+                    value="light"
+                    className="flex items-center gap-3 pl-3 pr-9 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <Sun className="h-4 w-4 shrink-0" />
+                    <span className="font-medium">Hell</span>
+                  </DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem
+                    value="dark"
+                    className="flex items-center gap-3 pl-3 pr-9 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer"
+                  >
+                    <Moon className="h-4 w-4 shrink-0" />
+                    <span className="font-medium">Dunkel</span>
+                  </DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </div>
 
           <DropdownMenuSeparator className="my-2 opacity-40" />
