@@ -6,6 +6,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'projects/web/**'
+      - 'projects/shared/**'
+      - '.github/workflows/firebase-hosting-merge.yml'
 permissions:
   contents: read
   id-token: write
@@ -16,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -36,15 +40,12 @@ jobs:
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: google-github-actions/auth@v2
+        uses: google-github-actions/auth@v3
         with:
-          token_format: 'access_token'
           workload_identity_provider: ${{ secrets.GCP_WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_WIF_SERVICE_ACCOUNT_HOSTING }}
           project_id: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
 
       - name: Deploy to Firebase Hosting
-        run: npx firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} --token "${{ steps.auth.outputs.access_token }}"
-        env:
-          FIREBASE_TOKEN: ${{ steps.auth.outputs.access_token }}
+        run: npx firebase deploy --only hosting --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
 
