@@ -15,7 +15,7 @@ export const BreaksTrigger = forwardRef<HTMLButtonElement, BreaksTriggerProps>(
         <Button
           ref={ref}
           variant="ghost"
-          className="rounded-full border border-[#E5173F] text-[#E5173F] hover:bg-[#E5173F]/10 hover:text-[#E5173F]"
+          className="rounded-full border border-primary text-primary hover:bg-primary/10 hover:text-primary"
           {...props}
         >
           <Coffee className="mr-2 h-4 w-4" /> Pausen

@@ -9,6 +9,18 @@
   <!-- Prevents white flash before CSS loads -->
   <style>html, body { margin: 0; background-color: #E5173F; }</style>
 
+  <!-- No-FOUC theme bootstrap: applies .dark class before first paint -->
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('fi-go.theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var dark = stored === 'dark' || ((stored === null || stored === 'system') && prefersDark);
+        if (dark) document.documentElement.classList.add('dark');
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+
   <!-- Icons -->
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/icon-512.svg" sizes="any" type="image/svg+xml">

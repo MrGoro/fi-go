@@ -9,9 +9,6 @@ interface BottomBarActionProps extends Omit<ComponentProps<typeof Button>, 'chil
 
 /**
  * Vertikaler Icon+Label-Button für die mobile BottomBar (Feierabend, Pausen-Trigger, …).
- * Kapselt das `flex-col gap-1 h-auto py-2.5 px-5 text-[#999]`-Pattern, das vorher
- * in App.tsx und BreaksTrigger 1:1 kopiert war.
- *
  * Forwarded Ref, damit Radix/Vaul-`asChild`-Trigger funktionieren.
  */
 export const BottomBarAction = forwardRef<HTMLButtonElement, BottomBarActionProps>(
@@ -22,7 +19,7 @@ export const BottomBarAction = forwardRef<HTMLButtonElement, BottomBarActionProp
         variant="ghost"
         className={cn(
           'flex flex-col gap-1 h-auto py-2.5 px-5',
-          'text-[#999] hover:text-[#E5173F] hover:bg-transparent',
+          'text-muted-foreground hover:text-primary hover:bg-transparent',
           className,
         )}
         {...props}

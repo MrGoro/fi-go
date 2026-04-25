@@ -7,16 +7,15 @@ type Variant = 'primary' | 'outline';
 const VARIANT_CLASS: Record<Variant, string> = {
   primary:
     'bg-primary text-white ' +
-    'hover:brightness-110 hover:shadow-[0_6px_20px_oklch(0.510_0.230_22_/_0.35)] ' +
+    'hover:brightness-110 hover:shadow-[0_6px_20px_hsl(var(--primary)/0.35)] ' +
     'active:scale-[0.98] active:brightness-95 ' +
     'disabled:opacity-40 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-none',
   outline:
-    'border border-[#E5173F] bg-white text-[#E5173F] ' +
-    'shadow-[0_2px_10px_rgba(0,0,0,0.07)] ' +
-    'hover:bg-[#E5173F]/5 ' +
+    'border border-primary bg-card text-primary ' +
+    'shadow-[0_2px_10px_hsl(var(--foreground)/0.07)] ' +
+    'hover:bg-primary/5 ' +
     'active:scale-[0.98] ' +
-    'disabled:opacity-40 disabled:cursor-not-allowed ' +
-    'dark:bg-neutral-900 dark:border-primary dark:text-primary dark:hover:bg-primary/10',
+    'disabled:opacity-40 disabled:cursor-not-allowed',
 };
 
 interface SubmitButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

@@ -1,7 +1,7 @@
 interface LogoProps {
   /** Renderhöhe in Pixel. Breite skaliert proportional. */
   height?: number
-  /** SVG-Farbwert. Standard: Primärfarbe #E5173F. */
+  /** SVG-Farbwert. Standard: Primärfarb-Token (passt sich Light/Dark an). */
   color?: string
   className?: string
 }
@@ -12,7 +12,7 @@ interface LogoProps {
  * Monoline-Schrift auf 28-Einheiten-Grid, stroke-width 2.4, rounded caps.
  * Buchstaben: f i – g o   (alle Kleinbuchstaben, geometric-sans Stil)
  */
-export function Logo({ height = 28, color = '#E5173F', className, ...props }: LogoProps) {
+export function Logo({ height = 28, color = 'hsl(var(--primary))', className, ...props }: LogoProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

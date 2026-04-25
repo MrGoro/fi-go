@@ -62,7 +62,7 @@ export default function App() {
       <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} desktopMode />
       <Button
         onClick={clockOut}
-        className="rounded-full bg-[#E5173F] text-white hover:bg-[#cc1538] shadow-[0_0_14px_rgba(229,23,63,0.38)] border-0"
+        className="rounded-full bg-primary text-white hover:brightness-110 shadow-[0_0_14px_hsl(var(--primary)/0.38)] border-0"
       >
         <LogOut className="mr-2 h-4 w-4" /> Feierabend
       </Button>

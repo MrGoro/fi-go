@@ -3,12 +3,11 @@ import { cn } from '@/lib/utils';
 import { Eyebrow } from './eyebrow';
 
 const FIELD_BASE_CLASS =
-  'w-full h-13 rounded-2xl border border-[rgba(229,23,63,0.2)] bg-white/90 ' +
-  'shadow-[0_2px_10px_rgba(0,0,0,0.07)] outline-none ' +
+  'w-full h-13 rounded-2xl border border-primary/20 bg-card/90 ' +
+  'shadow-[0_2px_10px_hsl(var(--foreground)/0.07)] outline-none ' +
   'placeholder:text-muted-foreground/40 ' +
   'transition-all duration-150 ' +
-  'focus:border-[rgba(229,23,63,0.4)] focus:ring-3 focus:ring-primary/10 focus:bg-white ' +
-  'dark:bg-neutral-900 dark:border-neutral-800 dark:focus:bg-neutral-950';
+  'focus:border-primary/40 focus:ring-3 focus:ring-primary/10 focus:bg-card';
 
 interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string;
