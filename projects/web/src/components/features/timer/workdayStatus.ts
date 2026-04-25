@@ -1,14 +1,14 @@
 import {
   MAX_WORK_LIMIT_MINUTES,
-  WORKDAY_TEN_HOUR_URGENT_MIN,
-  WORKDAY_TEN_HOUR_WARN_MIN,
-  WORKDAY_PAUSE_URGENT_MIN,
-  WORKDAY_PAUSE_WARN_MIN,
-  WORKDAY_PAUSE_TIP_MIN,
-  WORKDAY_FEIERABEND_NOW_MIN,
-  WORKDAY_FEIERABEND_NEAR_MIN,
-  WORKDAY_SOLL_REACHED_MIN,
-  WORKDAY_OVERTIME_STRONG_MIN,
+  WORKDAY_TEN_HOUR_URGENT_MINUTES,
+  WORKDAY_TEN_HOUR_WARN_MINUTES,
+  WORKDAY_PAUSE_URGENT_MINUTES,
+  WORKDAY_PAUSE_WARN_MINUTES,
+  WORKDAY_PAUSE_TIP_MINUTES,
+  WORKDAY_FEIERABEND_NOW_MINUTES,
+  WORKDAY_FEIERABEND_NEAR_MINUTES,
+  WORKDAY_SOLL_REACHED_MINUTES,
+  WORKDAY_OVERTIME_STRONG_MINUTES,
 } from '@figo/shared';
 
 export type WorkdayMessageSeverity = 'urgent' | 'warning' | 'success' | 'info';
@@ -69,14 +69,14 @@ export function getWorkdayMessage({
     };
   }
 
-  if (minutesToTen <= WORKDAY_TEN_HOUR_URGENT_MIN) {
+  if (minutesToTen <= WORKDAY_TEN_HOUR_URGENT_MINUTES) {
     return {
       text: `Noch ${Math.floor(minutesToTen)} Minuten bis zur gesetzlichen 10h-Grenze`,
       severity: 'urgent',
     };
   }
 
-  if (minutesToTen <= WORKDAY_TEN_HOUR_WARN_MIN) {
+  if (minutesToTen <= WORKDAY_TEN_HOUR_WARN_MINUTES) {
     const tenAtMin = nowMin + minutesToTen;
     return {
       text: `Noch ${Math.floor(minutesToTen)} Minuten bis zur 10h-Grenze (um ${formatHHMM(tenAtMin)})`,
@@ -91,49 +91,49 @@ export function getWorkdayMessage({
     };
   }
 
-  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_URGENT_MIN) {
+  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_URGENT_MINUTES) {
     return {
       text: `In ${Math.ceil(nextLegalPauseIn)} Minuten erfolgt ein Pausenabzug – jetzt Feierabend spart dir ${nextLegalPauseDeduction} Minuten`,
       severity: 'warning',
     };
   }
 
-  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_WARN_MIN) {
+  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_WARN_MINUTES) {
     return {
       text: `In ${Math.ceil(nextLegalPauseIn)} Minuten wird ein gesetzlicher Pausenabzug fällig`,
       severity: 'warning',
     };
   }
 
-  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_TIP_MIN) {
+  if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_TIP_MINUTES) {
     return {
       text: `Pause in den nächsten ${Math.ceil(nextLegalPauseIn)} Min. spart ${nextLegalPauseDeduction} Min. Abzug`,
       severity: 'info',
     };
   }
 
-  if (minutesToFeierabend > 0 && minutesToFeierabend <= WORKDAY_FEIERABEND_NOW_MIN) {
+  if (minutesToFeierabend > 0 && minutesToFeierabend <= WORKDAY_FEIERABEND_NOW_MINUTES) {
     return {
       text: `Feierabend in ${Math.floor(minutesToFeierabend)} Minuten`,
       severity: 'success',
     };
   }
 
-  if (minutesToFeierabend > 0 && minutesToFeierabend <= WORKDAY_FEIERABEND_NEAR_MIN) {
+  if (minutesToFeierabend > 0 && minutesToFeierabend <= WORKDAY_FEIERABEND_NEAR_MINUTES) {
     return {
       text: `Noch ${Math.floor(minutesToFeierabend)} Minuten bis Feierabend`,
       severity: 'info',
     };
   }
 
-  if (overtimeMin >= 0 && overtimeMin <= WORKDAY_SOLL_REACHED_MIN) {
+  if (overtimeMin >= 0 && overtimeMin <= WORKDAY_SOLL_REACHED_MINUTES) {
     return {
       text: `Soll-Zeit erreicht – Feierabend möglich`,
       severity: 'success',
     };
   }
 
-  if (overtimeMin > WORKDAY_OVERTIME_STRONG_MIN) {
+  if (overtimeMin > WORKDAY_OVERTIME_STRONG_MINUTES) {
     const h = Math.floor(overtimeMin / 60);
     const m = Math.floor(overtimeMin % 60);
     return {

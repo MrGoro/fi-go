@@ -1,18 +1,17 @@
 import { onValueWritten } from 'firebase-functions/v2/database';
 import { onTaskDispatched } from 'firebase-functions/v2/tasks';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { getFunctions } from 'firebase-admin/functions';
+import { getFunctions, type TaskQueue } from 'firebase-admin/functions';
 import * as admin from 'firebase-admin';
 import * as logger from 'firebase-functions/logger';
-import { WORK_TIME_TARGET_HOURS, WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateLegalMinimumBreakMinutes } from '@figo/shared';
+import { WORK_TIME_TARGET_MINUTES, MAX_WORK_LIMIT_MINUTES, calculateManualBreaksMinutes, calculateAppliedBreakMinutes, type BreakRecord } from '@figo/shared';
 
 // Initialize Firebase Admin
 admin.initializeApp();
 
-interface BreakRecord {
-  start: Date;
-  end: Date;
-}
+const FUNCTIONS_REGION   = 'us-central1';
+const FCM_LINK           = 'https://fi-go.schuermann.app';
+const STALE_TOKEN_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 interface PushPayload {
   userId: string;
@@ -21,9 +20,38 @@ interface PushPayload {
   breaksDurationMinutes: number;
 }
 
+interface FcmToken {
+  token: string;
+  lastSeen: number;
+}
+
+type RtdbBreak = { start: number; end: number };
+
+function parseBreaksFromRtdb(rtdbBreaks: Record<string, RtdbBreak> | null | undefined): BreakRecord[] {
+  if (!rtdbBreaks) return [];
+  return Object.values(rtdbBreaks).map(b => ({
+    start: new Date(b.start),
+    end:   new Date(b.end),
+  }));
+}
+
+async function scheduleNotification(
+  queue: TaskQueue<PushPayload>,
+  payload: PushPayload,
+  scheduleTimeMillis: number,
+): Promise<void> {
+  if (scheduleTimeMillis <= Date.now()) return;
+  try {
+    await queue.enqueue(payload, { scheduleTime: new Date(scheduleTimeMillis) });
+    logger.info(`Scheduled ${payload.type} notification for ${payload.userId} at ${new Date(scheduleTimeMillis).toISOString()}`);
+  } catch (e) {
+    logger.error(`Failed to enqueue ${payload.type} task`, e);
+  }
+}
+
 export const onSessionDataWritten = onValueWritten({
   ref: '/data/{userId}',
-  region: 'us-central1'
+  region: FUNCTIONS_REGION,
 }, async (event) => {
   const userId = event.data.after.key;
   if (!userId) return;
@@ -36,62 +64,27 @@ export const onSessionDataWritten = onValueWritten({
   }
 
   const startTimeMillis = data.startTime;
-  // Extract Breaks
-  const breaks: BreakRecord[] = [];
-  if (data.breaks) {
-    for (const key of Object.keys(data.breaks)) {
-      breaks.push({
-        start: new Date(data.breaks[key].start),
-        end: new Date(data.breaks[key].end)
-      });
-    }
-  }
-
+  const breaks          = parseBreaksFromRtdb(data.breaks);
   const manualBreaksMinutes = calculateManualBreaksMinutes(breaks);
-  const targetMinutes = WORK_TIME_TARGET_HOURS * 60 + WORK_TIME_TARGET_MINUTES;
-  const projectedBreakMinutesTarget = Math.max(calculateLegalMinimumBreakMinutes(targetMinutes), manualBreaksMinutes);
+  const projectedBreakMinutesTarget = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMinutes);
+  const projectedBreakMinutesLimit  = calculateAppliedBreakMinutes(MAX_WORK_LIMIT_MINUTES,  manualBreaksMinutes);
 
   // Calculate projected finish times
-  const targetFinishTimeMillis = startTimeMillis + (targetMinutes + projectedBreakMinutesTarget) * 60 * 1000;
+  const targetFinishTimeMillis  = startTimeMillis + (WORK_TIME_TARGET_MINUTES + projectedBreakMinutesTarget) * 60 * 1000;
+  const tenHoursFinishTimeMillis = startTimeMillis + (MAX_WORK_LIMIT_MINUTES   + projectedBreakMinutesLimit)  * 60 * 1000;
 
-  // 10 hours limit finish time
-  const projectedBreakMinutesLimit = Math.max(45, manualBreaksMinutes);
-  const tenHoursFinishTimeMillis = startTimeMillis + (MAX_WORK_LIMIT_MINUTES + projectedBreakMinutesLimit) * 60 * 1000;
+  const queue = getFunctions().taskQueue<PushPayload>('onSendPushNotification');
+  const basePayload = { userId, startTimeMillis, breaksDurationMinutes: manualBreaksMinutes };
 
-  const queue = getFunctions().taskQueue('onSendPushNotification');
-
-  // Enqueue Target (Feierabend)
-  if (targetFinishTimeMillis > Date.now()) {
-    try {
-      await queue.enqueue(
-        { userId, type: 'TARGET', startTimeMillis, breaksDurationMinutes: manualBreaksMinutes },
-        { scheduleTime: new Date(targetFinishTimeMillis) }
-      );
-      logger.info(`Scheduled TARGET notification for ${userId} at ${new Date(targetFinishTimeMillis).toISOString()}`);
-    } catch (e) {
-      logger.error('Failed to enqueue TARGET task', e);
-    }
-  }
-
-  // Enqueue Limit (10 Hours)
-  if (tenHoursFinishTimeMillis > Date.now()) {
-    try {
-      await queue.enqueue(
-        { userId, type: 'LIMIT', startTimeMillis, breaksDurationMinutes: manualBreaksMinutes },
-        { scheduleTime: new Date(tenHoursFinishTimeMillis) }
-      );
-      logger.info(`Scheduled LIMIT notification for ${userId} at ${new Date(tenHoursFinishTimeMillis).toISOString()}`);
-    } catch (e) {
-      logger.error('Failed to enqueue LIMIT task', e);
-    }
-  }
+  await scheduleNotification(queue, { ...basePayload, type: 'TARGET' }, targetFinishTimeMillis);
+  await scheduleNotification(queue, { ...basePayload, type: 'LIMIT' },  tenHoursFinishTimeMillis);
 });
 
 export const onSendPushNotification = onTaskDispatched<PushPayload>(
   {
     retryConfig: { maxAttempts: 3 },
     rateLimits: { maxConcurrentDispatches: 10 },
-    region: 'us-central1'
+    region: FUNCTIONS_REGION,
   },
   async (request) => {
     const payload = request.data;
@@ -105,16 +98,7 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
-    const breaks: BreakRecord[] = [];
-    if (data.breaks) {
-      for (const key of Object.keys(data.breaks)) {
-        breaks.push({
-          start: new Date(data.breaks[key].start),
-          end: new Date(data.breaks[key].end)
-        });
-      }
-    }
-
+    const breaks = parseBreaksFromRtdb(data.breaks);
     const currentManualBreaksMinutes = calculateManualBreaksMinutes(breaks);
     if (currentManualBreaksMinutes !== payload.breaksDurationMinutes) {
       logger.info(`Task aborted: Breaks duration changed. Task was for ${payload.breaksDurationMinutes}m, now ${currentManualBreaksMinutes}m. A newer task should be queued.`);
@@ -124,20 +108,19 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
     // Passed verification, calculate user specific timezone/time string if needed
     // Fetch FCM tokens
     const tokensSnap = await admin.database().ref(`/users/${payload.userId}/fcmTokens`).once('value');
-    const tokensData = tokensSnap.val();
-    
+    const tokensData = tokensSnap.val() as Record<string, FcmToken> | null;
+
     if (!tokensData) {
       logger.info(`Task aborted: No FCM Tokens found for user ${payload.userId}`);
       return;
     }
 
-    const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
     const now = Date.now();
-    
-    // Filter active tokens (lastSeen < 30 days)
+
+    // Filter active tokens (lastSeen within STALE_TOKEN_AGE_MS)
     const activeTokens = Object.entries(tokensData)
-      .map(([key, value]: [string, any]) => ({ key, ...value }))
-      .filter(t => (now - t.lastSeen) < THIRTY_DAYS_MS);
+      .map(([key, value]) => ({ key, ...value }))
+      .filter(t => (now - t.lastSeen) < STALE_TOKEN_AGE_MS);
 
     if (activeTokens.length === 0) {
       logger.info(`Task aborted: No active FCM Tokens found for user ${payload.userId} (all stale).`);
@@ -152,10 +135,8 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
     const message = {
       notification: { title, body },
       webpush: {
-        fcmOptions: {
-          link: 'https://fi-go.schuermann.app'
-        }
-      }
+        fcmOptions: { link: FCM_LINK },
+      },
     };
 
     try {
@@ -192,26 +173,24 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
  * Scheduled cleanup of stale tokens (older than 30 days) across all users.
  * Runs once every 24 hours at midnight.
  */
-export const cleanupStaleTokens = onSchedule('0 0 * * *', async (event) => {
-  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-  const cutoff = Date.now() - THIRTY_DAYS_MS;
-  
+export const cleanupStaleTokens = onSchedule('0 0 * * *', async () => {
+  const cutoff = Date.now() - STALE_TOKEN_AGE_MS;
+
+
   const usersSnap = await admin.database().ref('/users').once('value');
-  const users = usersSnap.val();
-  
+  const users = usersSnap.val() as Record<string, { fcmTokens?: Record<string, FcmToken> }> | null;
+
   if (!users) return;
 
   const updates: Record<string, null> = {};
   let cleanupCount = 0;
 
-  for (const userId of Object.keys(users)) {
-    const tokens = users[userId].fcmTokens;
-    if (tokens) {
-      for (const tokenKey of Object.keys(tokens)) {
-        if (tokens[tokenKey].lastSeen < cutoff) {
-          updates[`/users/${userId}/fcmTokens/${tokenKey}`] = null;
-          cleanupCount++;
-        }
+  for (const [userId, user] of Object.entries(users)) {
+    if (!user.fcmTokens) continue;
+    for (const [tokenKey, token] of Object.entries(user.fcmTokens)) {
+      if (token.lastSeen < cutoff) {
+        updates[`/users/${userId}/fcmTokens/${tokenKey}`] = null;
+        cleanupCount++;
       }
     }
   }

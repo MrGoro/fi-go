@@ -1,12 +1,11 @@
 import { Dialog } from '@/components/ui/dialog';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import {
-  WORK_TIME_TARGET_HOURS,
   WORK_TIME_TARGET_MINUTES,
   BREAK_RULE_1_THRESHOLD_MINUTES,
-  BREAK_RULE_1_MIN_BREAK_MINUTES,
+  BREAK_RULE_1_REQUIRED_MINUTES,
   BREAK_RULE_2_THRESHOLD_MINUTES,
-  BREAK_RULE_2_MIN_BREAK_MINUTES,
+  BREAK_RULE_2_REQUIRED_MINUTES,
   MAX_WORK_LIMIT_MINUTES,
 } from '@figo/shared';
 
@@ -16,7 +15,7 @@ interface AboutDialogProps {
 }
 
 export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
-  const targetFormatted = `${WORK_TIME_TARGET_HOURS}:${String(WORK_TIME_TARGET_MINUTES).padStart(2, '0')}`;
+  const targetFormatted = `${Math.floor(WORK_TIME_TARGET_MINUTES / 60)}:${String(WORK_TIME_TARGET_MINUTES % 60).padStart(2, '0')}`;
   const warningMinutes = MAX_WORK_LIMIT_MINUTES - 30;
   const warningHours   = Math.floor(warningMinutes / 60);
   const warningMins    = warningMinutes % 60;
@@ -55,12 +54,12 @@ export function AboutDialog({ open, onOpenChange }: AboutDialogProps) {
 
             <span>Pause 1:</span>
             <span className="font-medium text-foreground">
-              {BREAK_RULE_1_MIN_BREAK_MINUTES} Min (nach {BREAK_RULE_1_THRESHOLD_MINUTES / 60}h)
+              {BREAK_RULE_1_REQUIRED_MINUTES} Min (nach {BREAK_RULE_1_THRESHOLD_MINUTES / 60}h)
             </span>
 
             <span>Pause 2:</span>
             <span className="font-medium text-foreground">
-              {BREAK_RULE_2_MIN_BREAK_MINUTES} Min (nach {BREAK_RULE_2_THRESHOLD_MINUTES / 60}h)
+              {BREAK_RULE_2_REQUIRED_MINUTES} Min (nach {BREAK_RULE_2_THRESHOLD_MINUTES / 60}h)
             </span>
 
             <span>Warnung:</span>
