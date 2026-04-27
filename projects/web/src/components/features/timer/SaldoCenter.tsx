@@ -32,31 +32,37 @@ export function SaldoCenter({ saldoText, isOvertime, message }: SaldoCenterProps
   const Icon = message ? SEVERITY_ICON[message.severity] : null;
 
   return (
-    <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none px-8">
-      <Eyebrow size="xs" className="text-muted-foreground/50 mb-2.5">
-        {isOvertime ? 'Überstunden' : 'Saldo'}
-      </Eyebrow>
-      <div
-        className={cn(
-          'font-bold tabular-nums leading-none tracking-tight',
-          'text-[50px] sm:text-[62px]',
-        )}
-        style={{ color: RING_COLORS.work }}
-      >
-        {saldoText}
-      </div>
-      {message && Icon && (
+    <div className="absolute inset-0 select-none pointer-events-none">
+      {/* Saldo pinned to ring center, independent of message */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-8">
+        <Eyebrow size="xs" className="text-muted-foreground/50 mb-2.5">
+          {isOvertime ? 'Überstunden' : 'Saldo'}
+        </Eyebrow>
         <div
-          role={message.severity === 'urgent' ? 'alert' : 'status'}
           className={cn(
-            'mt-3 max-w-[80%] flex items-center justify-center gap-1.5',
-            'text-[12px] sm:text-[13px] font-medium leading-snug',
-            'px-2.5 py-1 rounded-full',
-            SEVERITY_CLASS[message.severity],
+            'font-bold tabular-nums leading-none tracking-tight',
+            'text-[50px] sm:text-[62px]',
           )}
+          style={{ color: RING_COLORS.work }}
         >
-          <Icon className="h-3.5 w-3.5 shrink-0 mt-px" />
-          <span className="text-balance">{message.text}</span>
+          {saldoText}
+        </div>
+      </div>
+      {/* Message in ring's bottom opening (below arc end-caps at ~y=245 SVG) */}
+      {message && Icon && (
+        <div className="absolute bottom-[8%] left-0 right-0 flex items-center justify-center px-6">
+          <div
+            role={message.severity === 'urgent' ? 'alert' : 'status'}
+            className={cn(
+              'max-w-[75%] flex items-center justify-center gap-1.5',
+              'text-[12px] sm:text-[13px] font-medium leading-snug',
+              'px-2.5 py-1 rounded-full',
+              SEVERITY_CLASS[message.severity],
+            )}
+          >
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            <span className="text-balance">{message.text}</span>
+          </div>
         </div>
       )}
     </div>
