@@ -64,14 +64,14 @@ export function getWorkdayMessage({
 
   if (minutesToTen < 0) {
     return {
-      text: `10h-Grenze seit ${Math.floor(-minutesToTen)} Min. überschritten – du solltest jetzt Feierabend machen`,
+      text: `10h-Grenze seit ${Math.floor(-minutesToTen)} Min. überschritten!`,
       severity: 'urgent',
     };
   }
 
   if (minutesToTen <= WORKDAY_TEN_HOUR_URGENT_MINUTES) {
     return {
-      text: `Noch ${Math.floor(minutesToTen)} Minuten bis zur gesetzlichen 10h-Grenze`,
+      text: `Noch ${Math.floor(minutesToTen)} Min. bis zur gesetzlichen 10h-Grenze`,
       severity: 'urgent',
     };
   }
@@ -79,28 +79,28 @@ export function getWorkdayMessage({
   if (minutesToTen <= WORKDAY_TEN_HOUR_WARN_MINUTES) {
     const tenAtMin = nowMin + minutesToTen;
     return {
-      text: `Noch ${Math.floor(minutesToTen)} Minuten bis zur 10h-Grenze (um ${formatHHMM(tenAtMin)})`,
+      text: `Noch ${Math.floor(minutesToTen)} Min. bis zur 10h-Grenze (um ${formatHHMM(tenAtMin)})`,
       severity: 'warning',
     };
   }
 
   if (legalPauseRunning) {
     return {
-      text: `Gesetzliche Pause wird gerade abgezogen (noch ${legalPauseMinsRemaining} Min.)`,
+      text: `Pausenabzug läuft – noch ${legalPauseMinsRemaining} Min.`,
       severity: 'urgent',
     };
   }
 
   if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_URGENT_MINUTES) {
     return {
-      text: `In ${Math.ceil(nextLegalPauseIn)} Minuten erfolgt ein Pausenabzug – jetzt Feierabend spart dir ${nextLegalPauseDeduction} Minuten`,
+      text: `In ${Math.ceil(nextLegalPauseIn)} Min. Abzug – Feierabend spart ${nextLegalPauseDeduction} Min.`,
       severity: 'warning',
     };
   }
 
   if (nextLegalPauseIn !== null && nextLegalPauseIn <= WORKDAY_PAUSE_WARN_MINUTES) {
     return {
-      text: `In ${Math.ceil(nextLegalPauseIn)} Minuten wird ein gesetzlicher Pausenabzug fällig`,
+      text: `In ${Math.ceil(nextLegalPauseIn)} Min. wird ein Pausenabzug fällig`,
       severity: 'warning',
     };
   }
@@ -144,7 +144,7 @@ export function getWorkdayMessage({
 
   if (overtimeMin > 0) {
     return {
-      text: `Du machst Überstunden – +${Math.floor(overtimeMin)} Minuten über Soll`,
+      text: `Du machst +${Math.floor(overtimeMin)} Min. Überstunden`,
       severity: 'info',
     };
   }

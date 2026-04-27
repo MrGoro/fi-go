@@ -21,8 +21,8 @@ const SEVERITY_ICON: Record<WorkdayMessageSeverity, ComponentType<{ className?: 
 const SEVERITY_CLASS: Record<WorkdayMessageSeverity, string> = {
   urgent:  'bg-destructive/12 text-destructive animate-pulse',
   warning: 'bg-orange-500/12 text-orange-700 dark:text-orange-300',
-  success: 'text-green-600 dark:text-green-500',
-  info:    'text-muted-foreground/90',
+  success: 'bg-green-500/12 text-green-600 dark:text-green-500',
+  info:    'bg-muted/60 text-muted-foreground/90',
 };
 
 /**
@@ -30,7 +30,6 @@ const SEVERITY_CLASS: Record<WorkdayMessageSeverity, string> = {
  */
 export function SaldoCenter({ saldoText, isOvertime, message }: SaldoCenterProps) {
   const Icon = message ? SEVERITY_ICON[message.severity] : null;
-  const isProminent = message?.severity === 'urgent' || message?.severity === 'warning';
 
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none px-8">
@@ -50,13 +49,13 @@ export function SaldoCenter({ saldoText, isOvertime, message }: SaldoCenterProps
         <div
           role={message.severity === 'urgent' ? 'alert' : 'status'}
           className={cn(
-            'mt-3 max-w-[80%] flex items-start justify-center gap-1.5',
+            'mt-3 max-w-[65%] flex items-center justify-center gap-1.5',
             'text-[12px] sm:text-[13px] font-medium leading-snug',
-            isProminent && 'px-2.5 py-1 rounded-full',
+            'px-2.5 py-1 rounded-full',
             SEVERITY_CLASS[message.severity],
           )}
         >
-          <Icon className="h-3.5 w-3.5 shrink-0 mt-px" />
+          <Icon className="h-3.5 w-3.5 shrink-0" />
           <span className="text-balance">{message.text}</span>
         </div>
       )}
