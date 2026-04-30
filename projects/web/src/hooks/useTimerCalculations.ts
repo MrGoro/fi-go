@@ -9,6 +9,7 @@ import {
   calculateSaldoMinutes,
   calculateLegalPauseStatus,
   calculateLegalPauseZones,
+  grossTimeForNetTarget,
   minutesToTimeDuration,
   WORK_TIME_TARGET_MINUTES,
   MAX_WORK_LIMIT_MINUTES,
@@ -43,6 +44,8 @@ export interface TimerCalculations {
   tenAngle: number;
   finishTime: Date;
   tenLimitTime: Date;
+  dailyMaxAngle?: number;
+  dailyMaxLimitTime?: Date;
   // Saldo-Anzeige
   saldoText: string;
   isOvertime: boolean;
@@ -55,7 +58,7 @@ export interface TimerCalculations {
  * abgeleiteten Zustand für den Timer-Ring (Segmente, Winkel, Saldo,
  * kontextuelle Nachricht). Reine Berechnung, keine Darstellung.
  */
-export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): TimerCalculations {
+export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], maxOvertimeMinutes?: number | null): TimerCalculations {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -70,14 +73,14 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   const netMin           = calculateNetWorkTimeMinutes(grossMin, appliedBreaksMin);
   const saldoMin         = calculateSaldoMinutes(netMin);
 
-  // Wall-clock Anker — projizierter Break am Soll- bzw. 10h-Anker
-  const sollBreakMin     = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMin);
-  const tenBreakMin      = calculateAppliedBreakMinutes(MAX_WORK_LIMIT_MINUTES,  manualBreaksMin);
-  const finishTime       = addMinutes(startTime, WORK_TIME_TARGET_MINUTES + sollBreakMin);
-  const tenLimitTime     = addMinutes(startTime, MAX_WORK_LIMIT_MINUTES + tenBreakMin);
+  // Wall-clock Anker — Brutto-Zeit wenn Netto-Ziel erreicht wird
+  const finishGross      = grossTimeForNetTarget(WORK_TIME_TARGET_MINUTES, manualBreaksMin);
+  const tenGross         = grossTimeForNetTarget(MAX_WORK_LIMIT_MINUTES,   manualBreaksMin);
+  const finishTime       = addMinutes(startTime, finishGross);
+  const tenLimitTime     = addMinutes(startTime, tenGross);
 
-  // Ring-Skala: 0 bis 10h-Grenze in Wall-Minutes seit Start
-  const ringMaxMin       = MAX_WORK_LIMIT_MINUTES + tenBreakMin;
+  // Ring-Skala: 0 bis 10h-Netto-Grenze in Wall-Minutes seit Start
+  const ringMaxMin       = tenGross;
 
   // ── Pausen-Intervalle auf dem Ring ────────────────────────────────────
   const manualIntervals: Interval[] = breaks
@@ -123,8 +126,23 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   ];
 
   // Marker
-  const sollAngle = minToAngle(WORK_TIME_TARGET_MINUTES + sollBreakMin, ringMaxMin);
+  const sollAngle = minToAngle(finishGross, ringMaxMin);
   const tenAngle  = RING.END_ANGLE;
+
+  // Tages-Maximum (optional)
+  let dailyMaxAngle: number | undefined;
+  let dailyMaxLimitTime: Date | undefined;
+  let minutesToDailyMax: number | undefined;
+
+  if (maxOvertimeMinutes != null) {
+    const dailyMaxWorkMin  = WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes;
+    const dailyMaxGross    = grossTimeForNetTarget(dailyMaxWorkMin, manualBreaksMin);
+    dailyMaxLimitTime      = addMinutes(startTime, dailyMaxGross);
+    minutesToDailyMax      = dailyMaxWorkMin - netMin;
+    if (dailyMaxWorkMin < MAX_WORK_LIMIT_MINUTES) {
+      dailyMaxAngle = minToAngle(dailyMaxGross, ringMaxMin);
+    }
+  }
 
   // Saldo-Anzeige
   const saldo      = minutesToTimeDuration(saldoMin);
@@ -141,6 +159,8 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     legalPauseMinsRemaining: legalPauseStatus.minsRemaining,
     nextLegalPauseIn:        legalPauseStatus.nextPauseIn,
     nextLegalPauseDeduction: legalPauseStatus.nextPauseDeduction,
+    minutesToDailyMax,
+    dailyMaxBeforeTenHours:  maxOvertimeMinutes != null && (WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes) < MAX_WORK_LIMIT_MINUTES,
   });
 
   return {
@@ -157,6 +177,8 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     tenAngle,
     finishTime,
     tenLimitTime,
+    dailyMaxAngle,
+    dailyMaxLimitTime,
     saldoText,
     isOvertime,
     workdayMsg,

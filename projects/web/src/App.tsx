@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useSessionData } from './hooks/useSessionData';
 import { AuthLayout } from './components/layout/AuthLayout';
@@ -5,6 +6,7 @@ import { AppLayout } from './components/layout/AppLayout';
 import { LoadingScreen } from './components/layout/LoadingScreen';
 import { InputScreen } from './components/features/timer/InputScreen';
 import { DisplayScreen } from './components/features/timer/DisplayScreen';
+import { DailyMaxDialog } from './components/features/timer/DailyMaxDialog';
 import { BreaksDrawer } from './components/features/breaks/BreaksDrawer';
 import { LoginView } from './components/features/auth/LoginView';
 import { Button } from './components/ui/button';
@@ -17,12 +19,16 @@ export default function App() {
   const {
     startTime,
     breaks,
+    dailyMaxOvertimeMinutes,
     loading: sessionLoading,
     clockIn,
     clockOut,
     addBreak,
     removeBreak,
+    setDailyMaxOvertime,
   } = useSessionData();
+
+  const [isDailyMaxOpen, setIsDailyMaxOpen] = useState(false);
 
   const loading = authLoading || (user && sessionLoading);
 
@@ -69,14 +75,29 @@ export default function App() {
     </>
   );
 
+  const dailyMaxDialog = startTime ? (
+    <DailyMaxDialog
+      open={isDailyMaxOpen}
+      onClose={() => setIsDailyMaxOpen(false)}
+      startTime={startTime}
+      breaks={breaks}
+      currentValue={dailyMaxOvertimeMinutes}
+      onSave={(v) => setDailyMaxOvertime(v)}
+      onClear={() => setDailyMaxOvertime(null)}
+    />
+  ) : null;
+
   return (
     <AppLayout
       user={user}
       onLogout={logout}
       bottomBar={bottomBar}
       desktopActions={desktopActions}
+      onOpenDailyMax={() => setIsDailyMaxOpen(true)}
+      dailyMaxActive={dailyMaxOvertimeMinutes !== null}
+      dailyMaxDialog={dailyMaxDialog}
     >
-      <DisplayScreen startTime={startTime} breaks={breaks} />
+      <DisplayScreen startTime={startTime} breaks={breaks} maxOvertimeMinutes={dailyMaxOvertimeMinutes} />
     </AppLayout>
   );
 }

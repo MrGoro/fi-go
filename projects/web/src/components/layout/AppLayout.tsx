@@ -17,6 +17,10 @@ interface AppLayoutProps {
   bottomBar?: ReactNode;
   /** Desktop: shown in AppBar between logo and profile menu. Ignoriert bei `minimal`. */
   desktopActions?: ReactNode;
+  onOpenDailyMax?: () => void;
+  dailyMaxActive?: boolean;
+  /** Overlay dialog rendered at layout level (e.g. DailyMaxDialog). */
+  dailyMaxDialog?: ReactNode;
 }
 
 export function AppLayout({
@@ -26,6 +30,9 @@ export function AppLayout({
   minimal = false,
   bottomBar,
   desktopActions,
+  onOpenDailyMax,
+  dailyMaxActive,
+  dailyMaxDialog,
 }: AppLayoutProps) {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
@@ -41,6 +48,8 @@ export function AppLayout({
         user={user}
         onLogout={onLogout}
         onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenDailyMax={minimal ? undefined : onOpenDailyMax}
+        dailyMaxActive={dailyMaxActive}
         desktopActions={minimal ? undefined : desktopActions}
         extra={minimal ? undefined : <PushNotificationButton userId={user.uid} />}
       />
@@ -65,6 +74,7 @@ export function AppLayout({
       )}
 
       <AboutDialog open={isAboutOpen} onOpenChange={setIsAboutOpen} />
+      {dailyMaxDialog}
     </div>
   );
 }

@@ -16,6 +16,7 @@ export const RING_COLORS = {
   track:     'var(--ring-track)',
   work:      'hsl(var(--primary))',
   over:      'hsl(var(--ring-over))',
+  limit:     'hsl(var(--ring-limit))',
   break:     'oklch(0.78 0.115 22)',
   breakHint: 'oklch(0.90 0.060 22)',
 } as const;

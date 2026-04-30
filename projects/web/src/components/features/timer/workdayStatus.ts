@@ -2,6 +2,8 @@ import {
   MAX_WORK_LIMIT_MINUTES,
   WORKDAY_TEN_HOUR_URGENT_MINUTES,
   WORKDAY_TEN_HOUR_WARN_MINUTES,
+  WORKDAY_DAILY_MAX_URGENT_MINUTES,
+  WORKDAY_DAILY_MAX_WARN_MINUTES,
   WORKDAY_PAUSE_URGENT_MINUTES,
   WORKDAY_PAUSE_WARN_MINUTES,
   WORKDAY_PAUSE_TIP_MINUTES,
@@ -26,6 +28,10 @@ export interface WorkdayMessageParams {
   legalPauseMinsRemaining: number;
   nextLegalPauseIn: number | null;
   nextLegalPauseDeduction: number | null;
+  /** Minutes of net work time remaining until the user-defined daily maximum. */
+  minutesToDailyMax?: number | null;
+  /** True when the daily maximum falls before the 10h legal limit (i.e. is actually restrictive). */
+  dailyMaxBeforeTenHours?: boolean;
 }
 
 function pad(n: number): string {
@@ -56,11 +62,36 @@ export function getWorkdayMessage({
   legalPauseMinsRemaining,
   nextLegalPauseIn,
   nextLegalPauseDeduction,
+  minutesToDailyMax,
+  dailyMaxBeforeTenHours,
 }: WorkdayMessageParams): WorkdayMessage | null {
   const nowMin              = toNowMin(currentTime);
   const minutesToTen        = MAX_WORK_LIMIT_MINUTES - workedMinutes;
   const minutesToFeierabend = sollMinutes - workedMinutes;
   const overtimeMin         = -minutesToFeierabend;
+
+  // Tages-Maximum (user-defined, only shown when it's more restrictive than 10h limit)
+  if (minutesToDailyMax != null && dailyMaxBeforeTenHours) {
+    if (minutesToDailyMax < 0) {
+      return {
+        text: `Tages-Maximum seit ${Math.floor(-minutesToDailyMax)} Min. überschritten!`,
+        severity: 'urgent',
+      };
+    }
+    if (minutesToDailyMax <= WORKDAY_DAILY_MAX_URGENT_MINUTES) {
+      return {
+        text: `Noch ${Math.floor(minutesToDailyMax)} Min. bis Tages-Maximum`,
+        severity: 'urgent',
+      };
+    }
+    if (minutesToDailyMax <= WORKDAY_DAILY_MAX_WARN_MINUTES) {
+      const maxAtMin = nowMin + minutesToDailyMax;
+      return {
+        text: `Noch ${Math.floor(minutesToDailyMax)} Min. bis Tages-Maximum (um ${formatHHMM(maxAtMin)})`,
+        severity: 'warning',
+      };
+    }
+  }
 
   if (minutesToTen < 0) {
     return {

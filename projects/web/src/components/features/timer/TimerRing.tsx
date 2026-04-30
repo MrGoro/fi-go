@@ -24,6 +24,9 @@ interface TimerRingProps {
   /** Winkel der 10h-Grenze (konstant = END_ANGLE) */
   tenAngle: number;
   tenLabel: string;
+  /** Optionaler Tages-Maximum-Marker */
+  dailyMaxAngle?: number;
+  dailyMaxLabel?: string;
   /** Zentrum-Inhalt (Saldo + Nachricht), als Slot */
   children?: ReactNode;
 }
@@ -38,6 +41,8 @@ export function TimerRing({
   sollLabel,
   tenAngle,
   tenLabel,
+  dailyMaxAngle,
+  dailyMaxLabel,
   children,
 }: TimerRingProps) {
   const [hovered, setHovered] = useState<BreakHoverItem | null>(null);
@@ -133,6 +138,9 @@ export function TimerRing({
         {/* Marker: Striche außerhalb des Rings — Ring bleibt ununterbrochen */}
         <TickMarker angle={sollAngle} label={sollLabel} color={RING_COLORS.work} />
         <TickMarker angle={tenAngle}  label={tenLabel}  color={RING_COLORS.over} />
+        {dailyMaxAngle != null && (
+          <TickMarker angle={dailyMaxAngle} label={dailyMaxLabel} color={RING_COLORS.limit} />
+        )}
 
         {/* Transparente Hit-Areas für Pausen-Hover */}
         {breakHoverItems.map((item, i) => {

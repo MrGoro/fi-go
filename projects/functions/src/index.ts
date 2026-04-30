@@ -15,9 +15,11 @@ const STALE_TOKEN_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 interface PushPayload {
   userId: string;
-  type: 'TARGET' | 'LIMIT';
+  type: 'TARGET' | 'LIMIT' | 'DAILY_MAX';
   startTimeMillis: number;
   breaksDurationMinutes: number;
+  /** Only set for DAILY_MAX notifications — used to invalidate stale tasks. */
+  maxOvertimeMinutes?: number;
 }
 
 interface FcmToken {
@@ -78,6 +80,20 @@ export const onSessionDataWritten = onValueWritten({
 
   await scheduleNotification(queue, { ...basePayload, type: 'TARGET' }, targetFinishTimeMillis);
   await scheduleNotification(queue, { ...basePayload, type: 'LIMIT' },  tenHoursFinishTimeMillis);
+
+  // Schedule DAILY_MAX notification if a user-defined limit is set and is before the 10h limit
+  if (typeof data.dailyMaxOvertimeMinutes === 'number') {
+    const dailyMaxWorkMin  = WORK_TIME_TARGET_MINUTES + data.dailyMaxOvertimeMinutes;
+    if (dailyMaxWorkMin < MAX_WORK_LIMIT_MINUTES) {
+      const dailyMaxBreakMin  = calculateAppliedBreakMinutes(dailyMaxWorkMin, manualBreaksMinutes);
+      const dailyMaxTimeMillis = startTimeMillis + (dailyMaxWorkMin + dailyMaxBreakMin) * 60 * 1000;
+      await scheduleNotification(
+        queue,
+        { ...basePayload, type: 'DAILY_MAX', maxOvertimeMinutes: data.dailyMaxOvertimeMinutes },
+        dailyMaxTimeMillis,
+      );
+    }
+  }
 });
 
 export const onSendPushNotification = onTaskDispatched<PushPayload>(
@@ -105,6 +121,14 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
+    // For DAILY_MAX: also verify the user-defined limit hasn't changed or been cleared
+    if (payload.type === 'DAILY_MAX') {
+      if (data.dailyMaxOvertimeMinutes !== payload.maxOvertimeMinutes) {
+        logger.info(`Task aborted: dailyMaxOvertimeMinutes changed or cleared. User: ${payload.userId}`);
+        return;
+      }
+    }
+
     // Passed verification, calculate user specific timezone/time string if needed
     // Fetch FCM tokens
     const tokensSnap = await admin.database().ref(`/users/${payload.userId}/fcmTokens`).once('value');
@@ -127,10 +151,14 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
-    const title = payload.type === 'TARGET' ? 'Feierabend!' : '10 Stunden Limit!';
-    const body = payload.type === 'TARGET'
-      ? `Deine Soll-Arbeitszeit ist jetzt erreicht.`
-      : `Du hast deine 10-Stunden-Grenze erreicht! Bitte stempeln.`;
+    const title =
+      payload.type === 'TARGET'   ? 'Feierabend!'          :
+      payload.type === 'DAILY_MAX' ? 'Tages-Maximum erreicht!' :
+      '10 Stunden Limit!';
+    const body =
+      payload.type === 'TARGET'   ? 'Deine Soll-Arbeitszeit ist jetzt erreicht.'                         :
+      payload.type === 'DAILY_MAX' ? 'Zeit, Feierabend zu machen – dein heutiges Arbeitszeit-Maximum ist erreicht.' :
+      'Du hast deine 10-Stunden-Grenze erreicht! Bitte stempeln.';
 
     const message = {
       notification: { title, body },

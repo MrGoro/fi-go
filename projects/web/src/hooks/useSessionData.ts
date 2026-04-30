@@ -14,6 +14,7 @@ export interface FirebaseBreakRecord extends BreakRecord {
 export interface SessionData {
   startTime: Date | null;
   breaks: FirebaseBreakRecord[];
+  dailyMaxOvertimeMinutes: number | null;
   loading: boolean;
 }
 
@@ -23,6 +24,7 @@ export function useSessionData() {
   const [data, setData] = useState<SessionData>({
     startTime: null,
     breaks: [],
+    dailyMaxOvertimeMinutes: null,
     loading: true
   });
 
@@ -35,6 +37,7 @@ export function useSessionData() {
     setData({
       startTime: null,
       breaks: [],
+      dailyMaxOvertimeMinutes: null,
       loading: true
     });
 
@@ -47,6 +50,7 @@ export function useSessionData() {
         
         let startTime: Date | null = null;
         let breaks: FirebaseBreakRecord[] = [];
+        let dailyMaxOvertimeMinutes: number | null = null;
 
         if (val) {
           // Parse Start Time
@@ -77,11 +81,17 @@ export function useSessionData() {
               end: new Date(val.breaks[key].end)
             }));
           }
+
+          // Parse daily max overtime setting
+          if (typeof val.dailyMaxOvertimeMinutes === 'number' && startTime) {
+            dailyMaxOvertimeMinutes = val.dailyMaxOvertimeMinutes;
+          }
         }
 
         setData({
           startTime,
           breaks,
+          dailyMaxOvertimeMinutes,
           loading: false
         });
       },
@@ -161,11 +171,31 @@ export function useSessionData() {
     }
   };
 
-  return { 
-    ...data, 
-    clockIn, 
-    clockOut, 
-    addBreak, 
-    removeBreak 
+  const setDailyMaxOvertime = async (v: number | null) => {
+    if (!user) return;
+    try {
+      const fieldRef = ref(db, `data/${user.uid}/dailyMaxOvertimeMinutes`);
+      if (v === null) {
+        await remove(fieldRef);
+      } else {
+        await set(fieldRef, v);
+      }
+    } catch (error) {
+      console.error('Set daily max error:', error);
+      toast({
+        title: 'Fehler beim Speichern',
+        description: 'Das Tages-Maximum konnte nicht gespeichert werden.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  return {
+    ...data,
+    clockIn,
+    clockOut,
+    addBreak,
+    removeBreak,
+    setDailyMaxOvertime,
   };
 }
