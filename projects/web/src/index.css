@@ -71,6 +71,7 @@
     --input: 240 6% 90%;
     --ring: 348 82% 49%;              /* primär */
     --ring-over: 25 95% 53%;          /* Timer-Overtime-Bogen ≈ #F97316 */
+    --ring-limit: 45 96% 50%;         /* Tages-Maximum-Marker (Amber) */
     --ring-track: oklch(0.928 0.006 264); /* Timer-Track (leerer Bogen) */
     --radius: 0.5rem;
   }
@@ -96,6 +97,7 @@
     --input: 240 5% 18%;
     --ring: 348 80% 65%;
     --ring-over: 25 90% 60%;          /* Overtime-Bogen, etwas heller für dunklen Track */
+    --ring-limit: 45 90% 58%;         /* Tages-Maximum-Marker (Amber, etwas heller) */
     --ring-track: oklch(0.28 0.008 264); /* Track im Dark — gedämpft, klar sichtbar */
   }
 

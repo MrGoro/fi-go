@@ -43,6 +43,8 @@ export interface TimerCalculations {
   tenAngle: number;
   finishTime: Date;
   tenLimitTime: Date;
+  dailyMaxAngle?: number;
+  dailyMaxLimitTime?: Date;
   // Saldo-Anzeige
   saldoText: string;
   isOvertime: boolean;
@@ -55,7 +57,7 @@ export interface TimerCalculations {
  * abgeleiteten Zustand für den Timer-Ring (Segmente, Winkel, Saldo,
  * kontextuelle Nachricht). Reine Berechnung, keine Darstellung.
  */
-export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): TimerCalculations {
+export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], maxOvertimeMinutes?: number | null): TimerCalculations {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -126,6 +128,21 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
   const sollAngle = minToAngle(WORK_TIME_TARGET_MINUTES + sollBreakMin, ringMaxMin);
   const tenAngle  = RING.END_ANGLE;
 
+  // Tages-Maximum (optional)
+  let dailyMaxAngle: number | undefined;
+  let dailyMaxLimitTime: Date | undefined;
+  let minutesToDailyMax: number | undefined;
+
+  if (maxOvertimeMinutes != null) {
+    const dailyMaxWorkMin  = WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes;
+    const dailyMaxBreakMin = calculateAppliedBreakMinutes(dailyMaxWorkMin, manualBreaksMin);
+    dailyMaxLimitTime      = addMinutes(startTime, dailyMaxWorkMin + dailyMaxBreakMin);
+    minutesToDailyMax      = dailyMaxWorkMin - netMin;
+    if (dailyMaxWorkMin < MAX_WORK_LIMIT_MINUTES) {
+      dailyMaxAngle = minToAngle(dailyMaxWorkMin + dailyMaxBreakMin, ringMaxMin);
+    }
+  }
+
   // Saldo-Anzeige
   const saldo      = minutesToTimeDuration(saldoMin);
   const saldoText  = `${saldo.negative ? '-' : '+'}${String(saldo.hours).padStart(2, '0')}:${String(saldo.minutes).padStart(2, '0')}`;
@@ -141,6 +158,8 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     legalPauseMinsRemaining: legalPauseStatus.minsRemaining,
     nextLegalPauseIn:        legalPauseStatus.nextPauseIn,
     nextLegalPauseDeduction: legalPauseStatus.nextPauseDeduction,
+    minutesToDailyMax,
+    dailyMaxBeforeTenHours:  maxOvertimeMinutes != null && (WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes) < MAX_WORK_LIMIT_MINUTES,
   });
 
   return {
@@ -157,6 +176,8 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[]): Ti
     tenAngle,
     finishTime,
     tenLimitTime,
+    dailyMaxAngle,
+    dailyMaxLimitTime,
     saldoText,
     isOvertime,
     workdayMsg,

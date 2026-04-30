@@ -9,9 +9,10 @@ import { SaldoCenter } from './SaldoCenter';
 interface DisplayScreenProps {
   startTime: Date;
   breaks: BreakRecord[];
+  maxOvertimeMinutes?: number | null;
 }
 
-export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
+export function DisplayScreen({ startTime, breaks, maxOvertimeMinutes }: DisplayScreenProps) {
   const {
     manualBreaksMin,
     appliedBreaksMin,
@@ -23,11 +24,13 @@ export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
     tenAngle,
     finishTime,
     tenLimitTime,
+    dailyMaxAngle,
+    dailyMaxLimitTime,
     saldoText,
     isOvertime,
     workdayMsg,
     grossMin,
-  } = useTimerCalculations(startTime, breaks);
+  } = useTimerCalculations(startTime, breaks, maxOvertimeMinutes);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full px-5 py-6 animate-in fade-in duration-700">
@@ -41,6 +44,8 @@ export function DisplayScreen({ startTime, breaks }: DisplayScreenProps) {
         sollLabel={format(finishTime, 'HH:mm')}
         tenAngle={tenAngle}
         tenLabel={format(tenLimitTime, 'HH:mm')}
+        dailyMaxAngle={dailyMaxAngle}
+        dailyMaxLabel={dailyMaxLimitTime ? format(dailyMaxLimitTime, 'HH:mm') : undefined}
       >
         <SaldoCenter saldoText={saldoText} isOvertime={isOvertime} message={workdayMsg} />
       </TimerRing>

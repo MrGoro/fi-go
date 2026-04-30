@@ -2,7 +2,7 @@ import { RING, pointOnRing } from '@/lib/ring-geometry';
 
 interface TickMarkerProps {
   angle: number;
-  label: string;
+  label?: string;
   color: string;
 }
 

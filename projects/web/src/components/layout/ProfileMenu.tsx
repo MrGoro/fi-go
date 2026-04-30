@@ -8,6 +8,7 @@ import {
   Sun,
   Moon,
   MonitorSmartphone,
+  TimerOff,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -31,6 +32,8 @@ interface ProfileMenuProps {
   user: User;
   onLogout?: () => void;
   onOpenAbout: () => void;
+  onOpenDailyMax?: () => void;
+  dailyMaxActive?: boolean;
 }
 
 const MODE_ICON: Record<ThemeMode, typeof Sun> = {
@@ -39,7 +42,7 @@ const MODE_ICON: Record<ThemeMode, typeof Sun> = {
   dark: Moon,
 };
 
-export function ProfileMenu({ user, onLogout, onOpenAbout }: ProfileMenuProps) {
+export function ProfileMenu({ user, onLogout, onOpenAbout, onOpenDailyMax, dailyMaxActive }: ProfileMenuProps) {
   const { mode, setMode } = useTheme();
   const ActiveModeIcon = MODE_ICON[mode];
 
@@ -75,6 +78,24 @@ export function ProfileMenu({ user, onLogout, onOpenAbout }: ProfileMenuProps) {
               </DropdownMenuItem>
             )}
           </div>
+
+          {onOpenDailyMax && (
+            <>
+              <DropdownMenuSeparator className="my-2 opacity-40" />
+              <div className="px-1">
+                <DropdownMenuItem
+                  onClick={onOpenDailyMax}
+                  className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground focus:text-foreground focus:bg-accent/50 rounded-xl transition-colors cursor-pointer"
+                >
+                  <TimerOff className="h-4 w-4 shrink-0" />
+                  <span className="font-medium flex-1">Tages-Maximum</span>
+                  {dailyMaxActive && (
+                    <span className="h-2 w-2 rounded-full bg-[hsl(var(--ring-limit))] shrink-0" />
+                  )}
+                </DropdownMenuItem>
+              </div>
+            </>
+          )}
 
           <DropdownMenuSeparator className="my-2 opacity-40" />
 

@@ -8,13 +8,15 @@ interface AppBarProps {
   user: User;
   onLogout: () => void;
   onOpenAbout: () => void;
+  onOpenDailyMax?: () => void;
+  dailyMaxActive?: boolean;
   /** Shown in the bar on desktop only (e.g. Pausen + Feierabend buttons) */
   desktopActions?: ReactNode;
   /** Always-visible element before the profile menu (e.g. push notification button) */
   extra?: ReactNode;
 }
 
-export function AppBar({ user, onLogout, onOpenAbout, desktopActions, extra }: AppBarProps) {
+export function AppBar({ user, onLogout, onOpenAbout, onOpenDailyMax, dailyMaxActive, desktopActions, extra }: AppBarProps) {
   return (
     <AppBarShell>
       <Logo height={22} />
@@ -29,7 +31,13 @@ export function AppBar({ user, onLogout, onOpenAbout, desktopActions, extra }: A
 
       <div className="flex items-center gap-1.5">
         {extra}
-        <ProfileMenu user={user} onLogout={onLogout} onOpenAbout={onOpenAbout} />
+        <ProfileMenu
+          user={user}
+          onLogout={onLogout}
+          onOpenAbout={onOpenAbout}
+          onOpenDailyMax={onOpenDailyMax}
+          dailyMaxActive={dailyMaxActive}
+        />
       </div>
     </AppBarShell>
   );

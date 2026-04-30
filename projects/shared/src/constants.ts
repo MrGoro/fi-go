@@ -16,8 +16,10 @@ export const BREAK_RULE_2_REQUIRED_MINUTES  = 45;     // legal break duration on
 
 // ── Workday-status thresholds ────────────────────────────────────────────────
 // Used to choose contextual messages in the timer UI.
-export const WORKDAY_TEN_HOUR_URGENT_MINUTES = 10;  // ≤ this min to 10h → urgent
-export const WORKDAY_TEN_HOUR_WARN_MINUTES   = 30;  // ≤ this min to 10h → warning
+export const WORKDAY_TEN_HOUR_URGENT_MINUTES   = 10;  // ≤ this min to 10h → urgent
+export const WORKDAY_TEN_HOUR_WARN_MINUTES     = 30;  // ≤ this min to 10h → warning
+export const WORKDAY_DAILY_MAX_URGENT_MINUTES  = 10;  // ≤ this min to daily max → urgent
+export const WORKDAY_DAILY_MAX_WARN_MINUTES    = 30;  // ≤ this min to daily max → warning
 export const WORKDAY_PAUSE_URGENT_MINUTES    = 5;   // next pause in ≤ this → urgent
 export const WORKDAY_PAUSE_WARN_MINUTES      = 15;  // next pause in ≤ this → warning
 export const WORKDAY_PAUSE_TIP_MINUTES       = 30;  // next pause in ≤ this → info nudge
