@@ -121,6 +121,12 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       return;
     }
 
+    // A live break started after this task was queued — skip the notification
+    if (typeof data.liveBreakStart === 'number') {
+      logger.info(`Task aborted: Live break running for ${payload.userId}.`);
+      return;
+    }
+
     const breaks = parseBreaksFromRtdb(data.breaks);
     const currentManualBreaksMinutes = calculateManualBreaksMinutes(breaks);
     if (currentManualBreaksMinutes !== payload.breaksDurationMinutes) {
