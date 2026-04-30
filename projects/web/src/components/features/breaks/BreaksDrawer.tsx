@@ -28,10 +28,16 @@ interface BreaksDrawerProps {
 
 export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, liveBreakStart, onStartLiveBreak, onEndLiveBreak, desktopMode }: BreaksDrawerProps) {
   const [open, setOpen] = useState(false);
+  const [showManualAdd, setShowManualAdd] = useState(false);
   const focusRef = useRef<HTMLDivElement>(null);
 
+  function handleOpenChange(v: boolean) {
+    setOpen(v);
+    if (!v) setShowManualAdd(false);
+  }
+
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>
         <BreaksTrigger desktopMode={desktopMode} liveBreakRunning={liveBreakStart !== null} />
       </DrawerTrigger>
@@ -68,8 +74,20 @@ export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, liv
               onStart={onStartLiveBreak}
             />
           )}
-          <BreaksList breaks={breaks} onRemove={onRemoveBreak} />
-          <BreaksAddForm startTime={startTime} breaks={breaks} onAdd={onAddBreak} liveBreakRunning={liveBreakStart !== null} />
+          <BreaksList
+            breaks={breaks}
+            onRemove={onRemoveBreak}
+            showAddButton={!liveBreakStart}
+            addOpen={showManualAdd}
+            onAddToggle={() => setShowManualAdd(v => !v)}
+          />
+          {showManualAdd && !liveBreakStart && (
+            <BreaksAddForm
+              startTime={startTime}
+              breaks={breaks}
+              onAdd={async (s, e) => { await onAddBreak(s, e); setShowManualAdd(false); }}
+            />
+          )}
         </div>
       </DrawerContent>
     </Drawer>

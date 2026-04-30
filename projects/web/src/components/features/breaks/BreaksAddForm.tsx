@@ -12,10 +12,9 @@ interface BreaksAddFormProps {
   startTime: Date;
   breaks: FirebaseBreakRecord[];
   onAdd: (start: Date, end: Date) => Promise<void>;
-  liveBreakRunning?: boolean;
 }
 
-export function BreaksAddForm({ startTime, breaks, onAdd, liveBreakRunning }: BreaksAddFormProps) {
+export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) {
   const [startStr, setStartStr] = useState('');
   const [endStr, setEndStr] = useState('');
   const [loading, setLoading] = useState(false);
@@ -50,51 +49,45 @@ export function BreaksAddForm({ startTime, breaks, onAdd, liveBreakRunning }: Br
     <section className="space-y-3">
       <Eyebrow as="h3">Neue Pause erfassen</Eyebrow>
 
-      {liveBreakRunning ? (
-        <div className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700 text-center dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-400">
-          Beende zuerst die laufende Pause.
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            {/* min-w-0 prevents grid children from overflowing on iOS */}
-            <div className="space-y-1.5 min-w-0">
-              <label className="text-xs font-medium pl-1">Start</label>
-              <Input
-                type="time"
-                value={startStr}
-                onChange={e => setStartStr(e.target.value)}
-                required
-                className="h-12 text-lg text-center font-mono px-1"
-              />
-            </div>
-            <div className="space-y-1.5 min-w-0">
-              <label className="text-xs font-medium pl-1">Ende</label>
-              <Input
-                type="time"
-                value={endStr}
-                onChange={e => setEndStr(e.target.value)}
-                required
-                className="h-12 text-lg text-center font-mono px-1"
-              />
-            </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          {/* min-w-0 prevents grid children from overflowing on iOS */}
+          <div className="space-y-1.5 min-w-0">
+            <label className="text-xs font-medium pl-1">Start</label>
+            <Input
+              type="time"
+              value={startStr}
+              onChange={e => setStartStr(e.target.value)}
+              required
+              className="h-12 text-lg text-center font-mono px-1"
+            />
           </div>
+          <div className="space-y-1.5 min-w-0">
+            <label className="text-xs font-medium pl-1">Ende</label>
+            <Input
+              type="time"
+              value={endStr}
+              onChange={e => setEndStr(e.target.value)}
+              required
+              className="h-12 text-lg text-center font-mono px-1"
+            />
+          </div>
+        </div>
 
-          {isOrderInvalid && <FormError>Die Endzeit muss nach der Startzeit liegen.</FormError>}
-          {isBeforeStart  && <FormError>Pause kann nicht vor Dienstbeginn ({format(startTime, 'HH:mm')}) liegen.</FormError>}
-          {hasOverlap     && <FormError>Diese Pause überschneidet sich mit einer bestehenden Pause.</FormError>}
+        {isOrderInvalid && <FormError>Die Endzeit muss nach der Startzeit liegen.</FormError>}
+        {isBeforeStart  && <FormError>Pause kann nicht vor Dienstbeginn ({format(startTime, 'HH:mm')}) liegen.</FormError>}
+        {hasOverlap     && <FormError>Diese Pause überschneidet sich mit einer bestehenden Pause.</FormError>}
 
-          <SubmitButton
-            type="submit"
-            disabled={isInvalid}
-            loading={loading}
-            className="h-12"
-          >
-            <Plus className="h-5 w-5" />
-            Pause hinzufügen
-          </SubmitButton>
-        </form>
-      )}
+        <SubmitButton
+          type="submit"
+          disabled={isInvalid}
+          loading={loading}
+          className="h-12"
+        >
+          <Plus className="h-5 w-5" />
+          Pause hinzufügen
+        </SubmitButton>
+      </form>
     </section>
   );
 }

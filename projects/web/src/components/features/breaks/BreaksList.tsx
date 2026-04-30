@@ -1,5 +1,5 @@
 import { format } from 'date-fns';
-import { Clock, Trash2 } from 'lucide-react';
+import { Clock, Plus, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import type { FirebaseBreakRecord } from '@/hooks/useSessionData';
@@ -7,9 +7,12 @@ import type { FirebaseBreakRecord } from '@/hooks/useSessionData';
 interface BreaksListProps {
   breaks: FirebaseBreakRecord[];
   onRemove: (id: string) => void;
+  showAddButton?: boolean;
+  addOpen?: boolean;
+  onAddToggle?: () => void;
 }
 
-export function BreaksList({ breaks, onRemove }: BreaksListProps) {
+export function BreaksList({ breaks, onRemove, showAddButton, addOpen, onAddToggle }: BreaksListProps) {
   const totalMins = breaks.reduce(
     (sum, b) => sum + Math.floor((b.end.getTime() - b.start.getTime()) / 60000),
     0,
@@ -19,11 +22,24 @@ export function BreaksList({ breaks, onRemove }: BreaksListProps) {
     <section className="space-y-2">
       <div className="flex items-center justify-between">
         <Eyebrow as="h3">Erfasste Pausen</Eyebrow>
-        {breaks.length > 0 && (
-          <span className="text-[11px] text-muted-foreground/70 tabular-nums">
-            {totalMins} Min. gesamt
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {breaks.length > 0 && (
+            <span className="text-[11px] text-muted-foreground/70 tabular-nums">
+              {totalMins} Min. gesamt
+            </span>
+          )}
+          {showAddButton && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onAddToggle}
+              className="h-7 w-7 text-muted-foreground hover:text-foreground -mr-1"
+              aria-label={addOpen ? 'Formular schließen' : 'Pause manuell erfassen'}
+            >
+              {addOpen ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            </Button>
+          )}
+        </div>
       </div>
 
       {breaks.length === 0 ? (
