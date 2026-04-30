@@ -20,6 +20,8 @@
     <td align="center"><img src="screens/03-breaks.png" width="180" alt="Pausen"/><br/><sub>Pausenverwaltung</sub></td>
     <td align="center"><img src="screens/04-timer.png" width="180" alt="Timer"/><br/><sub>Echtzeit-Timer</sub></td>
     <td align="center"><img src="screens/05-warning.png" width="180" alt="Warnung"/><br/><sub>10-Stunden-Warnung</sub></td>
+    <td align="center"><img src="screens/06-dark-mode.png" width="180" alt="Dark Mode"/><br/><sub>Dark Mode</sub></td>
+    <td align="center"><img src="screens/07-desktop.png" width="180" alt="Desktop"/><br/><sub>Desktop Ansicht</sub></td>
   </tr>
 </table>
 
