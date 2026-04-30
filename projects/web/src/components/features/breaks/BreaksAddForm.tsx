@@ -12,9 +12,20 @@ interface BreaksAddFormProps {
   startTime: Date;
   breaks: FirebaseBreakRecord[];
   onAdd: (start: Date, end: Date) => Promise<void>;
+  liveBreakRunning?: boolean;
 }
 
-export function BreaksAddForm({ startTime, breaks, onAdd }: BreaksAddFormProps) {
+export function BreaksAddForm({ startTime, breaks, onAdd, liveBreakRunning }: BreaksAddFormProps) {
+  if (liveBreakRunning) {
+    return (
+      <section className="space-y-3">
+        <Eyebrow as="h3">Neue Pause erfassen</Eyebrow>
+        <div className="rounded-2xl border border-orange-200 bg-orange-50 px-4 py-3 text-sm text-orange-700 text-center dark:border-orange-800 dark:bg-orange-950/30 dark:text-orange-400">
+          Beende zuerst die laufende Pause.
+        </div>
+      </section>
+    );
+  }
   const [startStr, setStartStr] = useState('');
   const [endStr, setEndStr] = useState('');
   const [loading, setLoading] = useState(false);

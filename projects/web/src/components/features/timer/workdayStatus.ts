@@ -32,6 +32,10 @@ export interface WorkdayMessageParams {
   minutesToDailyMax?: number | null;
   /** True when the daily maximum falls before the 10h legal limit (i.e. is actually restrictive). */
   dailyMaxBeforeTenHours?: boolean;
+  /** True while an open (live) break is actively running. */
+  liveBreakRunning?: boolean;
+  /** Elapsed minutes of the currently running live break. */
+  liveBreakMin?: number;
 }
 
 function pad(n: number): string {
@@ -64,6 +68,8 @@ export function getWorkdayMessage({
   nextLegalPauseDeduction,
   minutesToDailyMax,
   dailyMaxBeforeTenHours,
+  liveBreakRunning,
+  liveBreakMin = 0,
 }: WorkdayMessageParams): WorkdayMessage | null {
   const nowMin              = toNowMin(currentTime);
   const minutesToTen        = MAX_WORK_LIMIT_MINUTES - workedMinutes;
@@ -119,6 +125,19 @@ export function getWorkdayMessage({
     return {
       text: `Pausenabzug läuft – noch ${legalPauseMinsRemaining} Min.`,
       severity: 'urgent',
+    };
+  }
+
+  // Open (live) break is running — suppress time-limit approach warnings
+  if (liveBreakRunning) {
+    const h = Math.floor(liveBreakMin / 60);
+    const m = liveBreakMin % 60;
+    const durationText = h > 0
+      ? `${h}:${String(m).padStart(2, '0')} Std.`
+      : `${m} Min.`;
+    return {
+      text: `Pause läuft – seit ${durationText}`,
+      severity: 'warning',
     };
   }
 

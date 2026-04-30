@@ -47,10 +47,17 @@ export function calculateLegalMinimumBreakMinutes(grossWorkMinutes: number): num
   return BREAK_RULE_2_REQUIRED_MINUTES; // 45 mins
 }
 
-// Total minutes from a list of manually recorded breaks
-export function calculateManualBreaksMinutes(breaks: BreakRecord[]): number {
-  const millis = breaks.reduce((acc, brk) => acc + Math.max(0, differenceInMilliseconds(brk.end, brk.start)), 0);
-  return Math.floor(millis / 60000);
+// Total minutes from a list of manually recorded breaks, plus an optional live (open) break.
+export function calculateManualBreaksMinutes(
+  breaks: BreakRecord[],
+  liveBreakStart?: Date | null,
+  now?: Date,
+): number {
+  const completedMillis = breaks.reduce((acc, brk) => acc + Math.max(0, differenceInMilliseconds(brk.end, brk.start)), 0);
+  const liveMillis = liveBreakStart
+    ? Math.max(0, differenceInMilliseconds(now ?? new Date(), liveBreakStart))
+    : 0;
+  return Math.floor((completedMillis + liveMillis) / 60000);
 }
 
 /**

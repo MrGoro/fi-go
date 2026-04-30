@@ -66,6 +66,13 @@ export const onSessionDataWritten = onValueWritten({
   }
 
   const startTimeMillis = data.startTime;
+
+  // Live break is running — do not schedule notifications until it ends
+  if (typeof data.liveBreakStart === 'number') {
+    logger.info(`Live break running for ${userId}. Skipping push schedule.`);
+    return;
+  }
+
   const breaks          = parseBreaksFromRtdb(data.breaks);
   const manualBreaksMinutes = calculateManualBreaksMinutes(breaks);
   const projectedBreakMinutesTarget = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMinutes);

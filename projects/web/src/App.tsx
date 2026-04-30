@@ -20,12 +20,15 @@ export default function App() {
     startTime,
     breaks,
     dailyMaxOvertimeMinutes,
+    liveBreakStart,
     loading: sessionLoading,
     clockIn,
     clockOut,
     addBreak,
     removeBreak,
     setDailyMaxOvertime,
+    startLiveBreak,
+    endLiveBreak,
   } = useSessionData();
 
   const [isDailyMaxOpen, setIsDailyMaxOpen] = useState(false);
@@ -52,9 +55,19 @@ export default function App() {
     );
   }
 
+  const breaksDrawerProps = {
+    breaks,
+    onAddBreak: addBreak,
+    onRemoveBreak: removeBreak,
+    startTime,
+    liveBreakStart,
+    onStartLiveBreak: startLiveBreak,
+    onEndLiveBreak: endLiveBreak,
+  };
+
   const bottomBar = (
     <Surface variant="bar" className="flex justify-around items-center w-full py-3 px-4">
-      <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} />
+      <BreaksDrawer {...breaksDrawerProps} />
       <BottomBarAction
         icon={<LogOut className="h-6 w-6" />}
         label="Feierabend"
@@ -65,7 +78,7 @@ export default function App() {
 
   const desktopActions = (
     <>
-      <BreaksDrawer breaks={breaks} onAddBreak={addBreak} onRemoveBreak={removeBreak} startTime={startTime} desktopMode />
+      <BreaksDrawer {...breaksDrawerProps} desktopMode />
       <Button
         onClick={clockOut}
         className="rounded-full bg-primary text-white hover:brightness-110 shadow-[0_0_14px_hsl(var(--primary)/0.38)] border-0"
@@ -97,7 +110,7 @@ export default function App() {
       dailyMaxActive={dailyMaxOvertimeMinutes !== null}
       dailyMaxDialog={dailyMaxDialog}
     >
-      <DisplayScreen startTime={startTime} breaks={breaks} maxOvertimeMinutes={dailyMaxOvertimeMinutes} />
+      <DisplayScreen startTime={startTime} breaks={breaks} maxOvertimeMinutes={dailyMaxOvertimeMinutes} liveBreakStart={liveBreakStart} />
     </AppLayout>
   );
 }

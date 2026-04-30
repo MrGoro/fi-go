@@ -12,6 +12,7 @@ export async function resetWorkSession(uid: string) {
     [`data/${uid}/startTime`]:               null,
     [`data/${uid}/breaks`]:                  null,
     [`data/${uid}/dailyMaxOvertimeMinutes`]:  null,
+    [`data/${uid}/liveBreakStart`]:           null,
   };
 
   try {
