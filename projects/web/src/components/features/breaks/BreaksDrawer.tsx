@@ -11,6 +11,8 @@ import { Coffee } from 'lucide-react';
 import { BreaksTrigger } from './BreaksTrigger';
 import { BreaksList } from './BreaksList';
 import { BreaksAddForm } from './BreaksAddForm';
+import { StartBreakForm } from './StartBreakForm';
+import { LiveBreakPanel } from './LiveBreakPanel';
 import type { FirebaseBreakRecord } from '@/hooks/useSessionData';
 
 interface BreaksDrawerProps {
@@ -18,17 +20,26 @@ interface BreaksDrawerProps {
   onAddBreak: (start: Date, end: Date) => Promise<void>;
   onRemoveBreak: (id: string) => void;
   startTime: Date;
+  liveBreakStart: Date | null;
+  onStartLiveBreak: (startTime: Date) => Promise<void>;
+  onEndLiveBreak: (endTime: Date) => Promise<void>;
   desktopMode?: boolean;
 }
 
-export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, desktopMode }: BreaksDrawerProps) {
+export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, liveBreakStart, onStartLiveBreak, onEndLiveBreak, desktopMode }: BreaksDrawerProps) {
   const [open, setOpen] = useState(false);
+  const [showManualAdd, setShowManualAdd] = useState(false);
   const focusRef = useRef<HTMLDivElement>(null);
 
+  function handleOpenChange(v: boolean) {
+    setOpen(v);
+    if (!v) setShowManualAdd(false);
+  }
+
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
+    <Drawer open={open} onOpenChange={handleOpenChange}>
       <DrawerTrigger asChild>
-        <BreaksTrigger desktopMode={desktopMode} />
+        <BreaksTrigger desktopMode={desktopMode} liveBreakRunning={liveBreakStart !== null} />
       </DrawerTrigger>
 
       <DrawerContent
@@ -42,17 +53,41 @@ export function BreaksDrawer({ breaks, onAddBreak, onRemoveBreak, startTime, des
       >
         <DrawerHeader className="pb-3">
           <DrawerTitle className="text-2xl text-center flex items-center justify-center gap-2">
-            <Coffee className="h-6 w-6 text-primary" /> Manuelle Pausen
+            <Coffee className="h-6 w-6 text-primary" /> Pausen
           </DrawerTitle>
           <DrawerDescription className="text-center">
-            Pausenzeiten manuell erfassen oder löschen.
+            Pausenzeiten erfassen oder löschen.
           </DrawerDescription>
         </DrawerHeader>
 
         {/* tabIndex={-1}/outline-none: programmatic focus target, not in tab order */}
         <div ref={focusRef} tabIndex={-1} className="flex-1 min-h-0 overflow-y-auto px-4 pb-8 flex flex-col gap-6 outline-none">
-          <BreaksList breaks={breaks} onRemove={onRemoveBreak} />
-          <BreaksAddForm startTime={startTime} breaks={breaks} onAdd={onAddBreak} />
+          {liveBreakStart ? (
+            <LiveBreakPanel
+              liveBreakStart={liveBreakStart}
+              workdayStartTime={startTime}
+              onEnd={onEndLiveBreak}
+            />
+          ) : (
+            <StartBreakForm
+              workdayStartTime={startTime}
+              onStart={onStartLiveBreak}
+            />
+          )}
+          <BreaksList
+            breaks={breaks}
+            onRemove={onRemoveBreak}
+            showAddButton={!liveBreakStart}
+            addOpen={showManualAdd}
+            onAddToggle={() => setShowManualAdd(v => !v)}
+          />
+          {showManualAdd && !liveBreakStart && (
+            <BreaksAddForm
+              startTime={startTime}
+              breaks={breaks}
+              onAdd={async (s, e) => { await onAddBreak(s, e); setShowManualAdd(false); }}
+            />
+          )}
         </div>
       </DrawerContent>
     </Drawer>

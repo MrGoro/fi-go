@@ -66,6 +66,13 @@ export const onSessionDataWritten = onValueWritten({
   }
 
   const startTimeMillis = data.startTime;
+
+  // Live break is running — do not schedule notifications until it ends
+  if (typeof data.liveBreakStart === 'number') {
+    logger.info(`Live break running for ${userId}. Skipping push schedule.`);
+    return;
+  }
+
   const breaks          = parseBreaksFromRtdb(data.breaks);
   const manualBreaksMinutes = calculateManualBreaksMinutes(breaks);
   const projectedBreakMinutesTarget = calculateAppliedBreakMinutes(WORK_TIME_TARGET_MINUTES, manualBreaksMinutes);
@@ -111,6 +118,12 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
 
     if (!data || data.startTime !== payload.startTimeMillis) {
       logger.info(`Task aborted: Session startTime mismatch or session ended. User: ${payload.userId}`);
+      return;
+    }
+
+    // A live break started after this task was queued — skip the notification
+    if (typeof data.liveBreakStart === 'number') {
+      logger.info(`Task aborted: Live break running for ${payload.userId}.`);
       return;
     }
 

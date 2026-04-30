@@ -10,9 +10,10 @@ interface DisplayScreenProps {
   startTime: Date;
   breaks: BreakRecord[];
   maxOvertimeMinutes?: number | null;
+  liveBreakStart?: Date | null;
 }
 
-export function DisplayScreen({ startTime, breaks, maxOvertimeMinutes }: DisplayScreenProps) {
+export function DisplayScreen({ startTime, breaks, maxOvertimeMinutes, liveBreakStart }: DisplayScreenProps) {
   const {
     manualBreaksMin,
     appliedBreaksMin,
@@ -30,7 +31,7 @@ export function DisplayScreen({ startTime, breaks, maxOvertimeMinutes }: Display
     isOvertime,
     workdayMsg,
     grossMin,
-  } = useTimerCalculations(startTime, breaks, maxOvertimeMinutes);
+  } = useTimerCalculations(startTime, breaks, maxOvertimeMinutes, liveBreakStart);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full px-5 py-6 animate-in fade-in duration-700">

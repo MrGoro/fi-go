@@ -58,7 +58,7 @@ export interface TimerCalculations {
  * abgeleiteten Zustand für den Timer-Ring (Segmente, Winkel, Saldo,
  * kontextuelle Nachricht). Reine Berechnung, keine Darstellung.
  */
-export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], maxOvertimeMinutes?: number | null): TimerCalculations {
+export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], maxOvertimeMinutes?: number | null, liveBreakStart?: Date | null): TimerCalculations {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -68,7 +68,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
 
   // ── Grundgrößen ───────────────────────────────────────────────────────
   const grossMin         = calculateGrossWorkTimeMinutes(startTime, now);
-  const manualBreaksMin  = calculateManualBreaksMinutes(breaks);
+  const manualBreaksMin  = calculateManualBreaksMinutes(breaks, liveBreakStart ?? null, now);
   const appliedBreaksMin = calculateAppliedBreakMinutes(grossMin, manualBreaksMin);
   const netMin           = calculateNetWorkTimeMinutes(grossMin, appliedBreaksMin);
   const saldoMin         = calculateSaldoMinutes(netMin);
@@ -83,12 +83,19 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
   const ringMaxMin       = tenGross;
 
   // ── Pausen-Intervalle auf dem Ring ────────────────────────────────────
-  const manualIntervals: Interval[] = breaks
-    .map(b => ({
-      start: Math.max(0, (b.start.getTime() - startTime.getTime()) / 60000),
-      end:   Math.max(0, (b.end.getTime()   - startTime.getTime()) / 60000),
-    }))
-    .filter(m => m.end > m.start);
+  const manualIntervals: Interval[] = [
+    ...breaks
+      .map(b => ({
+        start: Math.max(0, (b.start.getTime() - startTime.getTime()) / 60000),
+        end:   Math.max(0, (b.end.getTime()   - startTime.getTime()) / 60000),
+      }))
+      .filter(m => m.end > m.start),
+    // Live break: grows every second because `now` ticks
+    ...(liveBreakStart ? [{
+      start: Math.max(0, (liveBreakStart.getTime() - startTime.getTime()) / 60000),
+      end:   Math.max(0, (now.getTime() - startTime.getTime()) / 60000),
+    }] : []),
+  ];
 
   const [zone1, zone2]   = calculateLegalPauseZones(grossMin, manualBreaksMin);
   const zone1HintSlots   = placeInZone(zone1.startMin, zone1.endMin, zone1.potentialMin, manualIntervals);
@@ -117,6 +124,14 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
         wallEnd:   b.end,
       }))
       .filter(m => m.end > m.start),
+    // Live break hover item
+    ...(liveBreakStart ? [{
+      start:     Math.max(0, (liveBreakStart.getTime() - startTime.getTime()) / 60000),
+      end:       Math.max(0, (now.getTime() - startTime.getTime()) / 60000),
+      kind:      'manual' as const,
+      wallStart: liveBreakStart,
+      wallEnd:   now,
+    }] : []),
     ...hintSlots.map(iv => ({
       ...iv,
       kind:      'legal' as const,
@@ -161,6 +176,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
     nextLegalPauseDeduction: legalPauseStatus.nextPauseDeduction,
     minutesToDailyMax,
     dailyMaxBeforeTenHours:  maxOvertimeMinutes != null && (WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes) < MAX_WORK_LIMIT_MINUTES,
+    liveBreakStart:          liveBreakStart ?? null,
   });
 
   return {

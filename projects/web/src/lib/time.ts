@@ -14,3 +14,10 @@ export function isFutureTimeToday(timeStr: string): boolean {
   if (!timeStr) return false;
   return parseToTodayDate(timeStr) > new Date();
 }
+
+/** Formatiert eine Dauer in Minuten als "H:MM Std." (>= 60 min) oder "M Min." */
+export function formatBreakDuration(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60);
+  const m = totalMinutes % 60;
+  return h > 0 ? `${h}:${String(m).padStart(2, '0')} Std.` : `${m} Min.`;
+}

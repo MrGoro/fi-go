@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ref, onValue, set, push, remove } from 'firebase/database';
+import { ref, onValue, set, push, remove, update } from 'firebase/database';
 import { db } from '../config/firebase';
 import { useAuth } from './useAuth';
 import { isToday } from 'date-fns';
@@ -15,6 +15,7 @@ export interface SessionData {
   startTime: Date | null;
   breaks: FirebaseBreakRecord[];
   dailyMaxOvertimeMinutes: number | null;
+  liveBreakStart: Date | null;
   loading: boolean;
 }
 
@@ -25,6 +26,7 @@ export function useSessionData() {
     startTime: null,
     breaks: [],
     dailyMaxOvertimeMinutes: null,
+    liveBreakStart: null,
     loading: true
   });
 
@@ -38,6 +40,7 @@ export function useSessionData() {
       startTime: null,
       breaks: [],
       dailyMaxOvertimeMinutes: null,
+      liveBreakStart: null,
       loading: true
     });
 
@@ -51,6 +54,7 @@ export function useSessionData() {
         let startTime: Date | null = null;
         let breaks: FirebaseBreakRecord[] = [];
         let dailyMaxOvertimeMinutes: number | null = null;
+        let liveBreakStart: Date | null = null;
 
         if (val) {
           // Parse Start Time
@@ -86,12 +90,18 @@ export function useSessionData() {
           if (typeof val.dailyMaxOvertimeMinutes === 'number' && startTime) {
             dailyMaxOvertimeMinutes = val.dailyMaxOvertimeMinutes;
           }
+
+          // Parse live break start
+          if (typeof val.liveBreakStart === 'number' && startTime) {
+            liveBreakStart = new Date(val.liveBreakStart);
+          }
         }
 
         setData({
           startTime,
           breaks,
           dailyMaxOvertimeMinutes,
+          liveBreakStart,
           loading: false
         });
       },
@@ -171,6 +181,56 @@ export function useSessionData() {
     }
   };
 
+  const startLiveBreak = async (startTime: Date) => {
+    if (!user) return;
+    try {
+      const liveRef = ref(db, `data/${user.uid}/liveBreakStart`);
+      await set(liveRef, startTime.getTime());
+    } catch (error) {
+      console.error('Start live break error:', error);
+      toast({
+        title: 'Fehler beim Starten der Pause',
+        description: 'Bitte versuche es erneut.',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const endLiveBreak = async (endTime: Date) => {
+    if (!user || !data.liveBreakStart) return;
+    const breakStart = data.liveBreakStart;
+
+    // Discard sub-second or zero-length breaks
+    if (endTime.getTime() - breakStart.getTime() < 1000) {
+      await remove(ref(db, `data/${user.uid}/liveBreakStart`));
+      return;
+    }
+
+    // Generate a new push key for the completed break record
+    const newBreakRef = push(ref(db, `data/${user.uid}/breaks`));
+    const newBreakKey = newBreakRef.key!;
+
+    // Atomic multi-path write: add completed break + clear liveBreakStart in one operation
+    const updates: Record<string, unknown> = {
+      [`data/${user.uid}/breaks/${newBreakKey}`]: {
+        start: breakStart.getTime(),
+        end:   endTime.getTime(),
+      },
+      [`data/${user.uid}/liveBreakStart`]: null,
+    };
+
+    try {
+      await update(ref(db), updates);
+    } catch (error) {
+      console.error('End live break error:', error);
+      toast({
+        title: 'Fehler beim Beenden der Pause',
+        description: 'Bitte versuche es erneut.',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const setDailyMaxOvertime = async (v: number | null) => {
     if (!user) return;
     try {
@@ -197,5 +257,7 @@ export function useSessionData() {
     addBreak,
     removeBreak,
     setDailyMaxOvertime,
+    startLiveBreak,
+    endLiveBreak,
   };
 }
