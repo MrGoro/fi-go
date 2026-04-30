@@ -6,8 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>fi-go</title>
 
-  <!-- Prevents white flash before CSS loads -->
-  <style>html, body { margin: 0; background-color: #E5173F; }</style>
+  <!-- Prevents white flash before CSS loads; split gradient controls iOS overscroll reveal color -->
+  <style>
+    html { margin: 0; background: linear-gradient(to bottom, #E5173F 50%, #FDFCFB 50%); }
+    html.dark { background: linear-gradient(to bottom, #E5173F 50%, #0D0B09 50%); }
+    body { margin: 0; background-color: #E5173F; }
+  </style>
 
   <!-- No-FOUC theme bootstrap: applies .dark class before first paint -->
   <script>
