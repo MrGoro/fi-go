@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { addMinutes, format } from 'date-fns';
-import { WORK_TIME_TARGET_MINUTES, calculateAppliedBreakMinutes, calculateManualBreaksMinutes } from '@figo/shared';
+import { WORK_TIME_TARGET_MINUTES, grossTimeForNetTarget, calculateManualBreaksMinutes } from '@figo/shared';
 import type { BreakRecord } from '@figo/shared';
 import { Dialog } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -171,8 +171,7 @@ export function DailyMaxDialog({
   const preview = useMemo(() => {
     const manualBreaksMin = calculateManualBreaksMinutes(breaks);
     const dailyMaxWorkMin = WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes;
-    const dailyMaxBreakMin = calculateAppliedBreakMinutes(dailyMaxWorkMin, manualBreaksMin);
-    const endTime = addMinutes(startTime, dailyMaxWorkMin + dailyMaxBreakMin);
+    const endTime = addMinutes(startTime, grossTimeForNetTarget(dailyMaxWorkMin, manualBreaksMin));
     return { endTime };
   }, [maxOvertimeMinutes, startTime, breaks]);
 
