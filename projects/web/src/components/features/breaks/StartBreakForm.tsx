@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { FormError } from '@/components/ui/form-error';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { parseToTodayDate } from '@/lib/time';
+import { parseToTodayDate, isFutureTimeToday } from '@/lib/time';
 
 interface StartBreakFormProps {
   workdayStartTime: Date;
@@ -18,7 +18,7 @@ export function StartBreakForm({ workdayStartTime, onStart }: StartBreakFormProp
 
   const parsedStart = startStr ? parseToTodayDate(startStr) : null;
   const isBeforeWorkday = !!(parsedStart && parsedStart < workdayStartTime);
-  const isInFuture = !!(parsedStart && parsedStart > new Date());
+  const isInFuture = isFutureTimeToday(startStr);
   const isInvalid = !startStr || isBeforeWorkday || isInFuture;
 
   const handleSubmit = async (e: FormEvent) => {

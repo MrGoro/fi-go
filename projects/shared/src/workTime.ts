@@ -20,3 +20,8 @@ export function calculateNetWorkTimeMinutes(grossWorkMinutes: number, appliedBre
 export function calculateSaldoMinutes(netWorkMinutes: number): number {
   return netWorkMinutes - WORK_TIME_TARGET_MINUTES;
 }
+
+// Elapsed minutes between two timestamps (non-negative)
+export function calculateElapsedMinutes(since: Date, until: Date = new Date()): number {
+  return Math.max(0, Math.floor(differenceInMilliseconds(until, since) / 60000));
+}

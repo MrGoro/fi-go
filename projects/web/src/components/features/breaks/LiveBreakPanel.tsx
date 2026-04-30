@@ -1,25 +1,17 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { format } from 'date-fns';
 import { Square } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { FormError } from '@/components/ui/form-error';
 import { SubmitButton } from '@/components/ui/submit-button';
-import { parseToTodayDate } from '@/lib/time';
+import { parseToTodayDate, isFutureTimeToday, formatBreakDuration } from '@/lib/time';
+import { useElapsedMinutes } from '@/hooks/useElapsedMinutes';
 
 interface LiveBreakPanelProps {
   liveBreakStart: Date;
   workdayStartTime: Date;
   onEnd: (endTime: Date) => Promise<void>;
-}
-
-function useElapsedMinutes(since: Date): number {
-  const [elapsed, setElapsed] = useState(() => Math.floor((Date.now() - since.getTime()) / 60000));
-  useEffect(() => {
-    const id = setInterval(() => setElapsed(Math.floor((Date.now() - since.getTime()) / 60000)), 1000);
-    return () => clearInterval(id);
-  }, [since]);
-  return elapsed;
 }
 
 export function LiveBreakPanel({ liveBreakStart, workdayStartTime, onEnd }: LiveBreakPanelProps) {
@@ -28,16 +20,10 @@ export function LiveBreakPanel({ liveBreakStart, workdayStartTime, onEnd }: Live
   const elapsedMin = useElapsedMinutes(liveBreakStart);
 
   const parsedEnd = endStr ? parseToTodayDate(endStr) : null;
-  const isBeforeStart = !!(parsedEnd && parsedEnd <= liveBreakStart);
+  const isBeforeStart  = !!(parsedEnd && parsedEnd <= liveBreakStart);
   const isBeforeWorkday = !!(parsedEnd && parsedEnd < workdayStartTime);
-  const isInFuture = !!(parsedEnd && parsedEnd > new Date());
+  const isInFuture = isFutureTimeToday(endStr);
   const isInvalid = !endStr || isBeforeStart || isBeforeWorkday || isInFuture;
-
-  const h = Math.floor(elapsedMin / 60);
-  const m = elapsedMin % 60;
-  const durationText = h > 0
-    ? `${h}:${String(m).padStart(2, '0')} Std.`
-    : `${m} Min.`;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -64,7 +50,7 @@ export function LiveBreakPanel({ liveBreakStart, workdayStartTime, onEnd }: Live
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-orange-500" />
           </span>
           <span className="text-sm font-medium">
-            Seit {format(liveBreakStart, 'HH:mm')} – {durationText}
+            Seit {format(liveBreakStart, 'HH:mm')} – {formatBreakDuration(elapsedMin)}
           </span>
         </div>
       </div>
@@ -81,9 +67,9 @@ export function LiveBreakPanel({ liveBreakStart, workdayStartTime, onEnd }: Live
           />
         </div>
 
-        {isBeforeStart && <FormError>Endzeit muss nach {format(liveBreakStart, 'HH:mm')} liegen.</FormError>}
+        {isBeforeStart   && <FormError>Endzeit muss nach {format(liveBreakStart, 'HH:mm')} liegen.</FormError>}
         {isBeforeWorkday && <FormError>Endzeit darf nicht vor Dienstbeginn liegen.</FormError>}
-        {isInFuture && <FormError>Die Endzeit darf nicht in der Zukunft liegen.</FormError>}
+        {isInFuture      && <FormError>Die Endzeit darf nicht in der Zukunft liegen.</FormError>}
 
         <SubmitButton
           type="submit"

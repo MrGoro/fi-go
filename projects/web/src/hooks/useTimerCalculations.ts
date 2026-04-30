@@ -166,9 +166,6 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
 
   // Kontextuelle Statusnachricht
   const legalPauseStatus = calculateLegalPauseStatus(grossMin, manualBreaksMin);
-  const liveBreakMin = liveBreakStart
-    ? Math.floor((now.getTime() - liveBreakStart.getTime()) / 60000)
-    : 0;
   const workdayMsg = getWorkdayMessage({
     currentTime:             now,
     sollMinutes:             WORK_TIME_TARGET_MINUTES,
@@ -179,8 +176,7 @@ export function useTimerCalculations(startTime: Date, breaks: BreakRecord[], max
     nextLegalPauseDeduction: legalPauseStatus.nextPauseDeduction,
     minutesToDailyMax,
     dailyMaxBeforeTenHours:  maxOvertimeMinutes != null && (WORK_TIME_TARGET_MINUTES + maxOvertimeMinutes) < MAX_WORK_LIMIT_MINUTES,
-    liveBreakRunning:        liveBreakStart != null,
-    liveBreakMin,
+    liveBreakStart:          liveBreakStart ?? null,
   });
 
   return {

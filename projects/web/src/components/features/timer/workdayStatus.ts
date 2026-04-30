@@ -11,7 +11,9 @@ import {
   WORKDAY_FEIERABEND_NEAR_MINUTES,
   WORKDAY_SOLL_REACHED_MINUTES,
   WORKDAY_OVERTIME_STRONG_MINUTES,
+  calculateElapsedMinutes,
 } from '@figo/shared';
+import { formatBreakDuration } from '@/lib/time';
 
 export type WorkdayMessageSeverity = 'urgent' | 'warning' | 'success' | 'info';
 
@@ -32,10 +34,8 @@ export interface WorkdayMessageParams {
   minutesToDailyMax?: number | null;
   /** True when the daily maximum falls before the 10h legal limit (i.e. is actually restrictive). */
   dailyMaxBeforeTenHours?: boolean;
-  /** True while an open (live) break is actively running. */
-  liveBreakRunning?: boolean;
-  /** Elapsed minutes of the currently running live break. */
-  liveBreakMin?: number;
+  /** Start time of the currently running live break, or null if none. */
+  liveBreakStart?: Date | null;
 }
 
 function pad(n: number): string {
@@ -68,8 +68,7 @@ export function getWorkdayMessage({
   nextLegalPauseDeduction,
   minutesToDailyMax,
   dailyMaxBeforeTenHours,
-  liveBreakRunning,
-  liveBreakMin = 0,
+  liveBreakStart,
 }: WorkdayMessageParams): WorkdayMessage | null {
   const nowMin              = toNowMin(currentTime);
   const minutesToTen        = MAX_WORK_LIMIT_MINUTES - workedMinutes;
@@ -129,14 +128,9 @@ export function getWorkdayMessage({
   }
 
   // Open (live) break is running — suppress time-limit approach warnings
-  if (liveBreakRunning) {
-    const h = Math.floor(liveBreakMin / 60);
-    const m = liveBreakMin % 60;
-    const durationText = h > 0
-      ? `${h}:${String(m).padStart(2, '0')} Std.`
-      : `${m} Min.`;
+  if (liveBreakStart) {
     return {
-      text: `Pause läuft – seit ${durationText}`,
+      text: `Pause läuft – seit ${formatBreakDuration(calculateElapsedMinutes(liveBreakStart))}`,
       severity: 'warning',
     };
   }
