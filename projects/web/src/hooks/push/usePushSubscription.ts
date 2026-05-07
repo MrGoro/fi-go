@@ -155,9 +155,9 @@ export function usePushSubscription({
       if (!messaging) return;
       unsubscribe = onMessage(messaging, (payload) => {
         console.debug('[PushNotifications] Foreground message:', payload);
-        if (Notification.permission === 'granted' && payload.notification) {
-          new Notification(payload.notification.title || 'fi-go', {
-            body: payload.notification.body,
+        if (Notification.permission === 'granted' && payload.data) {
+          new Notification(payload.data.title || 'fi-go', {
+            body: payload.data.body,
             icon: '/icon-192x192.png',
           });
         }
