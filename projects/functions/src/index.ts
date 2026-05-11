@@ -173,8 +173,16 @@ export const onSendPushNotification = onTaskDispatched<PushPayload>(
       payload.type === 'DAILY_MAX' ? 'Zeit, Feierabend zu machen – dein heutiges Arbeitszeit-Maximum ist erreicht.' :
       'Du hast deine 10-Stunden-Grenze erreicht! Bitte stempeln.';
 
+    // Data-only payload: prevents FCM SDK from auto-displaying the notification
+    // in the service worker, which would duplicate the manual showNotification()
+    // call in onBackgroundMessage.
     const message = {
-      notification: { title, body },
+      data: {
+        type: payload.type,
+        title,
+        body,
+        url: FCM_LINK,
+      },
       webpush: {
         fcmOptions: { link: FCM_LINK },
       },

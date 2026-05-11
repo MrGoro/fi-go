@@ -21,14 +21,14 @@ const messaging = getMessaging(app);
 onBackgroundMessage(messaging, (payload) => {
   console.debug('[sw.ts] Received background message:', payload);
 
-  const notificationTitle = payload.notification?.title || 'fi-go';
+  const notificationTitle = payload.data?.title || 'fi-go';
   const notificationOptions = {
-    body: payload.notification?.body || '',
+    body: payload.data?.body || '',
     icon: '/icon-192x192.png',
     badge: '/icon-192x192.png',
     data: {
       ...payload.data,
-      url: payload.fcmOptions?.link || self.registration.scope,
+      url: payload.data?.url || payload.fcmOptions?.link || self.registration.scope,
     },
   };
 
