@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getToken, onMessage } from 'firebase/messaging';
+import { getToken } from 'firebase/messaging';
 import { ref, set, onValue } from 'firebase/database';
 import { db, messagingPromise } from '@/config/firebase';
 import { useToast } from '@/hooks/use-toast';
@@ -144,28 +144,6 @@ export function usePushSubscription({
       setIsLoading(false);
     }
   }, [userId, disabled, setPermission, saveFcmToken, toast]);
-
-  // Foreground-Messages: Browser zeigt sie im Vordergrund nicht automatisch —
-  // wir triggern die Notification-API manuell.
-  useEffect(() => {
-    if (disabled) return;
-
-    let unsubscribe: (() => void) | undefined;
-    messagingPromise.then((messaging) => {
-      if (!messaging) return;
-      unsubscribe = onMessage(messaging, (payload) => {
-        console.debug('[PushNotifications] Foreground message:', payload);
-        if (Notification.permission === 'granted' && payload.data) {
-          new Notification(payload.data.title || 'fi-go', {
-            body: payload.data.body,
-            icon: '/icon-192x192.png',
-          });
-        }
-      });
-    });
-
-    return () => unsubscribe?.();
-  }, [disabled]);
 
   // Opt-In-Status aus DB synchronisieren + Token-lastSeen refreshen
   useEffect(() => {
