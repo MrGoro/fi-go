@@ -21,15 +21,17 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   // ── Clock in ────────────────────────────────────────────────────────────────
   await page.getByRole('button', { name: /Jetzt einstempeln/i }).click();
 
-  // ── Display screen shows the live stats ──────────────────────────────────────
+  // ── Display screen shows the live stats; pause starts at 0 ────────────────────
   // Exact match: Playwright's getByText is substring-based, and "Pause" would
   // otherwise also match the "Pausen" drawer trigger.
   await expect(page.getByText('Start', { exact: true })).toBeVisible();
   await expect(page.getByText('Pause', { exact: true })).toBeVisible();
+  await expect(page.getByText('0 Min', { exact: true })).toBeVisible();
 
-  // ── Add a break via the drawer ───────────────────────────────────────────────
-  // Future window relative to "now" so it always passes the form's validation
-  // (start >= clock-in, end > start, no overlap).
+  // ── Add a 30-minute break via the drawer ─────────────────────────────────────
+  // Window relative to "now" so it always passes the form's validation
+  // (start >= clock-in, end > start, no overlap). The break duration counts
+  // towards the applied pause regardless of lying slightly in the future.
   const now = new Date();
   const breakStart = format(addMinutes(now, 5), 'HH:mm');
   const breakEnd = format(addMinutes(now, 35), 'HH:mm');
@@ -44,16 +46,28 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   await addForm.locator('input[type="time"]').nth(1).fill(breakEnd);
   await page.getByRole('button', { name: /Pause hinzufügen/i }).click();
 
-  // The new break appears in the list.
+  // The break is captured with the correct start, end and computed duration,
+  // and rolled up into the list total.
   const breakRow = page.getByRole('listitem').filter({ hasText: breakStart });
-  await expect(breakRow).toBeVisible();
+  await expect(breakRow).toContainText(breakStart);
+  await expect(breakRow).toContainText(breakEnd);
+  await expect(breakRow).toContainText('30 Min');
+  await expect(page.getByText('30 Min. gesamt')).toBeVisible();
+
+  // …and it flows through to the work-time calculation on the main screen.
+  await page.keyboard.press('Escape'); // close the drawer
+  await expect(page.getByText('30 Min', { exact: true })).toBeVisible();
 
   // ── Remove the break again ───────────────────────────────────────────────────
-  await breakRow.getByRole('button').click();
-  await expect(page.getByRole('listitem').filter({ hasText: breakStart })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Pausen' }).first().click();
+  await page.getByRole('listitem').filter({ hasText: breakStart }).getByRole('button').click();
+  await expect(page.getByText('Noch keine Pausen erfasst.')).toBeVisible();
+
+  // Applied pause is back to zero on the main screen.
+  await page.keyboard.press('Escape');
+  await expect(page.getByText('0 Min', { exact: true })).toBeVisible();
 
   // ── Clock out → back to the clock-in screen ──────────────────────────────────
-  await page.keyboard.press('Escape'); // close the drawer
   await page.getByRole('button', { name: /Feierabend/i }).first().click();
   await expect(page.getByRole('button', { name: /Jetzt einstempeln/i })).toBeVisible();
 });
