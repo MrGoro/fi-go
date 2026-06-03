@@ -32,3 +32,12 @@ jobs:
           npx firebase hosting:channel:delete ${{ github.event.pull_request.head.ref }} \
             --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} \
             --force || true
+
+      # Same lifecycle for the E2E report channel (created by the e2e job as pr-<n>
+      # on the separate report site). --site keeps it independent of the checkout.
+      - name: Delete E2E report channel
+        run: |
+          npx firebase hosting:channel:delete pr-${{ github.event.pull_request.number }} \
+            --site fi-go-e2e-report \
+            --project ${{ secrets.VITE_FIREBASE_PROJECT_ID }} \
+            --force || true
