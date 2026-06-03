@@ -43,7 +43,9 @@ export default defineConfig({
     { name: 'mobile', use: { ...devices['Pixel 5'] } },
   ],
   webServer: {
-    command: `npm run dev -- --mode e2e --port ${PORT} --strictPort`,
+    // Bind IPv4 explicitly: Vite 8.0.16+ defaults to localhost/IPv6, which the
+    // 127.0.0.1 readiness probe below can't reach (webServer would time out).
+    command: `npm run dev -- --mode e2e --host 127.0.0.1 --port ${PORT} --strictPort`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
