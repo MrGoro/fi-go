@@ -22,7 +22,7 @@
   "devDependencies": {
     "@babel/core": "^7.29.7",
     "firebase-tools": "^15.18.0",
-    "vite": "^8.0.14",
+    "vite": "^8.0.16",
     "typescript": "^6.0.3"
   }
 }

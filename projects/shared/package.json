@@ -13,6 +13,6 @@
     "vitest": "^3.2.4"
   },
   "dependencies": {
-    "date-fns": "^4.3.0"
+    "date-fns": "^4.4.0"
   }
 }
