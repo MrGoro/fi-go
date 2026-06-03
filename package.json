@@ -12,7 +12,7 @@
     "lint": "npm run lint -w web",
     "test": "npm run test -w @figo/shared && npm run test -w web",
     "e2e": "firebase emulators:exec --project demo-fi-go --only auth,database \"npm run test:e2e -w web\"",
-    "e2e:video": "PW_VIDEO=1 PW_SLOWMO=${PW_SLOWMO:-1000} firebase emulators:exec --project demo-fi-go --only auth,database \"npm run test:e2e -w web\"",
+    "e2e:video": "PW_VIDEO=1 PW_SLOWMO=${PW_SLOWMO:-2000} firebase emulators:exec --project demo-fi-go --only auth,database \"npm run test:e2e -w web\"",
     "e2e:headed": "firebase emulators:exec --project demo-fi-go --only auth,database \"npm run test:e2e:headed -w web\"",
     "e2e:report": "playwright show-report projects/web/playwright-report",
     "preview": "npm run preview -w web",
