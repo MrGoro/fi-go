@@ -1,0 +1,7 @@
+{
+  "hosting": {
+    "site": "fi-go-e2e-report",
+    "public": "projects/web/playwright-report",
+    "ignore": ["firebase.json", "**/.*"]
+  }
+}

@@ -4,6 +4,8 @@ dist/
 .env
 .env.*
 !.env.example
+# E2E emulator config — contains no secrets, must be committed
+!.env.e2e
 
 # Next.js / Vite
 .next/
@@ -37,6 +39,13 @@ yarn-error.log*
 .firebase/
 firebase-debug.log*
 firestore-debug.log*
+database-debug.log*
 pubsub-debug.log*
 ui-debug.log*
 projects/functions/shared/
+
+# Playwright (E2E)
+playwright-report/
+test-results/
+blob-report/
+.playwright/
