@@ -3,12 +3,17 @@ import { defineConfig, devices } from '@playwright/test';
 const PORT = 4173;
 const BASE_URL = `http://127.0.0.1:${PORT}`;
 
+// slowMo delays every action — great for reviewable videos, but it also stretches
+// the wall-clock time a test needs, so the per-test timeout has to grow with it.
+const SLOW_MO = process.env.PW_SLOWMO ? Number(process.env.PW_SLOWMO) : 0;
+
 // Run with `npm run e2e` from the repo root, which boots the Firebase emulators
 // around this Playwright run (`firebase emulators:exec ...`).
 export default defineConfig({
   testDir: './e2e',
-  timeout: 30_000,
-  expect: { timeout: 10_000 },
+  // Base 30s, plus generous per-action headroom whenever slowMo is active.
+  timeout: 30_000 + SLOW_MO * 60,
+  expect: { timeout: 10_000 + SLOW_MO * 2 },
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,
@@ -24,10 +29,10 @@ export default defineConfig({
     video: process.env.PW_VIDEO ? 'on' : 'retain-on-failure',
     trace: process.env.PW_VIDEO ? 'on' : 'on-first-retry',
     screenshot: 'only-on-failure',
-    // PW_SLOWMO=500 slows every action by 500ms — useful with --headed to watch
-    // the flow unfold in real time.
+    // PW_SLOWMO=500 slows every action by 500ms — useful for reviewable videos
+    // or with --headed to watch the flow unfold in real time.
     launchOptions: {
-      slowMo: process.env.PW_SLOWMO ? Number(process.env.PW_SLOWMO) : 0,
+      slowMo: SLOW_MO,
     },
   },
   // Two viewports so a single run validates (and, with PW_VIDEO, films) both the
