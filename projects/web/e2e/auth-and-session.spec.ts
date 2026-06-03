@@ -28,7 +28,9 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   const breakStart = format(addMinutes(now, 5), 'HH:mm');
   const breakEnd = format(addMinutes(now, 35), 'HH:mm');
 
-  await page.getByRole('button', { name: 'Pausen' }).first().click();
+  // The Pausen/Feierabend actions live in the AppBar on desktop and in the
+  // bottom bar on mobile — target whichever is currently visible.
+  await page.getByRole('button', { name: 'Pausen' }).filter({ visible: true }).click();
   await page.getByRole('button', { name: 'Pause manuell erfassen' }).click();
 
   // Scope to the manual add-form — the drawer also contains StartBreakForm's
@@ -51,7 +53,7 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   await expect(page.getByText('30 Min', { exact: true })).toBeVisible();
 
   // ── Remove the break again ───────────────────────────────────────────────────
-  await page.getByRole('button', { name: 'Pausen' }).first().click();
+  await page.getByRole('button', { name: 'Pausen' }).filter({ visible: true }).click();
   await page.getByRole('listitem').filter({ hasText: breakStart }).getByRole('button').click();
   await expect(page.getByText('Noch keine Pausen erfasst.')).toBeVisible();
 
@@ -60,7 +62,7 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   await expect(page.getByText('0 Min', { exact: true })).toBeVisible();
 
   // ── Clock out → back to the clock-in screen ──────────────────────────────────
-  await page.getByRole('button', { name: /Feierabend/i }).first().click();
+  await page.getByRole('button', { name: /Feierabend/i }).filter({ visible: true }).click();
   await expect(page.getByRole('button', { name: /Jetzt einstempeln/i })).toBeVisible();
 });
 

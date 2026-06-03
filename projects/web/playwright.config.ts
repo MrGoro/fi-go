@@ -30,7 +30,13 @@ export default defineConfig({
       slowMo: process.env.PW_SLOWMO ? Number(process.env.PW_SLOWMO) : 0,
     },
   },
-  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+  // Two viewports so a single run validates (and, with PW_VIDEO, films) both the
+  // desktop and the mobile layout. Both are Chromium-based — no extra browser
+  // download needed in CI.
+  projects: [
+    { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
+    { name: 'mobile', use: { ...devices['Pixel 5'] } },
+  ],
   webServer: {
     command: `npm run dev -- --mode e2e --port ${PORT} --strictPort`,
     url: BASE_URL,
