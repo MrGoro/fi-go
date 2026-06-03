@@ -1,22 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { addMinutes, format } from 'date-fns';
-import { getLatestOtp, resetEmulatorState } from './helpers/emulator';
+import { resetEmulatorState } from './helpers/emulator';
+import { signIn } from './helpers/auth';
 
 test.beforeEach(async ({ request }) => {
   await resetEmulatorState(request);
 });
 
 test('login → clock in → add/remove break → clock out', async ({ page, request }) => {
-  await page.goto('/');
-
-  // ── Login: phone number → OTP ──────────────────────────────────────────────
-  await page.getByPlaceholder('+49 151 ...').fill('+4915112345678');
-  await page.getByRole('button', { name: /SMS-Code senden/i }).click();
-
-  const otp = page.getByPlaceholder('000000');
-  await expect(otp).toBeVisible();
-  await otp.fill(await getLatestOtp(request));
-  await page.getByRole('button', { name: /Verifizieren/i }).click();
+  await signIn(page, request);
 
   // ── Clock in ────────────────────────────────────────────────────────────────
   await page.getByRole('button', { name: /Jetzt einstempeln/i }).click();
@@ -70,4 +62,16 @@ test('login → clock in → add/remove break → clock out', async ({ page, req
   // ── Clock out → back to the clock-in screen ──────────────────────────────────
   await page.getByRole('button', { name: /Feierabend/i }).first().click();
   await expect(page.getByRole('button', { name: /Jetzt einstempeln/i })).toBeVisible();
+});
+
+test('logout via the profile menu returns to the login screen', async ({ page, request }) => {
+  await signIn(page, request);
+
+  // Open the profile dropdown (its trigger is the only menu-haspopup button;
+  // the breaks drawer trigger uses haspopup="dialog").
+  await page.locator('button[aria-haspopup="menu"]').click();
+  await page.getByRole('menuitem', { name: 'Abmelden' }).click();
+
+  // Back to the phone-number login step.
+  await expect(page.getByPlaceholder('+49 151 ...')).toBeVisible();
 });

@@ -3,6 +3,7 @@ import {
   calculateLegalMinimumBreakMinutes,
   calculateManualBreaksMinutes,
   calculateAppliedBreakMinutes,
+  grossTimeForNetTarget,
 } from './breaks';
 import type { BreakRecord } from './types';
 
@@ -51,5 +52,20 @@ describe('calculateAppliedBreakMinutes', () => {
     expect(calculateAppliedBreakMinutes(8 * 60, 10)).toBe(30);
     // Manual larger → manual wins.
     expect(calculateAppliedBreakMinutes(8 * 60, 45)).toBe(45);
+  });
+});
+
+describe('grossTimeForNetTarget', () => {
+  it('adds the 30 min zone-1 break for net targets up to 9h', () => {
+    // Soll (456 net) with no manual break → +30 min gross.
+    expect(grossTimeForNetTarget(456, 0)).toBe(486);
+  });
+
+  it('uses the manual break when it exceeds the legal minimum', () => {
+    expect(grossTimeForNetTarget(456, 45)).toBe(501);
+  });
+
+  it('switches to the 45 min zone-2 break above 9h net', () => {
+    expect(grossTimeForNetTarget(541, 0)).toBe(586);
   });
 });
