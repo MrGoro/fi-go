@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
-    "firebase-tools": "^15.18.0",
+    "firebase-tools": "^15.19.1",
     "vite": "^8.0.16",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
