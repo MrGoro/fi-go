@@ -14,7 +14,7 @@
     "generate-pwa-assets": "pwa-assets-generator --config pwa-assets.config.ts"
   },
   "dependencies": {
-    "@base-ui/react": "^1.7.0",
+    "@base-ui/react": "^1.8.0",
     "@figo/shared": "*",
     "@radix-ui/react-dialog": "^1.1.23",
     "@radix-ui/react-slot": "^1.2.4",
