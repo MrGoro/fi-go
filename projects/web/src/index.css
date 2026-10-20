@@ -101,10 +101,15 @@
     --ring-track: oklch(0.28 0.008 264); /* Track im Dark — gedämpft, klar sichtbar */
   }
 
+  html {
+    overscroll-behavior: none;
+  }
+
   * {
     @apply border-border;
   }
   body {
+    overscroll-behavior: none;
     @apply text-foreground;
     min-height: 100svh;
     background:
